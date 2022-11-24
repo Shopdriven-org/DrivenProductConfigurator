@@ -1,0 +1,39 @@
+{
+  "name": "driven/product-configurator",
+  "description": "Produkt Konfigurator",
+  "version": "1.0.1",
+  "license": "proprietary",
+  "type": "shopware-platform-plugin",
+  "authors": [
+    {
+      "name": "shopdriven",
+      "homepage": "https://www.shopdriven.de"
+    }
+  ],
+  "require": {
+    "shopware/core": "^6.4.13",
+    "shopware/storefront": "^6.4.13",
+    "shopware/administration": "^6.4.13"
+  },
+  "autoload": {
+    "psr-4": {
+      "Driven\\ProductConfigurator\\": "src/"
+    }
+  },
+  "extra": {
+    "shopware-plugin-class": "Driven\\ProductConfigurator\\DrivenProductConfigurator",
+    "copyright": "shopdriven",
+    "label": {
+      "de-DE": "Artikel Konfigurator für individuelle Set-Produkte",
+      "en-GB": "Article configurator for individual set products"
+    },
+    "manufacturerLink": {
+      "de-DE": "https://www.shopdriven.de",
+      "en-GB": "https://www.shopdriven.de"
+    },
+    "supportLink": {
+      "de-DE": "https://www.shopdriven.de",
+      "en-GB": "https://www.shopdriven.de"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../../../../../vendor/shopware/platform/src/Core/System/SystemConfig/Schema/config.xsd">
+    <card>
+        <title>Default settings</title>
+        <title lang="de-DE">Allgemeine Einstellungen</title>
+
+        <input-field type="bool">
+            <name>status</name>
+            <label>Activate plugin</label>
+            <label lang="de-DE">Plugin aktivieren</label>
+            <helpText>Enables the plugin for the current sales channel.</helpText>
+            <helpText lang="de-DE">Soll das Plugin für diesen Verkaufskanal aktiviert werden?</helpText>
+            <defaultValue>true</defaultValue>
+        </input-field>
+    </card>
+
+</config>
