@@ -1,0 +1,51 @@
+{% sw_extends '@Storefront/storefront/component/checkout/offcanvas-cart.html.twig' %}
+
+{% block utilities_offcanvas_content %}
+    {% block component_offcanvas_cart %}
+        {% set isCartNotEmpty = (page.cart.lineItems|length > 0) %}
+
+        <div class="offcanvas-cart">
+            {% block component_offcanvas_cart_header %}
+                {{ parent() }}
+            {% endblock %}
+
+            {% block component_offcanvas_cart_flashbags %}
+                {{ parent() }}
+            {% endblock %}
+
+            {% if isCartNotEmpty %}
+                {% block component_offcanvas_cart_items %}
+                    {{ parent() }}
+                {% endblock %}
+            {% else %}
+                {% block component_offcanvas_cart_empty %}
+                    {{ parent() }}
+                {% endblock %}
+            {% endif %}
+
+            {% if isCartNotEmpty %}
+                {% block component_offcanvas_summary %}
+                    {% sw_include '@Storefront/storefront/component/checkout/offcanvas-cart-summary.html.twig' %}
+                {% endblock %}
+            {% endif %}
+            {% block component_offcanvas_cart_driven_configurator_alerts %}
+                <h1>TODO </h1>
+                <div class="flashbags">
+                    {% if todo %}
+                        {% sw_include '@Storefront/storefront/utilities/alert.html.twig' with {
+                            type: type,
+                            list: messages
+                        } %}
+                    {% endif %}
+                </div>
+            {% endblock %}
+            {% block component_offcanvas_cart_actions %}
+                {{ parent() }}
+            {% endblock %}
+        </div>
+
+        {% block component_offcanvas_cart_hidden_line_items_information %}
+            {{ parent() }}
+        {% endblock %}
+    {% endblock %}
+{% endblock %}
