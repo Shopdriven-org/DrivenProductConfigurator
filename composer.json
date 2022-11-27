@@ -24,8 +24,12 @@
     "shopware-plugin-class": "Driven\\ProductConfigurator\\DrivenProductConfigurator",
     "copyright": "shopdriven",
     "label": {
-      "de-DE": "Artikel Konfigurator für individuelle Set-Produkte",
-      "en-GB": "Article configurator for individual set products"
+      "de-DE": "Artikel Konfigurator für individuelle Produkte",
+      "en-GB": "Article configurator for individual products"
+    },
+    "description": {
+      "de-DE": "Konfigurator für einzelne Produkte und deren Varianten",
+      "en-GB": "Configurator for individual products and its variants"
     },
     "manufacturerLink": {
       "de-DE": "https://www.shopdriven.de",

@@ -9,10 +9,6 @@
 
 namespace Driven\ProductConfigurator\Subscriber\Storefront\Page\Product;
 
-use Dvsn\SetConfigurator\Core\Content\Configurator\ConfiguratorEntity;
-use Dvsn\SetConfigurator\Exception\InvalidSelectionException;
-use Dvsn\SetConfigurator\Service\SelectionServiceInterface;
-use Dvsn\SetConfigurator\Service\StreamServiceInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;

@@ -19,17 +19,10 @@ class DrivenProductConfigurator extends Plugin
     public function build(ContainerBuilder $container): void
     {
         // set plugin parameters
-        $container->setParameter('dvsn.set_configurator.path', $this->getPath());
+        $container->setParameter('driven.product_configurator.path', $this->getPath());
 
         // call parent
         parent::build($container);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function activate(ActivateContext $activateContext): void
-    {
     }
 
     /**
@@ -61,13 +54,6 @@ class DrivenProductConfigurator extends Plugin
     /**
      * {@inheritDoc}
      */
-    public function postInstall(InstallContext $installContext): void
-    {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function update(UpdateContext $updateContext): void
     {
         // call updater
@@ -79,13 +65,6 @@ class DrivenProductConfigurator extends Plugin
             $this->container->get('custom_field.repository')
         );
         $installer->update($updateContext->getCurrentPluginVersion());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function postUpdate(UpdateContext $updateContext): void
-    {
     }
 
     /**
