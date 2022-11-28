@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <service id="Driven\ProductConfigurator\Core\Checkout\Cart\ConfiguratorCartProcessor">
+            <argument type="service" id="Shopware\Core\Checkout\Cart\Price\QuantityPriceCalculator" />
+            <argument type="service" id="Shopware\Core\Checkout\Cart\Price\PercentagePriceCalculator" />
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
+            <tag name="shopware.cart.processor" priority="4950"/>
+        </service>
+
+        <service id="Driven\ProductConfigurator\Core\Checkout\Cart\ConfiguratorCartDataCollector">
+            <argument type="service" id="sales_channel.product.repository" />
+            <argument type="service" id="Shopware\Core\Content\Product\SalesChannel\Price\ProductPriceCalculator" />
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
+            <tag name="shopware.cart.collector" priority="4950"/>
+        </service>
+
+        <service id="Driven\ProductConfigurator\Core\Checkout\Cart\ConfiguratorCartValidator">
+            <argument type="service" id="Driven\ProductConfigurator\Service\Validator\LineItemValidatorService" />
+            <tag name="shopware.cart.validator" priority="4950"/>
+        </service>
+
+        <service id="Driven\ProductConfigurator\Core\Checkout\Cart\LineItemFactoryHandler\ConfiguratorLineItemFactory">
+            <tag name="shopware.cart.line_item.factory"/>
+        </service>
+
+        <service id="Driven\ProductConfigurator\Core\Checkout\Cart\ProductCartProcessor">
+            <argument type="service" id="Shopware\Core\Checkout\Cart\Price\QuantityPriceCalculator" />
+            <tag name="shopware.cart.processor" priority="2000"/>
+        </service>
+    </services>
+</container>
