@@ -31,12 +31,12 @@
             {% block component_offcanvas_cart_driven_configurator_alerts %}
                 <h1>TODO </h1>
                 <div class="flashbags">
-                    {% if todo %}
+{#                    {% if todo %}#}
                         {% sw_include '@Storefront/storefront/utilities/alert.html.twig' with {
-                            type: type,
-                            list: messages
+                            type: "warning",
+                            content: "Status der Produkte im Offcanvas-Einkaufswagen, der implementiert werden soll"
                         } %}
-                    {% endif %}
+{#                    {% endif %}#}
                 </div>
             {% endblock %}
             {% block component_offcanvas_cart_actions %}

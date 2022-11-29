@@ -50,7 +50,7 @@ class ConfiguratorCartProcessor implements CartProcessorInterface
     {
         // get every line item which is a configurator
         $lineItems = $original->getLineItems()->filterType(
-            LineItemFactoryServiceInterface::CONFIGURATOR_LINE_ITEM_TYPE
+            "LineItemFactoryServiceInterface::CONFIGURATOR_LINE_ITEM_TYPE"
         );
 
         // do we even have a configurator?

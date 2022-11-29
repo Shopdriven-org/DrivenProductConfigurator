@@ -18,7 +18,6 @@
         </service>
 
         <service id="Driven\ProductConfigurator\Core\Checkout\Cart\ConfiguratorCartValidator">
-            <argument type="service" id="Driven\ProductConfigurator\Service\Validator\LineItemValidatorService" />
             <tag name="shopware.cart.validator" priority="4950"/>
         </service>
 

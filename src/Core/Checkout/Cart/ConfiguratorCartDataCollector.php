@@ -43,18 +43,15 @@ use Shopware\Core\System\SystemConfig\SystemConfigService;
 
 class ConfiguratorCartDataCollector implements CartDataCollectorInterface
 {
-    private EntityRepositoryInterface $configuratorRepository;
     private SalesChannelRepositoryInterface $salesChannelProductRepository;
     private AbstractProductPriceCalculator $productPriceCalculator;
     private SystemConfigService $systemConfigService;
 
     public function __construct(
-        EntityRepositoryInterface $configuratorRepository,
         SalesChannelRepositoryInterface $salesChannelProductRepository,
         AbstractProductPriceCalculator $productPriceCalculator,
         SystemConfigService $systemConfigService
     ) {
-        $this->configuratorRepository = $configuratorRepository;
         $this->salesChannelProductRepository = $salesChannelProductRepository;
         $this->productPriceCalculator = $productPriceCalculator;
         $this->systemConfigService = $systemConfigService;
@@ -73,7 +70,7 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
 
         // get every line item which is a configurator
         $lineItems = $original->getLineItems()->filterType(
-            LineItemFactoryServiceInterface::CONFIGURATOR_LINE_ITEM_TYPE
+            "LineItemFactoryServiceInterface::CONFIGURATOR_LINE_ITEM_TYPE"
         );
 
         // do we even have a configurator?
@@ -87,12 +84,6 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
             $lineItems,
             $salesChannelContext
         );
-
-        // check limited stock?!
-        if ($this->systemConfigService->get('DvsnSetConfigurator.config.cartCheckLimitedStock', $salesChannelContext->getSalesChannel()->getId()) === true) {
-            // do it and drop configurators
-            $this->validateMaxPurchase($original, $original->getErrors(), $products);
-        }
 
         // loop every configurator
         foreach ($lineItems as $lineItem) {
