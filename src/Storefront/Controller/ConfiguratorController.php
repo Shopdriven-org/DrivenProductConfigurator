@@ -36,7 +36,7 @@ class ConfiguratorController extends StorefrontController
      *
      * @param SystemConfigService $systemConfigService
      */
-    public function __construct( SystemConfigService $systemConfigService)
+    public function __construct(SystemConfigService $systemConfigService)
     {
         // set params
         $this->systemConfigService = $systemConfigService;
@@ -68,8 +68,8 @@ class ConfiguratorController extends StorefrontController
      * ...
      *
      * @RouteScope(scopes={"storefront"})
-     * @Route("/driven/set-configurator/save-selection",
-     *     name="frontend.driven.set-configurator.save-selection",
+     * @Route("/driven/product-configurator/save-selection",
+     *     name="frontend.driven.product-configurator.save-selection",
      *     options={"seo"=false},
      *     methods={"POST"}
      * )
@@ -82,7 +82,10 @@ class ConfiguratorController extends StorefrontController
      */
     public function saveSelection(Request $request, RequestDataBag $data, Context $context, SalesChannelContext $salesChannelContext): Response
     {
-        throw new \Exception('TODO: ');
+
+        $page = $request->getPathInfo();
+
+        return $this->redirectToRoute($page);
     }
 
 
