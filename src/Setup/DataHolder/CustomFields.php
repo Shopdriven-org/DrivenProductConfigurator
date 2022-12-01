@@ -26,35 +26,50 @@ class CustomFields
             'position' => 10,
             'config' => [
                 'label' => [
-                    'en-GB' => 'ShopDriven Configurator',
-                    'de-DE' => 'ShopDriven Konfigurator'
+                    'en-GB' => 'Single product configurator',
+                    'de-DE' => 'Einzelproduktkonfigurator'
                 ]
             ],
             'customFields' => [
                 [
                     'id' => null,
-                    'name' => 'driven_product_type_main',
-                    'type' => CustomFieldTypes::BOOL,
+                    'name' => 'dvsn_set_configurator_product_component_percental_display',
+                    'type' => CustomFieldTypes::SELECT,
                     'config' => [
                         'label' => [
-                            'en-GB' => 'Base product',
-                            'de-DE' => 'Basisprodukt'
+                            'en-GB' => 'Percentage surcharge - display method',
+                            'de-DE' => 'Prozentualer Aufschlag - Anzeige'
                         ],
-                        'customFieldPosition' => 2
+                        'placeholder' => [
+                            'en-GB' => 'Select display method...',
+                            'de-DE' => 'Anzeige wählen...'
+                        ],
+                        'options' => [
+                            'label' => [
+                                'en-GB' => 'Racquet',
+                                'de-DE' => 'Schläger'
+                            ],
+                            'value' => "racquet",
+                            [
+                                'label' => [
+                                    'en-GB' => 'Forehand',
+                                    'de-DE' => 'Rückhand'
+                                ],
+                                'value' => 'forehand'
+                            ],
+                            [
+                                'label' => [
+                                    'en-GB' => 'Backhand',
+                                    'de-DE' => 'Versiegelung'
+                                ],
+                                'value' => 'backhand'
+                            ]
+                        ],
+                        'componentName' => "sw-single-select",
+                        'customFieldType' => CustomFieldTypes::SELECT,
+                        'customFieldPosition' => 30
                     ]
                 ],
-                [
-                    'id' => null,
-                    'name' => 'driven_product_type_variant',
-                    'type' => CustomFieldTypes::BOOL,
-                    'config' => [
-                        'label' => [
-                            'en-GB' => 'Base product',
-                            'de-DE' => 'Variantenprodukt'
-                        ],
-                        'customFieldPosition' => 2
-                    ]
-                ]
             ],
             'relations' => [
                 [
