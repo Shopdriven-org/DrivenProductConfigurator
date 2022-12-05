@@ -4,7 +4,7 @@
  * shopdriven
  *
  * @category  shopdriven
- * @package   Shopware\Plugins\DrivenProductConfigurator
+ * @package   Shopware\Plugins\Driven\ProductConfigurator
  * @copyright (c) 2020 shopdriven
  */
 
@@ -23,7 +23,7 @@ class CustomFields
         [
             'id' => null,
             'name' => 'driven_configurator_product',
-            'position' => 10,
+            'position' => 3,
             'config' => [
                 'label' => [
                     'en-GB' => 'Single product configurator',
@@ -33,23 +33,30 @@ class CustomFields
             'customFields' => [
                 [
                     'id' => null,
-                    'name' => 'dvsn_set_configurator_product_component_percental_display',
+                    'name' => 'driven_product_configurator_base_racquet_product',
+                    'type' => CustomFieldTypes::BOOL,
+                    'config' => [
+                        'label' => [
+                            'en-GB' => 'Is Racquet',
+                            'de-DE' => 'Ist Racquet'
+                        ],
+                        'customFieldPosition' => 1
+                    ]
+                ],
+                [
+                    'id' => null,
+                    'name' => 'driven_product_configurator_product_racquet_type',
                     'type' => CustomFieldTypes::SELECT,
                     'config' => [
                         'label' => [
-                            'en-GB' => 'Percentage surcharge - display method',
-                            'de-DE' => 'Prozentualer Aufschlag - Anzeige'
+                            'en-GB' => 'Select Racquet type',
+                            'de-DE' => 'Produktart auswählen'
                         ],
                         'placeholder' => [
-                            'en-GB' => 'Select display method...',
-                            'de-DE' => 'Anzeige wählen...'
+                            'en-GB' => 'Select product type..',
+                            'de-DE' => 'Produktart auswählen..'
                         ],
                         'options' => [
-                            'label' => [
-                                'en-GB' => 'Racquet',
-                                'de-DE' => 'Schläger'
-                            ],
-                            'value' => "racquet",
                             [
                                 'label' => [
                                     'en-GB' => 'Forehand',
@@ -67,7 +74,7 @@ class CustomFields
                         ],
                         'componentName' => "sw-single-select",
                         'customFieldType' => CustomFieldTypes::SELECT,
-                        'customFieldPosition' => 30
+                        'customFieldPosition' => 2
                     ]
                 ],
             ],

@@ -10,5 +10,23 @@
             <argument type="service" id="product.repository"/>
             <tag name="kernel.event_subscriber" />
         </service>
+
+        <service id="Driven\ProductConfigurator\Subscriber\Core\Checkout\Cart\Order\OrderConverterSubscriber">
+            <argument type="service" id="Shopware\Core\Checkout\Cart\Price\QuantityPriceCalculator" />
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <service id="Driven\ProductConfigurator\Subscriber\Core\Checkout\Cart\CartChangedSubscriber">
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <service id="Driven\ProductConfigurator\Subscriber\Core\Checkout\Cart\AfterLineItemAddedSubscriber">
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <service id="Driven\ProductConfigurator\Subscriber\Core\Checkout\Cart\CartSavedSubscriber">
+            <tag name="kernel.event_subscriber" />
+        </service>
     </services>
 </container>

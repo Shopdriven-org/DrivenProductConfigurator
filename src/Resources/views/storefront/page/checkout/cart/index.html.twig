@@ -1,0 +1,47 @@
+{% sw_extends '@Storefront/storefront/page/checkout/cart/index.html.twig' %}
+
+{% block page_checkout_main_content %}
+    {% block page_checkout_cart %}
+        {% block page_checkout_cart_header %}
+            <h1 class="cart-main-header">
+                {{ "checkout.cartHeader"|trans|sw_sanitize }}
+            </h1>
+        {% endblock %}
+
+        {% block page_checkout_cart_product_table %}
+            <div class="card checkout-product-table">
+                <div class="card-body">
+                    {% block page_checkout_cart_table_header %}
+                        {{ parent() }}
+                    {% endblock %}
+
+                    {% block page_checkout_cart_table_items %}
+                        {% for lineItem in page.cart.lineItems %}
+                            {% block page_checkout_cart_table_item %}
+                                {% block page_checkout_item %}
+                                    {# @deprecated tag:v6.5.0 - Template `checkout-item.html.twig` is deprecated. Use `storefront/component/line-item/line-item.html.twig` instead. #}
+                                    {% if feature('v6.5.0.0') %}
+                                        {% sw_include '@Storefront/storefront/component/line-item/line-item.html.twig' %}
+                                    {% else %}
+                                        {# TODO based on product type add configurator with valid backhead and fronthead options with valid flash messages #}
+{#                                        {{ dump(lineItem) }}#}
+                                        {% sw_include '@Storefront/storefront/page/checkout/checkout-item.html.twig' %}
+                                    {% endif %}
+                                {% endblock %}
+                            {% endblock %}
+                        {% endfor %}
+                    {% endblock %}
+                </div>
+            </div>
+        {% endblock %}
+
+        {% block page_checkout_cart_hidden_line_items_information %}
+            {{ parent() }}
+        {% endblock %}
+
+        {% block page_checkout_cart_add_product_and_shipping %}
+            {{ parent() }}
+        {% endblock %}
+    {% endblock %}
+{% endblock %}
+
