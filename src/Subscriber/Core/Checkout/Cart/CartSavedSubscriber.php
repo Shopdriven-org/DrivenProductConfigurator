@@ -43,6 +43,7 @@ class CartSavedSubscriber implements EventSubscriberInterface
         foreach ($event->getCart()->getLineItems()->getPayload() as $item) {
             //dd($item["customFields"]["driven_product_configurator_base_racquet_product"]);
             if (isset($item["customFields"]["driven_product_configurator_base_racquet_product"]) && !isset($item["customFields"]["driven_product_configurator_product_racquet_type"])){
+                // TODO add necessary infos to arrayStruct => all backheads and forheads for selection options inside configurator!!
                 $event->getCart()->getLineItems()->addExtension("missingEquioments", new ArrayStruct());
             }
         }

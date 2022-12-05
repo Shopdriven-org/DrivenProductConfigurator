@@ -17,14 +17,6 @@
             <tag name="kernel.event_subscriber" />
         </service>
 
-        <service id="Driven\ProductConfigurator\Subscriber\Core\Checkout\Cart\CartChangedSubscriber">
-            <tag name="kernel.event_subscriber" />
-        </service>
-
-        <service id="Driven\ProductConfigurator\Subscriber\Core\Checkout\Cart\AfterLineItemAddedSubscriber">
-            <tag name="kernel.event_subscriber" />
-        </service>
-
         <service id="Driven\ProductConfigurator\Subscriber\Core\Checkout\Cart\CartSavedSubscriber">
             <tag name="kernel.event_subscriber" />
         </service>
