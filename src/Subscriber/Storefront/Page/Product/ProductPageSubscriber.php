@@ -52,7 +52,7 @@ class ProductPageSubscriber implements EventSubscriberInterface
      */
     public function onPageLoaded(ProductPageLoadedEvent $event)
     {
-        //todo
+//       dd($event->getPage()->getProduct()->getCustomFields());
     }
 
 }

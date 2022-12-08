@@ -18,8 +18,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class CartSavedSubscriber implements EventSubscriberInterface
 {
 
-    public function __construct(
-    ) {
+    public function __construct()
+    {
     }
 
     /**
@@ -39,12 +39,16 @@ class CartSavedSubscriber implements EventSubscriberInterface
      */
     public function OnCartSavedEvent(CartSavedEvent $event): void
     {
-        //dd($event->getCart()->getLineItems()->getPayload());
-        foreach ($event->getCart()->getLineItems()->getPayload() as $item) {
-            //dd($item["customFields"]["driven_product_configurator_base_racquet_product"]);
-            if (isset($item["customFields"]["driven_product_configurator_base_racquet_product"]) && !isset($item["customFields"]["driven_product_configurator_product_racquet_type"])){
-                // TODO add necessary infos to arrayStruct => all backheads and forheads for selection options inside configurator!!
-                $event->getCart()->getLineItems()->addExtension("missingEquioments", new ArrayStruct());
+        $struct = new ArrayStruct();
+        foreach ($event->getCart()->getLineItems() as $lineItem) {
+            if ($lineItem->getType() === "product" && $lineItem->getPayload()["customFields"]["driven_product_configurator_base_racquet_product"] !== true) {
+                $equipment = [
+                    "id" => $lineItem->getId(),
+                    "name" => $lineItem->getLabel()
+                ];
+                $struct->addArrayExtension("Equipment", $equipment);
+                $lineItem->addExtension("racquetEquipments", $struct);
+
             }
         }
     }
