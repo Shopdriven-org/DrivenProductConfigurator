@@ -41,7 +41,7 @@ class CartSavedSubscriber implements EventSubscriberInterface
     {
         $struct = new ArrayStruct();
         foreach ($event->getCart()->getLineItems() as $lineItem) {
-            if ($lineItem->getType() === "product" && $lineItem->getPayload()["customFields"]["driven_product_configurator_base_racquet_product"] !== true) {
+            if ($lineItem->getType() === "product" && isset($lineItem->getPayload()["customFields"]["driven_product_configurator_base_racquet_product"])) {
                 $equipment = [
                     "id" => $lineItem->getId(),
                     "name" => $lineItem->getLabel()
