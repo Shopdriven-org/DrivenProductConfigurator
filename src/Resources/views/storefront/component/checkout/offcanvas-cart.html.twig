@@ -1,6 +1,8 @@
 {% sw_extends '@Storefront/storefront/component/checkout/offcanvas-cart.html.twig' %}
 
 {% block utilities_offcanvas_content %}
+    {% set racquet_counter = page.cart.extensions["racquet_counter"][0] %}
+    {% set equipment_counter = page.cart.extensions["equipment_counter"][0] %}
     {% block component_offcanvas_cart %}
         {% set isCartNotEmpty = (page.cart.lineItems|length > 0) %}
 
@@ -29,28 +31,14 @@
                 {% endblock %}
             {% endif %}
             {% block component_offcanvas_cart_driven_configurator_alerts %}
-                {#                TODO: FINISH FLASH ALERT MESSAGE AND CONTINUE WITH CHECKOUT!!! #}
-                {% set haveRacquet = true %}
-                {% set haveEquipments = true %}
-                {#                {{ dump(page) }} #}
-                {% for element in page.cart.lineItems.elements %}
-                    {% set equipments = element.payload.customFields.driven_product_configurator_product_racquet_type %}
-                    {% set racquet = element.payload.customFields.driven_product_configurator_base_racquet_product %}
-                    {% if racquet === true %}
-                        {% set haveEquipments = false %}
-                    {% endif %}
-                {% endfor %}
-                {#                <h1>TODO </h1> #}
                 <div class="flashbags">
-                    {#                    {{ dump(haveEquipments) }} #}
-                    {% if haveEquipments === false %}
+                    {% if equipment_counter == 0 and racquet_counter > 0 %}
                         {% sw_include '@Storefront/storefront/utilities/alert.html.twig' with {
                             type: "warning",
                             content: "Status der Produkte im Offcanvas-Einkaufswagen, der implementiert werden soll"
                         } %}
                     {% endif %}
                 </div>
-                {#                <h4>Include link for configuration : Schläger-Montage</h4> #}
             {% endblock %}
             {% block component_offcanvas_cart_actions %}
                 <div class="offcanvas-cart-actions">
@@ -115,10 +103,12 @@
                                     </form>
                                 {% endblock %}
                             </div>
-                            <div class="mb-2">
-                                <a href="{{ path('frontend.checkout.cart.page') }}"
-                                   class="btn btn-block begin-checkout-btn btn-primary">Schläger-Montage</a>
-                            </div>
+                            {% if equipment_counter != 0 and racquet_counter != 0 %}
+                                <div class="mb-2">
+                                    <a href="{{ path('frontend.checkout.cart.page') }}"
+                                       class="btn btn-block begin-checkout-btn btn-primary">Schläger-Montage</a>
+                                </div>
+                            {% endif %}
                         {% endif %}
                     {% endblock %}
 

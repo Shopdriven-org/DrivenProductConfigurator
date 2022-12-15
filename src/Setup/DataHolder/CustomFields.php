@@ -33,43 +33,35 @@ class CustomFields
             'customFields' => [
                 [
                     'id' => null,
-                    'name' => 'driven_product_configurator_base_racquet_product',
-                    'type' => CustomFieldTypes::BOOL,
-                    'config' => [
-                        'label' => [
-                            'en-GB' => 'Is Racquet',
-                            'de-DE' => 'Ist Racquet'
-                        ],
-                        'customFieldPosition' => 1
-                    ]
-                ],
-                [
-                    'id' => null,
-                    'name' => 'driven_product_configurator_product_racquet_type',
+                    'name' => 'driven_product_configurator_racquet_option',
                     'type' => CustomFieldTypes::SELECT,
                     'config' => [
                         'label' => [
-                            'en-GB' => 'Select Racquet type',
-                            'de-DE' => 'Produktart auswählen'
+                            'en-GB' => 'Select product type..',
+                            'de-DE' => 'Beläge auswählen..'
                         ],
                         'placeholder' => [
                             'en-GB' => 'Select product type..',
-                            'de-DE' => 'Produktart auswählen..'
+                            'de-DE' => 'Beläge auswählen..'
+                        ],
+                        'helpText' => [
+                            'en-GB' => 'Please select between racquet or toppings',
+                            'de-DE' => 'Bitte wählen Sie zwischen Schläger oder dessen Beläge'
                         ],
                         'options' => [
                             [
                                 'label' => [
-                                    'en-GB' => 'Forehand',
-                                    'de-DE' => 'Rückhand'
+                                    'en-GB' => 'Racquet',
+                                    'de-DE' => 'Schläger'
                                 ],
-                                'value' => 'forehand'
+                                'value' => 'racquet'
                             ],
                             [
                                 'label' => [
-                                    'en-GB' => 'Backhand',
-                                    'de-DE' => 'Versiegelung'
+                                    'en-GB' => 'Toppings',
+                                    'de-DE' => 'Beläge'
                                 ],
-                                'value' => 'backhand'
+                                'value' => 'toppings'
                             ]
                         ],
                         'componentName' => "sw-single-select",

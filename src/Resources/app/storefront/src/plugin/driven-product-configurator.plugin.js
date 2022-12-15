@@ -7,9 +7,10 @@ export default class DrivenProductConfiguratorPlugin extends Plugin {
  }
 
     bindEvents(el) {
-        $('select').on('change', function (e) {
+        $('.driven_racquet_variant').on('change', function (e) {
             var optionSelected = $("option:selected", this);
             var valueSelected = this.value;
+            //  TODO : MAKE AJAX REQUEST
         });
     }
 }

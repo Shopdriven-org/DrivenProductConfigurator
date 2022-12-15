@@ -1,44 +1,38 @@
 {% block driven_set_configurator %}
-{#        {% if todo %}#}
-{#        {% sw_include '@Storefront/storefront/utilities/alert.html.twig' with {#}
-{#            type: "warning",#}
-{#            content: "Bitte konfigurieren Sie die Schlägerkonfiguration"#}
-{#        } %}#}
-{#        {% endif %}#}
+    {% set Equipments = lineItem.extensions["Equipments"] %}
+
+
     <div class="container">
-{#        {{ dump(lineItem) }}#}
-        {% if lineItem.type === "product" and lineItem.payload.customFields["driven_product_configurator_base_racquet_product"] === true %}
+    {% if lineItem.type === "product" and lineItem.payload.customFields["driven_product_configurator_racquet_option"] === "racquet" %}
+    <div class="mb-3 mt-3">
         {% sw_include '@Storefront/storefront/utilities/alert.html.twig' with {
             type: "warning",
             content: "Bitte konfigurieren Sie die Schlägerkonfiguration"
         } %}
-        <div class="row">
-                <div class="col-md-12">
-{#                                        {{ dump(lineItem.extensions) }}#}
-                    {#                    <form action="{{ path('frontend.driven.product-configurator.save-selection') }}" method="post"> #}
-                    {#                        {{ sw_csrf('frontend.driven.product-configurator.save-selection') }} #}
-                    <h3>Schläger-Montage: (im Gange)</h3>
-                    <select class="custom-select custom-select-lg mb-1">
-                        <option selected>Vorhand:</option>
-                        {% for field in lineItem.extensions %}
-                            <option value="{{ field.extensions["Equipment"].id }}">{{ field.extensions["Equipment"].name }}</option>
-                        {% endfor %}
-                    </select>
-                    <select class="custom-select custom-select-lg mb-1">
-                        <option selected>Rückhand:</option>
-                        {% for field in lineItem.extensions %}
-                            <option value="{{ field.extensions["Equipment"].id }}">{{ field.extensions["Equipment"].name }}</option>
-                        {% endfor %}
-                    </select>
-                    <select class="custom-select custom-select-lg mb-1">
-                        <option selected>Versiegelung:</option>
-                        {% for field in lineItem.extensions %}
-                            <option value="{{ field.extensions["Equipment"].id }}">{{ field.extensions["Equipment"].name }}</option>
-                        {% endfor %}
-                    </select>
-                    {#                    </form> #}
-                </div>
-            {% endif %}
+    </div>
+    <div class="row">
+        <div class="offset-1 col-md-6">
+            <h3>Schläger-Montage:</h3>
+            <select class="custom-select custom-select-lg mb-1">
+                <option selected>Vorhand:</option>
+                {% for i in 0..Equipments.length-1 %}
+                    <option class="driven_racquet_variant" value="{{ Equipments.items[i].id }}">{{ Equipments.items[i].label }}</option>
+                {% endfor %}
+            </select>
+
+{#            TODO: ON SELECT MAKE JQUERY EVENT WHICH WILL TRIGGER THE CONTROLLER #}
+            <select class="custom-select custom-select-lg mb-1">
+                <option selected>Rückhand:</option>
+                {% for i in 0..Equipments.length-1 %}
+                    <option class="driven_racquet_variant" value="{{ Equipments.items[i].id }}">{{ Equipments.items[i].label }}</option>
+                {% endfor %}
+            </select>
+            <select class="custom-select custom-select-lg mb-1">
+                <option disabled>Versiegelung:</option>
+                <option value="0">keine Versiegelung</option>
+                <option value="1">inkl. Versiegelung (zzgl. 5 EUR)</option>
+            </select>
         </div>
+        {% endif %}
     </div>
 {% endblock %}
