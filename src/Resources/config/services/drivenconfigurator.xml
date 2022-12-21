@@ -7,6 +7,8 @@
     <services>
         <service id="Driven\ProductConfigurator\Storefront\Controller\ConfiguratorController" public="true">
             <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+            <argument type="service" id="Shopware\Core\Checkout\Cart\LineItemFactoryRegistry"/>
+            <argument type="service" id="Shopware\Core\Checkout\Cart\SalesChannel\CartService"/>
             <call method="setContainer">
                 <argument type="service" id="service_container"/>
             </call>

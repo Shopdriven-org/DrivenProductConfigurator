@@ -1,9 +1,7 @@
 {% block driven_set_configurator %}
     {% set Equipments = lineItem.extensions["Equipments"] %}
-
-
     <div class="container">
-    {% if lineItem.type === "product" and lineItem.payload.customFields["driven_product_configurator_racquet_option"] === "racquet" %}
+    {% if lineItem.type === "dvsn-set-configurator" || lineItem.payload.customFields["driven_product_configurator_racquet_option"] === "racquet" %}
     <div class="mb-3 mt-3">
         {% sw_include '@Storefront/storefront/utilities/alert.html.twig' with {
             type: "warning",
@@ -13,26 +11,45 @@
     <div class="row">
         <div class="offset-1 col-md-6">
             <h3>Schläger-Montage:</h3>
-            <select class="custom-select custom-select-lg mb-1">
-                <option selected>Vorhand:</option>
-                {% for i in 0..Equipments.length-1 %}
-                    <option class="driven_racquet_variant" value="{{ Equipments.items[i].id }}">{{ Equipments.items[i].label }}</option>
-                {% endfor %}
-            </select>
-
-{#            TODO: ON SELECT MAKE JQUERY EVENT WHICH WILL TRIGGER THE CONTROLLER #}
-            <select class="custom-select custom-select-lg mb-1">
-                <option selected>Rückhand:</option>
-                {% for i in 0..Equipments.length-1 %}
-                    <option class="driven_racquet_variant" value="{{ Equipments.items[i].id }}">{{ Equipments.items[i].label }}</option>
-                {% endfor %}
-            </select>
-            <select class="custom-select custom-select-lg mb-1">
-                <option disabled>Versiegelung:</option>
-                <option value="0">keine Versiegelung</option>
-                <option value="1">inkl. Versiegelung (zzgl. 5 EUR)</option>
-            </select>
+            <form id="driven-checkout-selection" data-driven-product-configurator="true" action="{{ path('frontend.driven.product-configurator.save-selection', { 'id': lineItem.id }) }}" method="post">
+                {{ sw_csrf('frontend.driven.product-configurator.save-selection') }}
+                <select name="forhead" class="custom-select custom-select-lg mb-1" onChange=selectChange(this.value)>
+                    <option selected>Vorhand:</option>
+                    {% for i in 0..Equipments.length-1 %}
+                        <option class="driven_racquet_variant"
+                                value="{{ Equipments.items[i].id }}">{{ Equipments.items[i].label }}</option>
+                    {% endfor %}
+                </select>
+                <select name="backhead" class="custom-select custom-select-lg mb-1" onChange=selectChange(this.value)>
+                    <option selected>Rückhand:</option>
+                    {% for i in 0..Equipments.length-1 %}
+                        <option class="driven_racquet_variant"
+                                value="{{ Equipments.items[i].id }}">{{ Equipments.items[i].label }}</option>
+                    {% endfor %}
+                </select>
+                <select name="sealing" class="custom-select custom-select-lg mb-1" onChange=selectChange(this.value)>
+                    <option disabled>Versiegelung:</option>
+                    <option value="0">keine Versiegelung</option>
+                    <option value="1">inkl. Versiegelung (zzgl. 5 EUR)</option>
+                </select>
+            </form>
         </div>
         {% endif %}
     </div>
+    <script>
+        function selectChange(el) {
+
+            $('#driven-checkout-selection').submit();
+            $.ajax
+            ({
+                url: '/driven/product-configurator/save-selection/',
+                data: {"id": id, "selection" : el},
+                type: 'post',
+                success: function(result)
+                {
+                    console.log(result.data)
+                }
+            });
+        }
+    </script>
 {% endblock %}
