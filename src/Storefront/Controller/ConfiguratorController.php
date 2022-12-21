@@ -10,13 +10,17 @@
 
 namespace Driven\ProductConfigurator\Storefront\Controller;
 
+use Dompdf\Exception;
 use Shopware\Core\Checkout\Cart\Cart;
 use Shopware\Core\Checkout\Cart\CartException;
 use Shopware\Core\Checkout\Cart\Exception\LineItemNotFoundException;
 use Shopware\Core\Checkout\Cart\LineItem\LineItem;
 use Shopware\Core\Checkout\Cart\LineItemFactoryRegistry;
 use Shopware\Core\Checkout\Cart\SalesChannel\CartService;
+use Shopware\Core\Content\Product\ProductEntity;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\Feature;
 use Shopware\Core\Framework\Validation\DataBag\RequestDataBag;
 use Shopware\Core\Profiling\Profiler;
@@ -41,6 +45,8 @@ class ConfiguratorController extends StorefrontController
 
     private CartService $cartService;
 
+    private EntityRepositoryInterface $productRepository;
+
     /**
      * ...
      *
@@ -48,13 +54,15 @@ class ConfiguratorController extends StorefrontController
      */
     public function __construct(SystemConfigService     $systemConfigService,
                                 LineItemFactoryRegistry $factory,
-                                CartService             $cartService
+                                CartService             $cartService,
+                                EntityRepositoryInterface $productRepository
     )
     {
         // set params
         $this->systemConfigService = $systemConfigService;
         $this->factory = $factory;
         $this->cartService = $cartService;
+        $this->productRepository = $productRepository;
     }
 
     /**
@@ -108,17 +116,55 @@ class ConfiguratorController extends StorefrontController
      */
     public function saveSelection(Cart $cart, string $id, Request $request, SalesChannelContext $context): Response
     {
-        // TODO: 1. IF SEALING IS TRUE ADD SEALING OPTION IN THE CART
-        //       2. IF THERE ARE MULTIPLE SEALING OPTIONS INCREASE quantity OR IF REMOVED REMOVE THE PRODUCT (CREATE LOGIC)
-
         // TODO: GRAB REQUEST DATA AND CREATE BUNDLE PRODUCTS OUT OF IT AND SAVE SELECTION (CREATE LOGIC)
 
         // TODO: CREATE ADDITIONAL CART SERVICE AND NECESSARY INTERFACES!
+        // TODO: 1. IF SEALING IS TRUE ADD SEALING OPTION IN THE CART
+        //       2. IF THERE ARE MULTIPLE SEALING OPTIONS INCREASE quantity OR IF REMOVED REMOVE THE PRODUCT (CREATE LOGIC)
 //        dd($_POST['sealing']);
-//        if ($_POST['sealing'] != null) {
-//
-//        }
+        if ($_POST['sealing'] != null) {
+            $sealingID = strtolower("DC1B7FFCB8D64DD2AE574A21F34F6FC5");
+            $sealing = $this->getProducts([$sealingID], $context);
+//            dd($sealing);
+            try {
+                $lineItem = new LineItem(
+                    $sealingID,
+                    LineItem::PRODUCT_LINE_ITEM_TYPE,
+                    "",
+                    1
+                );
+                $cart->getLineItems()->add($lineItem);
+            } catch (\Exception $exception) {
+                 dd($exception);
+            }
+        }
+//        dd($cart->getLineItems());
         return $this->redirectToRoute("frontend.checkout.cart.page");
+    }
+
+    /**
+     * ...
+     *
+     * @param array $ids
+     * @param SalesChannelContext $salesChannelContext
+     *
+     * @return ProductEntity[]
+     */
+    private function getProducts(array $ids, SalesChannelContext $salesChannelContext): array
+    {
+        // create criteria
+        $criteria = (new Criteria($ids))
+            ->addAssociation('cover.media')
+            ->addAssociation('options.group')
+            ->addAssociation('customFields');
+
+        /** @var ProductEntity[] $products */
+        $products = $this->productRepository
+            ->search($criteria, $salesChannelContext->getContext())
+            ->getElements();
+
+        // retrn it
+        return $products;
     }
 
 }
