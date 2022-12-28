@@ -5,7 +5,7 @@
  *
  * @category  shopdriven
  * @package   Shopware\Plugins\Driven\ProductConfigurator
- * @copyright (c) 2020 shopdriven
+ * @copyright (c) 2022 shopdriven
  */
 
 namespace Driven\ProductConfigurator\Setup\DataHolder;

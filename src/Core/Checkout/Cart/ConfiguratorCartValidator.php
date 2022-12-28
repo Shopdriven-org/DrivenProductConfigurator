@@ -5,7 +5,7 @@
  *
  * @category  shopdriven
  * @package   Shopware\Plugins\Driven\ProductConfigurator
- * @copyright (c) 2020 shopdriven
+ * @copyright (c) 2022 shopdriven
  */
 
 namespace Driven\ProductConfigurator\Core\Checkout\Cart;
@@ -20,9 +20,9 @@ class ConfiguratorCartValidator implements CartValidatorInterface
 {
 
     /**
-     * {@inheritDoc}
+     * {}
      */
-    public function validate(Cart $cart, ErrorCollection $errorCollection, SalesChannelContext $salesChannelContext): void
+    public function validate(Cart $cart, ErrorCollection $errors, SalesChannelContext $context): void
     {
 
     }

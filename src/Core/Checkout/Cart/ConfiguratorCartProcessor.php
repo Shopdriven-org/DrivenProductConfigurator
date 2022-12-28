@@ -5,7 +5,7 @@
  *
  * @category  shopdriven
  * @package   Shopware\Plugins\Driven\ProductConfigurator
- * @copyright (c) 2020 shopdriven
+ * @copyright (c) 2022 shopdriven
  */
 
 namespace Driven\ProductConfigurator\Core\Checkout\Cart;
@@ -44,7 +44,7 @@ class ConfiguratorCartProcessor implements CartProcessorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {}
      */
     public function process(CartDataCollection $data, Cart $original, Cart $toCalculate, SalesChannelContext $context, CartBehavior $behavior): void
     {
@@ -80,7 +80,7 @@ class ConfiguratorCartProcessor implements CartProcessorInterface
 
                     case PercentagePriceDefinition::class:
                         $price = $this->percentagePriceCalculator->calculate(
-                            $child->getPayloadValue('dvsnSetConfiguratorPercentalSurcharge')['value'],
+                            $child->getPayloadValue('DrivenProductConfiguratorPercentalSurcharge')['value'],
                             $this->getPercentagePrices(
                                 $lineItem,
                                 $lineItem->getChildren(),
@@ -129,7 +129,7 @@ class ConfiguratorCartProcessor implements CartProcessorInterface
             );
 
             // do we want to clear every price of every child?
-            if ($this->systemConfigService->get('DvsnSetConfigurator.config.cartRemoveChildrenPrices', $context->getSalesChannel()->getId()) === true) {
+            if ($this->systemConfigService->get('DrivenProductConfigurator.config.cartRemoveChildrenPrices', $context->getSalesChannel()->getId()) === true) {
                 // clear every child price to have it 0,- EUR
                 foreach ($lineItem->getChildren() as $child) {
                     // create a free-of-charge definition
@@ -166,9 +166,9 @@ class ConfiguratorCartProcessor implements CartProcessorInterface
     private function setChildDefaults(LineItem $child): void
     {
         // set valid percental surcharge
-        if (!$child->hasPayloadValue('dvsnSetConfiguratorPercentalSurcharge')) {
+        if (!$child->hasPayloadValue('DrivenProductConfiguratorPercentalSurcharge')) {
             // set defaults
-            $child->setPayloadValue('dvsnSetConfiguratorPercentalSurcharge', [
+            $child->setPayloadValue('DrivenProductConfiguratorPercentalSurcharge', [
                 'status' => false,
                 'value' => 0
             ]);
@@ -189,7 +189,7 @@ class ConfiguratorCartProcessor implements CartProcessorInterface
     {
         // get every price
         $prices = array_filter(array_map(static function (LineItem $lineItem) {
-            return (!$lineItem->hasPayloadValue('dvsnSetConfiguratorPercentalSurcharge') || $lineItem->getPayloadValue('dvsnSetConfiguratorPercentalSurcharge')['status'] === false) ? $lineItem->getPrice() : null;
+            return (!$lineItem->hasPayloadValue('DrivenProductConfiguratorPercentalSurcharge') || $lineItem->getPayloadValue('DrivenProductConfiguratorPercentalSurcharge')['status'] === false) ? $lineItem->getPrice() : null;
         }, array_values($children->getElements())));
 
         // all unit prices

@@ -5,7 +5,7 @@
  *
  * @category  shopdriven
  * @package   Shopware\Plugins\DrivenProducttConfigurator
- * @copyright (c) 2020 shopdriven
+ * @copyright (c) 2022 shopdriven
  */
 
 namespace Driven\ProductConfigurator\Setup;

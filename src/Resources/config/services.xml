@@ -8,5 +8,7 @@
         <import resource="./services/cart.xml"/>
         <import resource="./services/drivenconfigurator.xml"/>
         <import resource="./services/subscriber.xml"/>
+        <import resource="./services/service.xml"/>
+        <import resource="./services/entity-definition.xml"/>
     </imports>
 </container>

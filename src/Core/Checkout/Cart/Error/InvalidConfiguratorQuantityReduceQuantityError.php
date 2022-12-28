@@ -4,8 +4,8 @@
  * shopdriven
  *
  * @category  shopdriven
- * @package   Shopware\Plugins\DvsnSetConfigurator
- * @copyright (c) 2020 shopdriven
+ * @package   Shopware\Plugins\DrivenProductConfigurator
+ * @copyright (c) 2022 shopdriven
  */
 
 namespace Driven\ProductConfigurator\Core\Checkout\Cart\Error;

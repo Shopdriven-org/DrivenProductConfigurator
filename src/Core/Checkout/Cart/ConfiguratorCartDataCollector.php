@@ -5,7 +5,7 @@
  *
  * @category  shopdriven
  * @package   Shopware\Plugins\Driven\ProductConfigurator
- * @copyright (c) 2020 shopdriven
+ * @copyright (c) 2022 shopdriven
  */
 
 namespace Driven\ProductConfigurator\Core\Checkout\Cart;
@@ -15,7 +15,6 @@ use Driven\ProductConfigurator\Core\Checkout\Cart\Error\InvalidComponentQuantity
 use Driven\ProductConfigurator\Core\Checkout\Cart\Error\InvalidConfiguratorQuantityReduceQuantityError;
 use Driven\ProductConfigurator\Core\Checkout\Cart\Error\InvalidConfiguratorQuantityRemoveConfiguratorError;
 use Driven\ProductConfigurator\Core\Checkout\Cart\Error\InvalidSelectionError;
-use Driven\ProductConfigurator\Core\Content\Configurator\Aggregate\ConfiguratorStream\ConfiguratorStreamEntity;
 use Driven\ProductConfigurator\Core\Content\Configurator\ConfiguratorEntity;
 use Driven\ProductConfigurator\Service\Cart\LineItemFactoryServiceInterface;
 use Shopware\Core\Checkout\Cart\Cart;
@@ -58,7 +57,7 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {}
      */
     public function collect(CartDataCollection $data, Cart $original, SalesChannelContext $salesChannelContext, CartBehavior $behavior): void
     {
@@ -108,7 +107,7 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
 
             // get the configurator itself
             $configurator = $this->getConfigurator(
-                $lineItem->getPayloadValue('dvsnSetConfiguratorId'),
+                $lineItem->getPayloadValue('DrivenProductConfiguratorId'),
                 $salesChannelContext
             );
 
@@ -166,10 +165,10 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
                 }
 
                 // is this a percental surcharge?
-                if ($child->getPayloadValue('dvsnSetConfiguratorPercentalSurcharge')['status'] === true) {
+                if ($child->getPayloadValue('DrivenProductConfiguratorPercentalSurcharge')['status'] === true) {
                     // set definition
                     $definition = new PercentagePriceDefinition(
-                        (float) $child->getPayloadValue('dvsnSetConfiguratorPercentalSurcharge')['value']
+                        (float) $child->getPayloadValue('DrivenProductConfiguratorPercentalSurcharge')['value']
                     );
 
                     // set price definition
@@ -197,7 +196,7 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
 
                 $child->setPriceDefinition($definition);
 
-                $child->setPayloadValue('dvsnSetConfiguratorUnitPrice', $price->getUnitPrice() * (1 - ($configurator->getRebate() / 100)));
+                $child->setPayloadValue('DrivenProductConfiguratorUnitPrice', $price->getUnitPrice() * (1 - ($configurator->getRebate() / 100)));
 
                 if (!isset($prices['total'][$product->getTaxId()])) {
                     $prices['total'][$product->getTaxId()] = 0.0;
@@ -211,7 +210,7 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
                 ];
             }
 
-            $lineItem->setPayloadValue('dvsnSetConfiguratorPrices', $prices);
+            $lineItem->setPayloadValue('DrivenProductConfiguratorPrices', $prices);
         }
     }
 
@@ -249,9 +248,9 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
     private function setChildDefaults(LineItem $child): void
     {
         // set valid percental surcharge
-        if (!$child->hasPayloadValue('dvsnSetConfiguratorPercentalSurcharge')) {
+        if (!$child->hasPayloadValue('DrivenProductConfiguratorPercentalSurcharge')) {
             // set defaults
-            $child->setPayloadValue('dvsnSetConfiguratorPercentalSurcharge', [
+            $child->setPayloadValue('DrivenProductConfiguratorPercentalSurcharge', [
                 'status' => false,
                 'value' => 0
             ]);
@@ -523,7 +522,7 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
 
                 // find and count the product
                 foreach ($configurator->getChildren() as $child) {
-                    if ($child->getPayloadValue('dvsnSetConfiguratorProductId') !== $productId) {
+                    if ($child->getPayloadValue('DrivenProductConfiguratorProductId') !== $productId) {
                         continue;
                     }
 
@@ -746,7 +745,7 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
         $grouped = [];
 
         foreach ($lineItems as $lineItem) {
-            $id = (string) $lineItem->getPayloadValue('dvsnSetConfiguratorProductId');
+            $id = (string) $lineItem->getPayloadValue('DrivenProductConfiguratorProductId');
             if (!isset($grouped[$id])) {
                 $grouped[$id] = new LineItemCollection();
             }

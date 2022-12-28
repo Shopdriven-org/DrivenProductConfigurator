@@ -5,7 +5,7 @@
  *
  * @category  shopdriven
  * @package   Shopware\Plugins\Driven\ProductConfigurator
- * @copyright (c) 2020 shopdriven
+ * @copyright (c) 2022 shopdriven
  */
 
 namespace Driven\ProductConfigurator\Core\Checkout\Cart;
@@ -42,11 +42,11 @@ class ProductCartProcessor implements CartProcessorInterface
         foreach ($lineItems as $lineItem) {
             $payload = (array) $lineItem->getPayload();
 
-            if (!isset($payload['dvsnSetConfigurator']) || $payload['dvsnSetConfigurator'] !== true) {
+            if (!isset($payload['DrivenProductConfigurator']) || $payload['DrivenProductConfigurator'] !== true) {
                 continue;
             }
 
-            if (!isset($payload['dvsnSetConfiguratorPrices']) || !is_array($payload['dvsnSetConfiguratorPrices'])) {
+            if (!isset($payload['DrivenProductConfiguratorPrices']) || !is_array($payload['DrivenProductConfiguratorPrices'])) {
                 continue;
             }
 
@@ -59,7 +59,7 @@ class ProductCartProcessor implements CartProcessorInterface
 
             $prices = [];
 
-            foreach ($payload['dvsnSetConfiguratorPrices']['total'] as $taxId => $price) {
+            foreach ($payload['DrivenProductConfiguratorPrices']['total'] as $taxId => $price) {
                 $definition = new QuantityPriceDefinition(
                     $price,
                     $context->buildTaxRules($taxId),
