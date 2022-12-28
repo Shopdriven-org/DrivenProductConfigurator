@@ -55,12 +55,11 @@ class LineItemFactoryService implements LineItemFactoryServiceInterface
             ->setCover(($product->getCover() instanceof ProductMediaEntity) ? $product->getCover()->getMedia() : null)
             ->setPayload([
                 'DrivenProductConfigurator' => true,
-                'DrivenProductConfiguratorId' => $product->getCustomFields()['dvsn_set_configurator_product_configurator'],
+                'DrivenProductConfiguratorId' => $product->getCustomFields()['racquet'],
                 'DrivenProductConfiguratorProductId' => $product->getId(),
                 'DrivenProductConfiguratorSelection' => $selection,
                 'DrivenProductConfiguratorPrices' => [],
                 'productNumber' => $product->getProductNumber(),
-                'customFields' => ((boolean) $this->systemConfigService->get('DrivenProductConfigurator.config.cartAddProductCustomFields', $salesChannelContext->getSalesChannelId()) === true) ? $product->getCustomFields() : null,
                 'taxId' => $product->getTaxId(),
                 'manufacturerId' => $product->getManufacturerId(),
                 'propertyIds' => $product->getPropertyIds(),

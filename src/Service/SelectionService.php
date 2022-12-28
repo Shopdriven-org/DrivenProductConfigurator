@@ -138,7 +138,7 @@ class SelectionService implements SelectionServiceInterface
     {
         // create a random key
         $key = substr(Uuid::randomHex(), 0, 16);
-
+        // todo: save configurator on change
         // create a selection
         $this->selectionRepository->create([[
             'id' => Uuid::randomHex(),

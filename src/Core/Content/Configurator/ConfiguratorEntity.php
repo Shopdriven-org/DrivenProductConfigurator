@@ -10,75 +10,39 @@
 
 namespace Driven\ProductConfigurator\Core\Content\Configurator;
 
-use Driven\ProductConfigurator\Core\Content\Configurator\Aggregate\ConfiguratorStream\ConfiguratorStreamCollection;
+use Shopware\Core\Checkout\Customer\CustomerEntity;
+use Shopware\Core\Content\Product\ProductEntity;
 use Shopware\Core\Framework\DataAbstractionLayer\Entity;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityIdTrait;
+use Shopware\Core\System\SalesChannel\SalesChannelEntity;
 
 class ConfiguratorEntity extends Entity
 {
-    public const POSITION_BUYBOX = 'buybox';
-    public const POSITION_CONTENT = 'content';
-
-    public const LISTING_PRICE_CHEAPEST = 'cheapest';
-    public const LISTING_PRICE_PRESELECTION = 'preselection';
 
     use EntityIdTrait;
 
-    /**
-     * ...
-     *
-     * @var string
-     */
-    protected $name;
+    protected string $name;
+    protected string $position;
+    protected string $listingPrice;
+    protected bool $free;
+    protected int $rebate;
+    protected string $forehead;
+    protected string $backhead;
+    protected string $sealing;
+    protected string $customerId;
+    protected CustomerEntity $customer;
+    protected string $salesChannelId;
+    protected SalesChannelEntity $salesChannel;
+    protected string $productId;
+    protected ProductEntity $product;
 
-    /**
-     * ...
-     *
-     * @var string
-     */
-    protected $position;
-
-    /**
-     * ...
-     *
-     * @var string
-     */
-    protected $listingPrice;
-
-    /**
-     * ...
-     *
-     * @var bool
-     */
-    protected $summary;
-
-    /**
-     * ...
-     *
-     * @var bool
-     */
-    protected $free;
-
-    /**
-     * ...
-     *
-     * @var int
-     */
-    protected $rebate;
-
-    /**
-     * ...
-     *
-     * @var bool
-     */
-    protected $collapsibleStreams;
 
     /**
      * Getter method for the property.
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -100,7 +64,7 @@ class ConfiguratorEntity extends Entity
      *
      * @return string
      */
-    public function getPosition()
+    public function getPosition(): string
     {
         return $this->position;
     }
@@ -122,7 +86,7 @@ class ConfiguratorEntity extends Entity
      *
      * @return string
      */
-    public function getListingPrice()
+    public function getListingPrice(): string
     {
         return $this->listingPrice;
     }
@@ -144,29 +108,7 @@ class ConfiguratorEntity extends Entity
      *
      * @return bool
      */
-    public function getSummary()
-    {
-        return $this->summary;
-    }
-
-    /**
-     * Setter method for the property.
-     *
-     * @param bool $summary
-     *
-     * @return void
-     */
-    public function setSummary(bool $summary): void
-    {
-        $this->summary = $summary;
-    }
-
-    /**
-     * Getter method for the property.
-     *
-     * @return bool
-     */
-    public function getFree()
+    public function getFree(): bool
     {
         return $this->free;
     }
@@ -188,7 +130,7 @@ class ConfiguratorEntity extends Entity
      *
      * @return int
      */
-    public function getRebate()
+    public function getRebate(): int
     {
         return $this->rebate;
     }
@@ -203,5 +145,204 @@ class ConfiguratorEntity extends Entity
     public function setRebate(int $rebate): void
     {
         $this->rebate = $rebate;
+    }
+
+
+    /**
+     * Getter method for the property.
+     *
+     * @return int
+     */
+    public function getForehead(): int
+    {
+        return $this->forehead;
+    }
+
+    /**
+     * Setter method for the property.
+     *
+     * @param int $forehead
+     *
+     * @return void
+     */
+    public function setForehead(int $forehead): void
+    {
+        $this->forehead = $forehead;
+    }
+
+    /**
+     * Getter method for the property.
+     *
+     * @return int
+     */
+    public function getBackhead(): int
+    {
+        return $this->backhead;
+    }
+
+    /**
+     * Setter method for the property.
+     *
+     * @param int $backhead
+     *
+     * @return void
+     */
+    public function setBackhead(int $backhead): void
+    {
+        $this->backhead = $backhead;
+    }
+
+    /**
+     * Getter method for the property.
+     *
+     * @return int
+     */
+    public function getSealing(): int
+    {
+        return $this->sealing;
+    }
+
+    /**
+     * Setter method for the property.
+     *
+     * @param int $sealing
+     *
+     * @return void
+     */
+    public function setSealing(int $sealing): void
+    {
+        $this->sealing = $sealing;
+    }
+
+    /**
+     * Getter method for the property.
+     *
+     * @return string
+     */
+    public function getCustomerId(): string
+    {
+        return $this->customerId;
+    }
+
+    /**
+     * Setter method for the property.
+     *
+     * @param string $customerId
+     *
+     * @return void
+     */
+    public function setCustomerId(string $customerId): void
+    {
+        $this->customerId = $customerId;
+    }
+
+    /**
+     * Getter method for the property.
+     *
+     * @return CustomerEntity
+     */
+    public function getCustomer(): CustomerEntity
+    {
+        return $this->customer;
+    }
+
+    /**
+     * Setter method for the property.
+     *
+     * @param CustomerEntity $customer
+     *
+     * @return void
+     */
+    public function setCustomer(CustomerEntity $customer): void
+    {
+        $this->customer = $customer;
+    }
+
+    /**
+     * Getter method for the property.
+     *
+     * @return string
+     */
+    public function getSalesChannelId(): string
+    {
+        return $this->salesChannelId;
+    }
+
+    /**
+     * Setter method for the property.
+     *
+     * @param string $salesChannelId
+     *
+     * @return void
+     */
+    public function setSalesChannelId(string $salesChannelId): void
+    {
+        $this->salesChannelId = $salesChannelId;
+    }
+
+    /**
+     * Getter method for the property.
+     *
+     * @return SalesChannelEntity
+     */
+    public function getSalesChannel(): SalesChannelEntity
+    {
+        return $this->salesChannel;
+    }
+
+    /**
+     * Setter method for the property.
+     *
+     * @param SalesChannelEntity $salesChannel
+     *
+     * @return void
+     */
+    public function setSalesChannel(SalesChannelEntity $salesChannel): void
+    {
+        $this->salesChannel = $salesChannel;
+    }
+
+    /**
+     * Getter method for the property.
+     *
+     * @return string
+     */
+    public function getProductId(): string
+    {
+        return $this->productId;
+    }
+
+    /**
+     * Setter method for the property.
+     *
+     * @param string $productId
+     *
+     * @return void
+     */
+    public function setProductId(string $productId): void
+    {
+        $this->productId = $productId;
+    }
+
+    /**
+     * Getter method for the property.
+     *
+     * @return ProductEntity
+     */
+    public function getProduct(): ProductEntity
+    {
+        return $this->product;
+    }
+
+    /**
+     * Setter method for the property.
+     *
+     * @param ProductEntity $product
+     *
+     * @return void
+     */
+    public function setProduct(ProductEntity $product): void
+    {
+        $this->product = $product;
     }
 }
