@@ -21,14 +21,9 @@ class ConfiguratorEntity extends Entity
 
     use EntityIdTrait;
 
-    protected string $name;
-    protected string $position;
-    protected string $listingPrice;
-    protected bool $free;
-    protected int $rebate;
     protected string $forehead;
     protected string $backhead;
-    protected string $sealing;
+    protected int $sealing;
     protected string $customerId;
     protected CustomerEntity $customer;
     protected string $salesChannelId;
@@ -42,118 +37,7 @@ class ConfiguratorEntity extends Entity
      *
      * @return string
      */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * Setter method for the property.
-     *
-     * @param string $name
-     *
-     * @return void
-     */
-    public function setName(string $name): void
-    {
-        $this->name = $name;
-    }
-
-    /**
-     * Getter method for the property.
-     *
-     * @return string
-     */
-    public function getPosition(): string
-    {
-        return $this->position;
-    }
-
-    /**
-     * Setter method for the property.
-     *
-     * @param string $position
-     *
-     * @return void
-     */
-    public function setPosition(string $position): void
-    {
-        $this->position = $position;
-    }
-
-    /**
-     * Getter method for the property.
-     *
-     * @return string
-     */
-    public function getListingPrice(): string
-    {
-        return $this->listingPrice;
-    }
-
-    /**
-     * Setter method for the property.
-     *
-     * @param string $listingPrice
-     *
-     * @return void
-     */
-    public function setListingPrice(string $listingPrice): void
-    {
-        $this->listingPrice = $listingPrice;
-    }
-
-    /**
-     * Getter method for the property.
-     *
-     * @return bool
-     */
-    public function getFree(): bool
-    {
-        return $this->free;
-    }
-
-    /**
-     * Setter method for the property.
-     *
-     * @param bool $free
-     *
-     * @return void
-     */
-    public function setFree(bool $free): void
-    {
-        $this->free = $free;
-    }
-
-    /**
-     * Getter method for the property.
-     *
-     * @return int
-     */
-    public function getRebate(): int
-    {
-        return $this->rebate;
-    }
-
-    /**
-     * Setter method for the property.
-     *
-     * @param int $rebate
-     *
-     * @return void
-     */
-    public function setRebate(int $rebate): void
-    {
-        $this->rebate = $rebate;
-    }
-
-
-    /**
-     * Getter method for the property.
-     *
-     * @return int
-     */
-    public function getForehead(): int
+    public function getForehead(): string
     {
         return $this->forehead;
     }
@@ -161,11 +45,11 @@ class ConfiguratorEntity extends Entity
     /**
      * Setter method for the property.
      *
-     * @param int $forehead
+     * @param string $forehead
      *
      * @return void
      */
-    public function setForehead(int $forehead): void
+    public function setForehead(string $forehead): void
     {
         $this->forehead = $forehead;
     }
@@ -173,9 +57,9 @@ class ConfiguratorEntity extends Entity
     /**
      * Getter method for the property.
      *
-     * @return int
+     * @return string
      */
-    public function getBackhead(): int
+    public function getBackhead(): string
     {
         return $this->backhead;
     }
@@ -183,11 +67,11 @@ class ConfiguratorEntity extends Entity
     /**
      * Setter method for the property.
      *
-     * @param int $backhead
+     * @param string $backhead
      *
      * @return void
      */
-    public function setBackhead(int $backhead): void
+    public function setBackhead(string $backhead): void
     {
         $this->backhead = $backhead;
     }

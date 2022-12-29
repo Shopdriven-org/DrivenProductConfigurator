@@ -11,6 +11,7 @@
 namespace Driven\ProductConfigurator\Storefront\Controller;
 
 use Dompdf\Exception;
+use Driven\ProductConfigurator\DrivenProductConfigurator;
 use Driven\ProductConfigurator\Service\SelectionServiceInterface;
 use Shopware\Core\Checkout\Cart\Cart;
 use Shopware\Core\Checkout\Cart\CartException;
@@ -22,6 +23,7 @@ use Shopware\Core\Content\Product\ProductEntity;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\Feature;
 use Shopware\Core\Framework\Validation\DataBag\RequestDataBag;
 use Shopware\Core\Profiling\Profiler;
@@ -40,6 +42,8 @@ use Symfony\Component\HttpFoundation\Response;
 class ConfiguratorController extends StorefrontController
 {
 
+    private EntityRepositoryInterface $drivenConfigurator;
+
     private SystemConfigService $systemConfigService;
 
     private LineItemFactoryRegistry $factory;
@@ -55,14 +59,16 @@ class ConfiguratorController extends StorefrontController
      *
      * @param SystemConfigService $systemConfigService
      */
-    public function __construct(SystemConfigService     $systemConfigService,
-                                LineItemFactoryRegistry $factory,
-                                CartService             $cartService,
+    public function __construct(EntityRepositoryInterface $drivenConfigurator,
+                                SystemConfigService       $systemConfigService,
+                                LineItemFactoryRegistry   $factory,
+                                CartService               $cartService,
                                 EntityRepositoryInterface $productRepository,
                                 SelectionServiceInterface $selectionService
     )
     {
         // set params
+        $this->drivenConfigurator = $drivenConfigurator;
         $this->systemConfigService = $systemConfigService;
         $this->factory = $factory;
         $this->cartService = $cartService;
@@ -97,46 +103,55 @@ class ConfiguratorController extends StorefrontController
      */
     public function saveSelection(Cart $cart, string $id, RequestDataBag $data, Request $request, SalesChannelContext $context): Response
     {
-        // TODO: get forehead and backhead and save that as children of parent racquet as bundle
-//        dd($data->get("backhead"));
-        $selection = [];
-        $backhead = $data->get("backhead");
-        $forehead = $data->get("forehead");
-        $sealing = $data->get("sealing");
 
-        // todo: save the selection properly
-        $configurator = $this->selectionService->saveSelection(
-            $id,
-            $id,
-            $selection,
-            $context
-        );
+        $backhead = $_POST["backhead"] ?? "";
+        $forehead = $_POST["forehead"] ?? "";
+        $sealing = $_POST["sealing"] ?? 0;
+        // TODO: TOMORROW!!!!
+        // TODO: FIX SELECTION TO SAVE RIGHT VALUE
+        // TODO: DISPLAY CHOSEN VALUE IN FRONTEND
+        // TODO: ADD SEALING SERVICE AS PRODUCT IF SELECTED
+//        dd($forehead);
+        if ($this->getParentProduct($id, $context) !== null) {
+            $this->selectionService->updateSelection(
+                $id,
+                "",
+                $backhead,
+                $sealing,
+                $context
+            );
+        } else {
+            $this->selectionService->saveSelection(
+                $id,
+                $forehead,
+                $backhead,
+                $sealing,
+                $context
+            );
+        }
 
-        dd($configurator);
-        // add flash with the url
-        // we wont have a cache because the key is always unique
         $this->addFlash(
             'success', "Successfully saved selection!"
         );
-//        dd($_POST['sealing']);
+
         // TODO: if sealing is selected add that service as line item
-        if ($_POST['sealing'] != null) {
-            $sealingID = strtolower("DC1B7FFCB8D64DD2AE574A21F34F6FC5");
-            $sealing = $this->getProducts([$sealingID], $context);
-//            dd($sealing);
-            try {
-                $lineItem = new LineItem(
-                    $sealingID,
-                    LineItem::PRODUCT_LINE_ITEM_TYPE,
-                    "",
-                    1
-                );
-                $cart->getLineItems()->add($lineItem);
-            } catch (\Exception $exception) {
-                 dd($exception);
-            }
-        }
-//        dd($cart->getLineItems());
+//        if ($sealing != null) {
+//            $sealingID = strtolower("DC1B7FFCB8D64DD2AE574A21F34F6FC5");
+//            $sealingProduct = $this->getProducts([$sealingID], $context);
+////            dd($sealing);
+//            try {
+//                $lineItem = new LineItem(
+//                    $sealingID,
+//                    LineItem::PRODUCT_LINE_ITEM_TYPE,
+//                    "",
+//                    1
+//                );
+//                $cart->getLineItems()->add($lineItem);
+//            } catch (\Exception $exception) {
+//                dd($exception);
+//            }
+//        }
+
         return $this->redirectToRoute("frontend.checkout.cart.page");
     }
 
@@ -163,6 +178,17 @@ class ConfiguratorController extends StorefrontController
 
         // retrn it
         return $products;
+    }
+
+    private function getParentProduct($id, SalesChannelContext $salesChannelContext)
+    {
+//        dd($id);
+        /** @var DrivenProductConfigurator $drivenConfigurator */
+        return $this->drivenConfigurator->search(
+            (new Criteria())
+                ->addFilter(new EqualsFilter('driven_product_configurator.productId', $id)),
+            $salesChannelContext->getContext()
+        )->first();
     }
 
 }

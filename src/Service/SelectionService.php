@@ -14,6 +14,7 @@ use Driven\ProductConfigurator\Core\Content\Configurator\Aggregate\ConfiguratorS
 use Driven\ProductConfigurator\Core\Content\Configurator\Aggregate\ConfiguratorStream\ConfiguratorStreamEntity;
 use Driven\ProductConfigurator\Core\Content\Configurator\Aggregate\ConfiguratorStream\ConfiguratorStreamPreselectedProductEntity;
 use Driven\ProductConfigurator\Core\Content\Configurator\ConfiguratorEntity;
+use Driven\ProductConfigurator\DrivenProductConfigurator;
 use Driven\ProductConfigurator\Exception\InvalidSelectionException;
 use Driven\ProductConfigurator\Service\Validator\SelectionValidatorServiceInterface;
 use Shopware\Core\Checkout\Customer\CustomerEntity;
@@ -21,6 +22,7 @@ use Shopware\Core\Content\Product\ProductEntity;
 use Shopware\Core\Content\Product\SalesChannel\SalesChannelProductEntity;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Checkout\Cart\SalesChannel\CartService;
+use Shopware\Core\Framework\DataAbstractionLayer\Event\EntityWrittenContainerEvent;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\Uuid\Uuid;
@@ -29,26 +31,20 @@ use Shopware\Core\System\SalesChannel\SalesChannelContext;
 
 class SelectionService implements SelectionServiceInterface
 {
-    private EntityRepositoryInterface $selectionRepository;
+    private EntityRepositoryInterface $drivenConfigurator;
     private EntityRepositoryInterface $productRepository;
     private SalesChannelRepositoryInterface $salesChannelProductRepository;
-    private VariantTextServiceInterface $variantTextService;
-    private SelectionValidatorServiceInterface $selectionValidatorService;
     private CartService $cartService;
 
     public function __construct(
-        EntityRepositoryInterface $selectionRepository,
+        EntityRepositoryInterface $drivenConfigurator,
         EntityRepositoryInterface $productRepository,
         SalesChannelRepositoryInterface $salesChannelProductRepository,
-        VariantTextServiceInterface $variantTextService,
-        SelectionValidatorServiceInterface $selectionValidatorService,
         CartService $cartService
     ) {
-        $this->selectionRepository = $selectionRepository;
+        $this->drivenConfigurator = $drivenConfigurator;
         $this->productRepository = $productRepository;
         $this->salesChannelProductRepository = $salesChannelProductRepository;
-        $this->variantTextService = $variantTextService;
-        $this->selectionValidatorService = $selectionValidatorService;
         $this->cartService = $cartService;
     }
 
@@ -89,69 +85,57 @@ class SelectionService implements SelectionServiceInterface
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getSelectionByKey(string $key, ConfiguratorEntity $configurator, SalesChannelContext $salesChannelContext): array
-    {
-        // create criteria
-        $criteria = (new Criteria())
-            ->addFilter(new EqualsFilter('key', $key));
-
-        /** @var ConfiguratorSelectionEntity $selection */
-        $selection = $this->selectionRepository
-            ->search($criteria, $salesChannelContext->getContext())
-            ->getEntities()
-            ->first();
-
-        // did we even this the selection?
-        if (!$selection instanceof ConfiguratorSelectionEntity) {
-            // we didnt
-            throw new InvalidSelectionException();
-        }
-
-        // validate it
-        if ($this->selectionValidatorService->validate($configurator, $selection->getSelection(), $salesChannelContext) === false) {
-            // invalid
-            throw new InvalidSelectionException();
-        }
-
-        // parse it
-        return $this->parseSelection(
-            $configurator,
-            $selection->getSelection(),
-            $salesChannelContext
-        );
-    }
 
     /**
      * ...
      *
      * @param string $productId
-     * @param string $configuratorId
-     * @param array $selection
+     * @param string $forehead
+     * @param string $backhead
+     * @param int $sealing
      * @param SalesChannelContext $salesChannelContext
      *
-     * @return string
+     * @return EntityWrittenContainerEvent
      */
-    public function saveSelection(string $productId, string $configuratorId, array $selection, SalesChannelContext $salesChannelContext): string
+    public function saveSelection(string $productId, string $forehead, string $backhead, int $sealing, SalesChannelContext $salesChannelContext) : EntityWrittenContainerEvent
     {
-        // create a random key
-        $key = substr(Uuid::randomHex(), 0, 16);
-        // todo: save configurator on change
-        // create a selection
-        $this->selectionRepository->create([[
+        return $this->drivenConfigurator->create([[
             'id' => Uuid::randomHex(),
-            'key' => $key,
-            'selection' => $selection,
-            'configuratorId' => $configuratorId,
+            'forehead' => $forehead,
+            'backhead' => $backhead,
+            'sealing' => $sealing,
             'customerId' => ($salesChannelContext->getCustomer() instanceof CustomerEntity) ? $salesChannelContext->getCustomer()->getId() : null,
             'productId' => $productId,
             'salesChannelId' => $salesChannelContext->getSalesChannel()->getId()
         ]], $salesChannelContext->getContext());
 
-        // return the key
-        return $key;
+    }
+
+
+    /**
+     * ...
+     *
+     * @param string $productId
+     * @param string $forehead
+     * @param string $backhead
+     * @param int $sealing
+     * @param SalesChannelContext $salesChannelContext
+     * @return EntityWrittenContainerEvent|void
+     */
+    public function updateSelection(string $productId, string $forehead, string $backhead, int $sealing, SalesChannelContext $salesChannelContext)
+    {
+        $parentProduct = $this->getParentProduct($productId, $salesChannelContext);
+        if ($parentProduct !== null) {
+            return $this->drivenConfigurator->update([[
+                'id' => $parentProduct->id,
+                'forehead' => $forehead,
+                'backhead' => $backhead,
+                'sealing' => $sealing,
+                'customerId' => ($salesChannelContext->getCustomer() instanceof CustomerEntity) ? $salesChannelContext->getCustomer()->getId() : null,
+                'productId' => $productId,
+                'salesChannelId' => $salesChannelContext->getSalesChannel()->getId()
+            ]], $salesChannelContext->getContext());
+        }
     }
 
     /**
@@ -276,4 +260,16 @@ class SelectionService implements SelectionServiceInterface
         // retrn it
         return $products;
     }
+
+    private function getParentProduct($id, SalesChannelContext $salesChannelContext)
+    {
+//        dd($id);
+        /** @var DrivenProductConfigurator $drivenConfigurator */
+        return $this->drivenConfigurator->search(
+            (new Criteria())
+                ->addFilter(new EqualsFilter('driven_product_configurator.productId', $id)),
+            $salesChannelContext->getContext()
+        )->first();
+    }
+
 }

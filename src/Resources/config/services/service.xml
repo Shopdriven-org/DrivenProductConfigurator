@@ -16,21 +16,10 @@
         </service>
 
         <service id="Driven\ProductConfigurator\Service\SelectionService">
-            <argument type="service" id="driven_configurator_selection.repository"/>
+            <argument type="service" id="driven_product_configurator.repository"/>
             <argument type="service" id="product.repository"/>
             <argument type="service" id="sales_channel.product.repository"/>
-            <argument type="service" id="Driven\ProductConfigurator\Service\VariantTextService"/>
-            <argument type="service" id="Driven\ProductConfigurator\Service\Validator\SelectionValidatorService"/>
             <argument type="service" id="Shopware\Core\Checkout\Cart\SalesChannel\CartService"/>
-        </service>
-
-        <service id="Driven\ProductConfigurator\Service\Stream\SortingService">
-        </service>
-
-        <service id="Driven\ProductConfigurator\Service\Stream\FilterService">
-        </service>
-
-        <service id="Driven\ProductConfigurator\Service\VariantTextService">
         </service>
 
         <service id="Driven\ProductConfigurator\Service\Calculator\PriceCalculatorService">
@@ -44,16 +33,6 @@
             <argument type="service" id="Driven\ProductConfigurator\Service\Calculator\PriceCalculatorService"/>
             <argument type="service" id="cache.object"/>
             <argument type="service" id="Shopware\Core\Framework\DataAbstractionLayer\Cache\EntityCacheKeyGenerator"/>
-        </service>
-
-        <service id="Driven\ProductConfigurator\Service\Validator\LineItemValidatorService">
-            <argument type="service" id="driven_configurator.repository"/>
-            <argument type="service" id="product.repository"/>
-            <argument type="service" id="Driven\ProductConfigurator\Service\Validator\SelectionValidatorService"/>
-            <argument type="service" id="Driven\ProductConfigurator\Service\StreamService"/>
-        </service>
-
-        <service id="Driven\ProductConfigurator\Service\Validator\SelectionValidatorService">
         </service>
 
     </services>

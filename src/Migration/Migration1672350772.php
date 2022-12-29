@@ -3,30 +3,21 @@
 namespace Driven\ProductConfigurator\Migration;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception;
 use Shopware\Core\Framework\Migration\MigrationStep;
 
-class Migration1672265472 extends MigrationStep
+class Migration1672350772 extends MigrationStep
 {
     public function getCreationTimestamp(): int
     {
-        return 1672265472;
+        return 1672350772;
     }
 
-    /**
-     * @throws Exception
-     */
     public function update(Connection $connection): void
     {
         // create custom entity
         $query = '
             CREATE TABLE IF NOT EXISTS `driven_product_configurator` (
                 `id` BINARY(16) NOT NULL,
-                `name` VARCHAR(255) NOT NULL,
-                `position` VARCHAR(255) NOT NULL,
-                `listing_price` VARCHAR(255) NOT NULL,
-                `free` TINYINT(1) NOT NULL,
-                `rebate` INT(11) NOT NULL,
                 `forehead` BINARY(16) NULL DEFAULT NULL,
                 `backhead` BINARY(16) NULL DEFAULT NULL,
                 `sealing` BINARY(16) NULL DEFAULT NULL,
@@ -39,7 +30,7 @@ class Migration1672265472 extends MigrationStep
                 CONSTRAINT `fk.driven_configurator.pid__pvid` FOREIGN KEY (`product_id`, `product_version_id`)
                     REFERENCES `product` (`id`, `version_id`) ON DELETE SET NULL,
                 CONSTRAINT `fk.driven_configurator.sales_channel_id` FOREIGN KEY (`sales_channel_id`)
-                    REFERENCES `sales_channel` (`id`) ON DELETE SET NULL
+                    REFERENCES `sales_channel` (`id`) ON DELETE SET NULL,
                 `created_at` DATETIME(3) NOT NULL,
                 `updated_at` DATETIME(3),
                 PRIMARY KEY (`id`)

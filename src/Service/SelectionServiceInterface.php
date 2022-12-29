@@ -11,6 +11,7 @@
 namespace Driven\ProductConfigurator\Service;
 
 use Driven\ProductConfigurator\Core\Content\Configurator\ConfiguratorEntity;
+use Shopware\Core\Framework\DataAbstractionLayer\Event\EntityWrittenContainerEvent;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 
 interface SelectionServiceInterface
@@ -29,23 +30,27 @@ interface SelectionServiceInterface
     /**
      * ...
      *
-     * @param string $key
-     * @param ConfiguratorEntity $configurator
+     * @param string $productId
+     * @param string $forehead
+     * @param string $backhead
+     * @param int $sealing
      * @param SalesChannelContext $salesChannelContext
      *
-     * @return array
+     * @return EntityWrittenContainerEvent
      */
-    public function getSelectionByKey(string $key, ConfiguratorEntity $configurator, SalesChannelContext $salesChannelContext): array;
+    public function saveSelection(string $productId, string $forehead, string $backhead, int $sealing, SalesChannelContext $salesChannelContext): EntityWrittenContainerEvent;
+
 
     /**
      * ...
      *
      * @param string $productId
-     * @param string  $configuratorId
-     * @param array  $selection
+     * @param string $forehead
+     * @param string $backhead
+     * @param int $sealing
      * @param SalesChannelContext $salesChannelContext
      *
-     * @return string
+     * @return EntityWrittenContainerEvent|void
      */
-    public function saveSelection(string $productId, string $configuratorId, array $selection, SalesChannelContext $salesChannelContext): string;
+    public function updateSelection(string $productId, string $forehead, string $backhead, int $sealing, SalesChannelContext $salesChannelContext);
 }

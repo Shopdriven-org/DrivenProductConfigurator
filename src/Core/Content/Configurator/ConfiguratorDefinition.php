@@ -64,14 +64,10 @@ class ConfiguratorDefinition extends EntityDefinition
         return new FieldCollection([
             // default fields
             (new IdField('id', 'id'))->addFlags(new PrimaryKey(), new Required()),
-            (new StringField('position', 'position'))->addFlags(new Required()),
-            (new StringField('listing_price', 'listingPrice'))->addFlags(new Required()),
-            (new BoolField('free', 'free'))->addFlags(new Required()),
-            (new IntField('rebate', 'rebate'))->addFlags(new Required()),
 
-            (new IntField('forehead', 'forehead'))->addFlags(new Required()),
-            (new IntField('backhead', 'backhead'))->addFlags(new Required()),
-            (new IntField('sealing', 'sealing'))->addFlags(new Required()),
+            (new IdField('forehead', 'forehead')),
+            (new IdField('backhead', 'backhead')),
+            (new IntField('sealing', 'sealing')),
             // shopware customer
             (new FkField('customer_id', 'customerId', CustomerDefinition::class)),
             (new ManyToOneAssociationField('customer', 'customer_id', CustomerDefinition::class)),
