@@ -75,7 +75,6 @@ class ConfiguratorDefinition extends EntityDefinition
             // shopware sales channel
             (new FkField('sales_channel_id', 'salesChannelId', SalesChannelDefinition::class)),
             (new ManyToOneAssociationField('salesChannel', 'sales_channel_id', SalesChannelDefinition::class)),
-
             // product
             (new FkField('product_id', 'productId', ProductDefinition::class)),
             (new ReferenceVersionField(ProductDefinition::class)),

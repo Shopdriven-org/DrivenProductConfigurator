@@ -107,7 +107,7 @@ class ConfiguratorController extends StorefrontController
         $backhead = $_POST["backhead"] ?? "";
         $forehead = $_POST["forehead"] ?? "";
         $sealing = $_POST["sealing"] ?? 0;
-        // TODO: TOMORROW!!!!
+
         // TODO: FIX SELECTION TO SAVE RIGHT VALUE
         // TODO: DISPLAY CHOSEN VALUE IN FRONTEND
         // TODO: ADD SEALING SERVICE AS PRODUCT IF SELECTED
@@ -115,7 +115,7 @@ class ConfiguratorController extends StorefrontController
         if ($this->getParentProduct($id, $context) !== null) {
             $this->selectionService->updateSelection(
                 $id,
-                "",
+                $forehead,
                 $backhead,
                 $sealing,
                 $context
@@ -151,7 +151,6 @@ class ConfiguratorController extends StorefrontController
 //                dd($exception);
 //            }
 //        }
-
         return $this->redirectToRoute("frontend.checkout.cart.page");
     }
 
@@ -182,7 +181,7 @@ class ConfiguratorController extends StorefrontController
 
     private function getParentProduct($id, SalesChannelContext $salesChannelContext)
     {
-//        dd($id);
+
         /** @var DrivenProductConfigurator $drivenConfigurator */
         return $this->drivenConfigurator->search(
             (new Criteria())
