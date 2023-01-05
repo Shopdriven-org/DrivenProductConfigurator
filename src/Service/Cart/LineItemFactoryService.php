@@ -10,7 +10,6 @@
 
 namespace Driven\ProductConfigurator\Service\Cart;
 
-use Driven\ProductConfigurator\Service\UrlGeneratorServiceInterface;
 use Driven\ProductConfigurator\Service\VariantTextServiceInterface;
 use Shopware\Core\Checkout\Cart\LineItem\LineItem;
 use Shopware\Core\Checkout\Cart\LineItem\QuantityInformation;
@@ -23,52 +22,9 @@ use Shopware\Core\System\SystemConfig\SystemConfigService;
 
 class LineItemFactoryService implements LineItemFactoryServiceInterface
 {
-    private VariantTextServiceInterface $variantTextService;
-    private SystemConfigService $systemConfigService;
 
     public function __construct(
-        VariantTextServiceInterface $variantTextService,
-        SystemConfigService $systemConfigService
     ) {
-        $this->variantTextService = $variantTextService;
-        $this->systemConfigService = $systemConfigService;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function createConfigurator(ProductEntity $product, int $quantity, array $selection, SalesChannelContext $salesChannelContext): LineItem
-    {
-        $lineItem = new LineItem(
-            Uuid::randomHex(),
-            self::CONFIGURATOR_LINE_ITEM_TYPE,
-            $product->getId(),
-            $quantity
-        );
-
-        $lineItem->setLabel($product->getTranslated()['name'])
-            ->setGood(false)
-            ->setStackable(true)
-            ->setRemovable(true)
-            ->setDescription(null)
-            ->setQuantityInformation(new QuantityInformation())
-            ->setCover(($product->getCover() instanceof ProductMediaEntity) ? $product->getCover()->getMedia() : null)
-            ->setPayload([
-                'DrivenProductConfigurator' => true,
-                'DrivenProductConfiguratorId' => $product->getCustomFields()['racquet'],
-                'DrivenProductConfiguratorProductId' => $product->getId(),
-                'DrivenProductConfiguratorSelection' => $selection,
-                'DrivenProductConfiguratorPrices' => [],
-                'productNumber' => $product->getProductNumber(),
-                'taxId' => $product->getTaxId(),
-                'manufacturerId' => $product->getManufacturerId(),
-                'propertyIds' => $product->getPropertyIds(),
-                'optionIds' => $product->getOptionIds(),
-                'options' => $this->getOptions($product),
-                'tagIds' => $product->getTagIds()
-            ]);
-
-        return $lineItem;
     }
 
     /**
@@ -83,13 +39,9 @@ class LineItemFactoryService implements LineItemFactoryServiceInterface
             $quantity
         );
 
-        $lineItem->setLabel(($product->getParentId() === null)
-            ? $product->getTranslated()['name']
-            : $product->getTranslated()['name'] . ' (' . $this->variantTextService->getName($product, false) . ')')
+        $lineItem->setLabel("Sealing service product")
             ->setCover(($product->getCover() instanceof ProductMediaEntity) ? $product->getCover()->getMedia() : null)
             ->setPayload([
-                'dvsnConfiguratorIsParent' => $parent,
-                'dvsnConfiguratorIsChild' => !$parent,
                 'DrivenProductConfiguratorProductId' => $product->getId(),
                 'DrivenProductConfiguratorUnitPrice' => 0.0,
                 'productNumber' => $product->getProductNumber(),

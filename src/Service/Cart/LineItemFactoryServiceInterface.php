@@ -25,18 +25,6 @@ interface LineItemFactoryServiceInterface
      *
      * @param ProductEntity $product
      * @param int $quantity
-     * @param array $selection
-     * @param SalesChannelContext $salesChannelContext
-     *
-     * @return LineItem
-     */
-    public function createConfigurator(ProductEntity $product, int $quantity, array $selection, SalesChannelContext $salesChannelContext): LineItem;
-
-    /**
-     * ...
-     *
-     * @param ProductEntity $product
-     * @param int $quantity
      * @param bool $parent
      * @param SalesChannelContext $salesChannelContext
      *

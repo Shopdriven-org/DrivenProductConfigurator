@@ -13,25 +13,28 @@
             <h3>Schläger-Montage:</h3>
             <form id="driven-checkout-selection" data-driven-product-configurator="true" action="{{ path('frontend.driven.product-configurator.save-selection', { 'id': lineItem.id }) }}" method="post">
                 {{ sw_csrf('frontend.driven.product-configurator.save-selection') }}
-                {{ dump(Equipments.selection) }}
                 <select name="forehead" class="custom-select custom-select-lg mb-1" onChange=selectChange(this.value)>
-                    <option value="" disabled selected>Vorhand:</option>
+                    <option value="" >Vorhand:</option>
                     {% for i in 0..Equipments.length-1 %}
-                        <option class="driven_racquet_variant_forehead"
+                        <option {% if Equipments.selection.foreheadSelection == Equipments.items[i].id %} selected {% endif %}
+                                class="driven_racquet_variant_forehead"
                                 value="{{ Equipments.items[i].id }}">{{ Equipments.items[i].label }}</option>
                     {% endfor %}
                 </select>
                 <select name="backhead" class="custom-select custom-select-lg mb-1" onChange=selectChange(this.value)>
-                    <option value="" disabled selected>Rückhand:</option>
+                    <option value="">Rückhand:</option>
                     {% for i in 0..Equipments.length-1 %}
-                        <option class="driven_racquet_variant_backhead"
+                        <option {% if Equipments.selection.backheadSelection == Equipments.items[i].id %} selected {% endif %}
+                                class="driven_racquet_variant_backhead"
                                 value="{{ Equipments.items[i].id }}">{{ Equipments.items[i].label }}</option>
                     {% endfor %}
                 </select>
                 <select name="sealing" class="custom-select custom-select-lg mb-1" onChange=selectChange(this.value)>
-                    <option value="0" selected disabled>Versiegelung:</option>
+                    <option value="0" >Versiegelung:</option>
                     <option value="0">keine Versiegelung</option>
-                    <option value="1">inkl. Versiegelung (zzgl. 5 EUR)</option>
+                    <option
+{#                            {% if Equipments.selection.sealingSelection == Equipments.items[i].id %} selected {% endif %}#}
+                            value="1">inkl. Versiegelung (zzgl. 5 EUR)</option>
                 </select>
             </form>
         </div>

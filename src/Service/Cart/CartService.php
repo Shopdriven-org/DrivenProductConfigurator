@@ -11,9 +11,11 @@
 namespace Driven\ProductConfigurator\Service\Cart;
 
 use Shopware\Core\Checkout\Cart\Cart as CoreCart;
+use Shopware\Core\Checkout\Cart\LineItem\LineItem;
 use Shopware\Core\Content\Product\ProductEntity;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Shopware\Core\Checkout\Cart\SalesChannel\CartService as CoreCartService;
 
@@ -36,45 +38,24 @@ class CartService implements CartServiceInterface
     /**
      * {@inheritDoc}
      */
-    public function addToCart(string $productId, int $quantity, array $selection, CoreCart $cart, SalesChannelContext $salesChannelContext): void
+    public function addToCart(string $productId, int $quantity, CoreCart $cart, SalesChannelContext $salesChannelContext): void
     {
-        // get every product which is either parent or child
-        $products = $this->getProducts(
-            array_unique(array_merge(array_column($selection, 'productId'), [$productId])),
-            $salesChannelContext
-        );
-
-        // create the configurator line item
-        $lineItem = $this->lineItemFactoryService->createConfigurator(
-            $products[$productId],
-            $quantity,
-            $selection,
-            $salesChannelContext
+        $lineItem = new LineItem(
+            Uuid::randomHex(),
+            self::PRODUCT_LINE_ITEM_TYPE,
+            $productId,
+            $quantity
         );
 
         // add the parent product as first child
-        $lineItem->addChild(
+//        $lineItem->addChild(
             $this->lineItemFactoryService->createProduct(
-                $products[$productId],
+                $productId,
                 $quantity,
                 true,
                 $salesChannelContext
-            )
-        );
-
-        // loop every selected product
-        foreach ($selection as $aktu) {
-            // add that product as child
-            $lineItem->addChild(
-                $this->lineItemFactoryService->createProduct(
-                    $products[$aktu['productId']],
-                    $aktu['quantity'] * $quantity,
-                    false,
-                    $salesChannelContext,
-                    $aktu['streamId']
-                )
             );
-        }
+//        );
 
         // and add the configurator to the cart
         $cart = $this->cartService->add(

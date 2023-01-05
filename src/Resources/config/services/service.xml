@@ -5,8 +5,6 @@
     <services>
 
         <service id="Driven\ProductConfigurator\Service\Cart\LineItemFactoryService">
-            <argument type="service" id="Driven\ProductConfigurator\Service\VariantTextService"/>
-            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
         </service>
 
         <service id="Driven\ProductConfigurator\Service\Cart\CartService">

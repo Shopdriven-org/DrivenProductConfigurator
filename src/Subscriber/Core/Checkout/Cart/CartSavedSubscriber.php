@@ -101,13 +101,13 @@ class CartSavedSubscriber implements EventSubscriberInterface
                 }
                 $racquet->addArrayExtension("Equipments",
                     ["items" => $equipments, "length" => $equipments_length,
-                        "selection" =>  ["foreheadProduct" => $foreheadProduct, "backheadProduct" => $backheadProduct, "sealing" => $sealing]
+                        "selection" =>  ["foreheadProduct" => $foreheadProduct, "foreheadSelection" => $parentProduct->getForehead(),
+                            "backheadSelection" => $parentProduct->getBackhead(), "backheadProduct" => $backheadProduct,
+                            "sealingSelection" => $parentProduct->getSealing(), "sealing" => $sealing]
                     ]
                 );
             }
         }
-
-
     }
 
 
