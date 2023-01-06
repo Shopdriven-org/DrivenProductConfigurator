@@ -34,7 +34,7 @@ class ConfiguratorLineItemFactory implements LineItemFactoryInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {}
      */
     public function update(LineItem $lineItem, array $data, SalesChannelContext $context): void
     {

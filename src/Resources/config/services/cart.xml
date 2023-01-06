@@ -27,6 +27,8 @@
 
         <service id="Driven\ProductConfigurator\Core\Checkout\Cart\ProductCartProcessor">
             <argument type="service" id="Shopware\Core\Checkout\Cart\Price\QuantityPriceCalculator" />
+            <argument type="service" id="Driven\ProductConfigurator\Service\Cart\LineItemFactoryService" />
+            <argument type="service" id="product.repository"/>
             <tag name="shopware.cart.processor" priority="2000"/>
         </service>
     </services>

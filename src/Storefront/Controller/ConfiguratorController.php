@@ -22,6 +22,8 @@ use Shopware\Core\Checkout\Cart\CartPersisterInterface;
 use Shopware\Core\Checkout\Cart\CartRuleLoader;
 use Shopware\Core\Checkout\Cart\Event\AfterLineItemAddedEvent;
 use Shopware\Core\Checkout\Cart\Event\BeforeLineItemAddedEvent;
+use Shopware\Core\Checkout\Cart\Event\CartChangedEvent;
+use Shopware\Core\Checkout\Cart\Event\CartSavedEvent;
 use Shopware\Core\Checkout\Cart\Exception\LineItemNotFoundException;
 use Shopware\Core\Checkout\Cart\LineItem\LineItem;
 use Shopware\Core\Checkout\Cart\LineItemFactoryRegistry;
@@ -52,10 +54,6 @@ class ConfiguratorController extends StorefrontController
 
     private EntityRepositoryInterface $drivenConfigurator;
 
-    private SystemConfigService $systemConfigService;
-
-    private LineItemFactoryRegistry $factory;
-
     private CartService $cartService;
 
     private  \Driven\ProductConfigurator\Service\Cart\LineItemFactoryService $factoryService;
@@ -68,32 +66,39 @@ class ConfiguratorController extends StorefrontController
 
     private EventDispatcherInterface $eventDispatcher;
 
+    private lineItemFactoryService $lineItemFactoryService;
+
     /**
      * ...
      *
-     * @param SystemConfigService $systemConfigService
+     * @param EntityRepositoryInterface $drivenConfigurator
+     * @param CartService $cartService
+     * @param LineItemFactoryService $factoryService
+     * @param EntityRepositoryInterface $productRepository
+     * @param SelectionServiceInterface $selectionService
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param CartRuleLoader $cartRuleLoader
+     * @param LineItemFactoryService $lineItemFactoryService
      */
     public function __construct(EntityRepositoryInterface $drivenConfigurator,
-                                SystemConfigService       $systemConfigService,
-                                LineItemFactoryRegistry   $factory,
                                 CartService               $cartService,
-                                \Driven\ProductConfigurator\Service\Cart\LineItemFactoryService               $factoryService,
+                                LineItemFactoryService               $factoryService,
                                 EntityRepositoryInterface $productRepository,
                                 SelectionServiceInterface $selectionService,
                                 EventDispatcherInterface $eventDispatcher,
-                                CartRuleLoader $cartRuleLoader
+                                CartRuleLoader $cartRuleLoader,
+                                lineItemFactoryService $lineItemFactoryService
     )
     {
         // set params
         $this->drivenConfigurator = $drivenConfigurator;
-        $this->systemConfigService = $systemConfigService;
-        $this->factory = $factory;
         $this->cartService = $cartService;
         $this->factoryService = $factoryService;
         $this->productRepository = $productRepository;
         $this->selectionService = $selectionService;
         $this->eventDispatcher = $eventDispatcher;
         $this->cartRuleLoader = $cartRuleLoader;
+        $this->lineItemFactoryService = $lineItemFactoryService;
     }
 
     /**
@@ -133,19 +138,11 @@ class ConfiguratorController extends StorefrontController
 //        dd($forehead);
         if ($this->getParentProduct($id, $context) !== null) {
             $this->selectionService->updateSelection(
-                $id,
-                $forehead,
-                $backhead,
-                $sealing,
-                $context
+                $id,$forehead,$backhead, $sealing,$context
             );
         } else {
             $this->selectionService->saveSelection(
-                $id,
-                $forehead,
-                $backhead,
-                $sealing,
-                $context
+                $id,$forehead,$backhead, $sealing,$context
             );
         }
 
@@ -154,10 +151,12 @@ class ConfiguratorController extends StorefrontController
         );
 
         // TODO: if sealing is selected add that service as line item !!!!
-        // TODO: IF two black layers are selected  push warning notification
         if ($sealing != null) {
             try {
-                $this->addSealingService($this->getProduct($id, $context), $context, $cart);
+                $sealingLineItem = $this->lineItemFactoryService->createProduct($this->getProduct($id, $context),1, true, $context);
+                $cart->getLineItems()->add($sealingLineItem);
+                $this->eventDispatcher->dispatch(new CartSavedEvent($context, $cart));
+//                dd($cart->getLineItems()->first());
             } catch (\Exception $exception) {
                 dd($exception);
             }
@@ -230,27 +229,6 @@ class ConfiguratorController extends StorefrontController
                 ->addAssociation('customFields'),
             $salesChannelContext->getContext()
         )->first();
-    }
-
-    /**
-     * @param $product
-     * @param SalesChannelContext $salesChannelContext
-     * @param Cart $cart
-     */
-    private function addSealingService($product, SalesChannelContext $salesChannelContext, Cart $cart): void
-    {
-
-        $lineItem =  $this->factoryService->createProduct($product, 1, true, $salesChannelContext);
-
-        $this->cartService->add(
-            $cart,
-            $lineItem,
-            $salesChannelContext
-        );
-
-        $this->eventDispatcher->dispatch(new BeforeLineItemAddedEvent($lineItem, $cart, $salesChannelContext));
-
-        $this->calculate($cart, $salesChannelContext);
     }
 
     private function calculate(Cart $cart, SalesChannelContext $context): void

@@ -19,6 +19,7 @@ interface LineItemFactoryServiceInterface
     public const CONFIGURATOR_LINE_ITEM_TYPE = 'driven-product-configurator';
     public const PRODUCT_PARENT_LINE_ITEM_TYPE = 'driven-product-configurator-parent';
     public const PRODUCT_CHILD_LINE_ITEM_TYPE = 'driven-product-configurator-child';
+    public const PRODUCT_SEALING_LINE_ITEM_TYPE = 'driven-product-sealing-service';
 
     /**
      * ...

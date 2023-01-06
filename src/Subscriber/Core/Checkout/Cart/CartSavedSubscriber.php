@@ -11,9 +11,12 @@
 namespace Driven\ProductConfigurator\Subscriber\Core\Checkout\Cart;
 
 use Driven\ProductConfigurator\DrivenProductConfigurator;
+use Driven\ProductConfigurator\Service\Cart\LineItemFactoryService;
+use Dvsn\SetConfigurator\Service\Cart\LineItemFactoryServiceInterface;
 use Shopware\Core\Checkout\Cart\Event\CartChangedEvent;
 use Shopware\Core\Checkout\Cart\Event\CartSavedEvent;
 use Shopware\Core\Checkout\Cart\Event\CheckoutOrderPlacedCriteriaEvent;
+use Shopware\Core\Checkout\Cart\LineItem\LineItem;
 use Shopware\Core\Content\Product\ProductEntity;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
@@ -27,12 +30,15 @@ class CartSavedSubscriber implements EventSubscriberInterface
 
     private EntityRepositoryInterface $drivenConfiguratorRepository;
     private EntityRepositoryInterface $productRepository;
+    private lineItemFactoryService $lineItemFactoryService;
 
     public function __construct(EntityRepositoryInterface $drivenConfiguratorRepository,
-                                EntityRepositoryInterface  $productRepository)
+                                EntityRepositoryInterface $productRepository,
+                                lineItemFactoryService    $lineItemFactoryService)
     {
         $this->drivenConfiguratorRepository = $drivenConfiguratorRepository;
         $this->productRepository = $productRepository;
+        $this->lineItemFactoryService = $lineItemFactoryService;
     }
 
     /**
@@ -68,8 +74,11 @@ class CartSavedSubscriber implements EventSubscriberInterface
         $racquets_length = 0;
 
         foreach ($event->getCart()->getLineItems() as $lineItem) {
-
-            if ($lineItem->getType() === "product") {
+//            if ($lineItem->getType() == LineItemFactoryServiceInterface::CONFIGURATOR_LINE_ITEM_TYPE) {
+//                array_push($racquets, $lineItem);
+//                $racquets_length++;
+//            }
+            if ($lineItem->getType() === LineItem::PRODUCT_LINE_ITEM_TYPE) {
                 $options = $lineItem->getPayload()["customFields"];
                 if (isset($options["driven_product_configurator_racquet_option"])) {
                     if ($options["driven_product_configurator_racquet_option"] === "toppings") {
@@ -83,6 +92,7 @@ class CartSavedSubscriber implements EventSubscriberInterface
                 }
             }
         }
+        $count = 0;
         if (count($racquets) !== 0) {
             $event->getCart()->addArrayExtension("racquet_counter", (array)$racquets_length);
             $event->getCart()->addArrayExtension("equipment_counter", (array)$equipments_length);
@@ -94,23 +104,53 @@ class CartSavedSubscriber implements EventSubscriberInterface
                     $foreheadProduct = "";
                     $backheadProduct = "";
                     $sealing = "";
-                }else{
+                } else {
                     $foreheadProduct = $this->getChildrenProduct($parentProduct->getForehead(), $event->getSalesChannelContext());
                     $backheadProduct = $this->getChildrenProduct($parentProduct->getBackhead(), $event->getSalesChannelContext());
                     $sealing = $parentProduct->getSealing();
                 }
+
+                if ($sealing != "") {
+                    $count++;
+                    $event->getCart()->getLineItems()->add(
+                        $this->lineItemFactoryService->createProduct(
+                            $this->getChildrenProduct($racquet->getId(), $event->getSalesChannelContext()), $count, true, $event->getSalesChannelContext()
+                        )
+                    );
+                } else {
+                    if ($count < 1) {
+                        $count = +1;
+                    }
+                    $event->getCart()->getLineItems()->removeElement(
+                        $this->lineItemFactoryService->createProduct(
+                            $this->getChildrenProduct($racquet->getId(), $event->getSalesChannelContext()), $count, true, $event->getSalesChannelContext()
+                        )
+                    );
+                }
+                $sameSides = false;
+                if ($foreheadProduct != "" || $backheadProduct != "") {
+                    if ($foreheadProduct->variation[0]["option"] == $backheadProduct->variation[0]["option"]) {
+                        $sameSides = true;
+                    }
+                }
+
                 $racquet->addArrayExtension("Equipments",
                     ["items" => $equipments, "length" => $equipments_length,
-                        "selection" =>  ["foreheadProduct" => $foreheadProduct, "foreheadSelection" => $parentProduct->getForehead(),
+                        "selection" => ["foreheadProduct" => $foreheadProduct, "foreheadSelection" => $parentProduct->getForehead(),
                             "backheadSelection" => $parentProduct->getBackhead(), "backheadProduct" => $backheadProduct,
-                            "sealingSelection" => $parentProduct->getSealing(), "sealing" => $sealing]
+                            "sealingSelection" => $parentProduct->getSealing(), "sealing" => $sealing],
+                        "sameSides" => $sameSides
                     ]
                 );
             }
         }
     }
 
-
+    /**
+     * @param $id
+     * @param SalesChannelContext $salesChannelContext
+     * @return mixed|null
+     */
     private function getParentProduct($id, SalesChannelContext $salesChannelContext)
     {
 //        dd($id);
@@ -121,12 +161,18 @@ class CartSavedSubscriber implements EventSubscriberInterface
         )->first();
     }
 
+    /**
+     * @param $id
+     * @param SalesChannelContext $salesChannelContext
+     * @return mixed|null
+     */
     private function getChildrenProduct($id, SalesChannelContext $salesChannelContext)
     {
 
         return $this->productRepository->search(
             (new Criteria())
-                ->addFilter(new EqualsFilter('product.id', $id)),
+                ->addFilter(new EqualsFilter('product.id', $id))
+                ->addAssociation('options.group'),
             $salesChannelContext->getContext()
         )->first();
     }

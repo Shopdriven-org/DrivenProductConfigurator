@@ -12,10 +12,15 @@ namespace Driven\ProductConfigurator\Service\Cart;
 
 use Driven\ProductConfigurator\Service\VariantTextServiceInterface;
 use Shopware\Core\Checkout\Cart\LineItem\LineItem;
+use Shopware\Core\Checkout\Cart\LineItem\LineItemCollection;
 use Shopware\Core\Checkout\Cart\LineItem\QuantityInformation;
+use Shopware\Core\Checkout\Cart\Price\Struct\CalculatedPrice;
+use Shopware\Core\Checkout\Cart\Price\Struct\PriceDefinitionCollection;
+use Shopware\Core\Checkout\Cart\Price\Struct\QuantityPriceDefinition;
 use Shopware\Core\Content\Product\Aggregate\ProductMedia\ProductMediaEntity;
 use Shopware\Core\Content\Product\ProductEntity;
 use Shopware\Core\Content\Property\Aggregate\PropertyGroupOption\PropertyGroupOptionEntity;
+use Shopware\Core\Framework\DataAbstractionLayer\Pricing\PriceCollection;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
@@ -34,17 +39,22 @@ class LineItemFactoryService implements LineItemFactoryServiceInterface
     {
         $lineItem = new LineItem(
             Uuid::randomHex(),
-            ($parent === true) ? self::PRODUCT_PARENT_LINE_ITEM_TYPE : self::PRODUCT_CHILD_LINE_ITEM_TYPE,
-            $product->getId(),
-            $quantity
+            self::PRODUCT_SEALING_LINE_ITEM_TYPE,
+            $product->getId()
         );
 
-        $lineItem->setLabel("Sealing service product")
-            ->setCover(($product->getCover() instanceof ProductMediaEntity) ? $product->getCover()->getMedia() : null)
+//        $newPrice = new CalculatedPrice(
+//            5.00,
+//            5,
+//            $product->g(),
+//            $priceSum->getTaxRules(),
+//            $lineItem->getQuantity(),
+//            $priceSum->getReferencePrice(),
+//            $priceSum->getListPrice()
+//        );
+        $lineItem->setLabel("Versiegelung")
             ->setPayload([
-                'DrivenProductConfiguratorProductId' => $product->getId(),
-                'DrivenProductConfiguratorUnitPrice' => 0.0,
-                'productNumber' => $product->getProductNumber(),
+                'productNumber' => "versiegelung",
                 'weight' => $product->getWeight(),
                 'height' => $product->getHeight(),
                 'width' => $product->getWidth(),
@@ -56,6 +66,10 @@ class LineItemFactoryService implements LineItemFactoryServiceInterface
                 'options' => $this->getOptions($product),
                 'tagIds' => $product->getTagIds()
             ]);
+        $lineItem->setGood(true);
+        $lineItem->setStackable(true);
+//        $lineItem->setPrice($definition);
+        $lineItem->setQuantity($quantity);
 
         return $lineItem;
     }

@@ -1,6 +1,7 @@
 {% block driven_set_configurator %}
     {% set Equipments = lineItem.extensions["Equipments"] %}
     <div class="container">
+
     {% if lineItem.type === "dvsn-set-configurator" || lineItem.payload.customFields["driven_product_configurator_racquet_option"] === "racquet" %}
     <div class="mb-3 mt-3">
         {% sw_include '@Storefront/storefront/utilities/alert.html.twig' with {
@@ -8,13 +9,22 @@
             content: "Bitte konfigurieren Sie die Schlägerkonfiguration"
         } %}
     </div>
+{#    {{ dump(lineItem) }}#}
+    {% if Equipments.sameSides == true %}
+        <div class="mb-3 mt-3">
+            {% sw_include '@Storefront/storefront/utilities/alert.html.twig' with {
+                type: "warning",
+                content: "Die Beläge müssen verschiedenfarbig sein.“  - eine der beiden Schlägerseiten muss schwarz sein."
+            } %}
+        </div>
+    {% endif %}
     <div class="row">
         <div class="offset-1 col-md-6">
             <h3>Schläger-Montage:</h3>
             <form id="driven-checkout-selection" data-driven-product-configurator="true" action="{{ path('frontend.driven.product-configurator.save-selection', { 'id': lineItem.id }) }}" method="post">
                 {{ sw_csrf('frontend.driven.product-configurator.save-selection') }}
                 <select name="forehead" class="custom-select custom-select-lg mb-1" onChange=selectChange(this.value)>
-                    <option value="" >Vorhand:</option>
+                    <option value="" disabled>Vorhand:</option>
                     {% for i in 0..Equipments.length-1 %}
                         <option {% if Equipments.selection.foreheadSelection == Equipments.items[i].id %} selected {% endif %}
                                 class="driven_racquet_variant_forehead"
@@ -22,7 +32,7 @@
                     {% endfor %}
                 </select>
                 <select name="backhead" class="custom-select custom-select-lg mb-1" onChange=selectChange(this.value)>
-                    <option value="">Rückhand:</option>
+                    <option value="" disabled>Rückhand:</option>
                     {% for i in 0..Equipments.length-1 %}
                         <option {% if Equipments.selection.backheadSelection == Equipments.items[i].id %} selected {% endif %}
                                 class="driven_racquet_variant_backhead"
@@ -30,10 +40,10 @@
                     {% endfor %}
                 </select>
                 <select name="sealing" class="custom-select custom-select-lg mb-1" onChange=selectChange(this.value)>
-                    <option value="0" >Versiegelung:</option>
+                    <option value="" disabled >Versiegelung:</option>
                     <option value="0">keine Versiegelung</option>
                     <option
-{#                            {% if Equipments.selection.sealingSelection == Equipments.items[i].id %} selected {% endif %}#}
+                            {% if Equipments.selection.sealingSelection > 0 %} selected {% endif %}
                             value="1">inkl. Versiegelung (zzgl. 5 EUR)</option>
                 </select>
             </form>
@@ -51,7 +61,7 @@
                 type: 'post',
                 success: function(result)
                 {
-                    console.log(result.data)
+                    // console.log(result.data)
                 }
             });
         }
