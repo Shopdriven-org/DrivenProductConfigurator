@@ -8,9 +8,5 @@
             <tag name="shopware.entity.definition"/>
         </service>
 
-        <service id="Driven\ProductConfigurator\Core\Content\Configurator\Aggregate\ConfiguratorSelection\ConfiguratorSelectionDefinition">
-            <tag name="shopware.entity.definition"/>
-        </service>
-
     </services>
 </container>
