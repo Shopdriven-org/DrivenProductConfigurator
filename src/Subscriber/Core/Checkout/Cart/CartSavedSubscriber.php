@@ -49,17 +49,17 @@ class CartSavedSubscriber implements EventSubscriberInterface
     {
         return [
             CartSavedEvent::class => 'OnCartSavedEvent',
-            CheckoutOrderPlacedCriteriaEvent::class => 'OnCheckoutOrderPlacedCriteriaEvent'
+            CartChangedEvent::class => 'OnCartChangedEvent'
         ];
     }
 
     /**
      * ...
-     * @param CheckoutOrderPlacedCriteriaEvent $event
+     * @param CartChangedEvent $event
      */
-    public function OnOrderPlacedEvent(CheckoutOrderPlacedCriteriaEvent $event)
+    public function OnCartChangedEvent(CartChangedEvent $event)
     {
-//        dd($event);
+//        dd($event->getContext());
     }
 
     /**
@@ -72,6 +72,9 @@ class CartSavedSubscriber implements EventSubscriberInterface
         $racquets = [];
         $equipments_length = 0;
         $racquets_length = 0;
+        $foreheadProduct = "";
+        $backheadProduct = "";
+        $sealing = "";
 
         foreach ($event->getCart()->getLineItems() as $lineItem) {
 //            if ($lineItem->getType() == LineItemFactoryServiceInterface::CONFIGURATOR_LINE_ITEM_TYPE) {
@@ -93,18 +96,15 @@ class CartSavedSubscriber implements EventSubscriberInterface
             }
         }
         $count = 0;
+//        dd(count($racquets));
         if (count($racquets) !== 0) {
             $event->getCart()->addArrayExtension("racquet_counter", (array)$racquets_length);
             $event->getCart()->addArrayExtension("equipment_counter", (array)$equipments_length);
-
             foreach ($racquets as $racquet) {
+//            dd($racquet->getId());
                 $parentProduct = $this->getParentProduct($racquet->getId(), $event->getSalesChannelContext());
 
-                if ($parentProduct == null) {
-                    $foreheadProduct = "";
-                    $backheadProduct = "";
-                    $sealing = "";
-                } else {
+                if ($parentProduct !== null) {
                     $foreheadProduct = $this->getChildrenProduct($parentProduct->getForehead(), $event->getSalesChannelContext());
                     $backheadProduct = $this->getChildrenProduct($parentProduct->getBackhead(), $event->getSalesChannelContext());
                     $sealing = $parentProduct->getSealing();
@@ -121,6 +121,7 @@ class CartSavedSubscriber implements EventSubscriberInterface
                     if ($count < 1) {
                         $count = +1;
                     }
+//                    dd($count);
                     $event->getCart()->getLineItems()->removeElement(
                         $this->lineItemFactoryService->createProduct(
                             $this->getChildrenProduct($racquet->getId(), $event->getSalesChannelContext()), $count, true, $event->getSalesChannelContext()
@@ -136,9 +137,11 @@ class CartSavedSubscriber implements EventSubscriberInterface
 
                 $racquet->addArrayExtension("Equipments",
                     ["items" => $equipments, "length" => $equipments_length,
-                        "selection" => ["foreheadProduct" => $foreheadProduct, "foreheadSelection" => $parentProduct->getForehead(),
-                            "backheadSelection" => $parentProduct->getBackhead(), "backheadProduct" => $backheadProduct,
-                            "sealingSelection" => $parentProduct->getSealing(), "sealing" => $sealing],
+                        "selection" =>
+                            ["parentId" => $racquet->getId(), "foreheadProduct" => $foreheadProduct, "foreheadSelection" => $parentProduct !== null ? $parentProduct->getForehead() : "",
+                                "backheadProduct" => $backheadProduct, "backheadSelection" => isset($parentProduct) ? $parentProduct->getBackhead() : "",
+                                "sealing" => $sealing, "sealingSelection" => isset($parentProduct) ? $parentProduct->getSealing() : ""
+                            ],
                         "sameSides" => $sameSides
                     ]
                 );

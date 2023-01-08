@@ -17,6 +17,8 @@ use Shopware\Core\Checkout\Cart\LineItem\QuantityInformation;
 use Shopware\Core\Checkout\Cart\Price\Struct\CalculatedPrice;
 use Shopware\Core\Checkout\Cart\Price\Struct\PriceDefinitionCollection;
 use Shopware\Core\Checkout\Cart\Price\Struct\QuantityPriceDefinition;
+use Shopware\Core\Checkout\Cart\Tax\Struct\CalculatedTaxCollection;
+use Shopware\Core\Checkout\Cart\Tax\Struct\TaxRuleCollection;
 use Shopware\Core\Content\Product\Aggregate\ProductMedia\ProductMediaEntity;
 use Shopware\Core\Content\Product\ProductEntity;
 use Shopware\Core\Content\Property\Aggregate\PropertyGroupOption\PropertyGroupOptionEntity;
@@ -37,21 +39,21 @@ class LineItemFactoryService implements LineItemFactoryServiceInterface
      */
     public function createProduct(ProductEntity $product, int $quantity, bool $parent, SalesChannelContext $salesChannelContext): LineItem
     {
+//        dd($quantity);
         $lineItem = new LineItem(
-            Uuid::randomHex(),
+            self::SEALING_UID,
             self::PRODUCT_SEALING_LINE_ITEM_TYPE,
             $product->getId()
         );
-
-//        $newPrice = new CalculatedPrice(
-//            5.00,
-//            5,
-//            $product->g(),
-//            $priceSum->getTaxRules(),
-//            $lineItem->getQuantity(),
-//            $priceSum->getReferencePrice(),
-//            $priceSum->getListPrice()
-//        );
+        $calculatedTaxes = new CalculatedTaxCollection();
+        $taxRules = new TaxRuleCollection();
+        $newPrice = new CalculatedPrice(
+            5,
+            5,
+            $calculatedTaxes,
+            $taxRules,
+            $quantity
+        );
         $lineItem->setLabel("Versiegelung")
             ->setPayload([
                 'productNumber' => "versiegelung",
@@ -68,8 +70,9 @@ class LineItemFactoryService implements LineItemFactoryServiceInterface
             ]);
         $lineItem->setGood(true);
         $lineItem->setStackable(true);
-//        $lineItem->setPrice($definition);
+        $lineItem->setPrice($newPrice);
         $lineItem->setQuantity($quantity);
+        $lineItem->setType(self::PRODUCT_SEALING_LINE_ITEM_TYPE);
 
         return $lineItem;
     }

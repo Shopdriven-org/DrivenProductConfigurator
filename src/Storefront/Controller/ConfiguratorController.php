@@ -129,13 +129,11 @@ class ConfiguratorController extends StorefrontController
      */
     public function saveSelection(CoreCart $cart, string $id, RequestDataBag $data, Request $request, SalesChannelContext $context): Response
     {
-        ;
+//        dd($id);
         $backhead = $_POST["backhead"] ?? "";
         $forehead = $_POST["forehead"] ?? "";
         $sealing = $_POST["sealing"] ?? 0;
-
-        // TODO: ADD SEALING SERVICE AS PRODUCT IF SELECTED
-//        dd($forehead);
+//        dd($id);
         if ($this->getParentProduct($id, $context) !== null) {
             $this->selectionService->updateSelection(
                 $id,$forehead,$backhead, $sealing,$context
@@ -150,13 +148,12 @@ class ConfiguratorController extends StorefrontController
             'success', "Successfully saved selection!"
         );
 
-        // TODO: if sealing is selected add that service as line item !!!!
         if ($sealing != null) {
             try {
                 $sealingLineItem = $this->lineItemFactoryService->createProduct($this->getProduct($id, $context),1, true, $context);
                 $cart->getLineItems()->add($sealingLineItem);
                 $this->eventDispatcher->dispatch(new CartSavedEvent($context, $cart));
-//                dd($cart->getLineItems()->first());
+
             } catch (\Exception $exception) {
                 dd($exception);
             }

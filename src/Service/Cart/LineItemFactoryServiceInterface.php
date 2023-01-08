@@ -12,6 +12,7 @@ namespace Driven\ProductConfigurator\Service\Cart;
 
 use Shopware\Core\Checkout\Cart\LineItem\LineItem;
 use Shopware\Core\Content\Product\ProductEntity;
+use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 
 interface LineItemFactoryServiceInterface
@@ -20,6 +21,7 @@ interface LineItemFactoryServiceInterface
     public const PRODUCT_PARENT_LINE_ITEM_TYPE = 'driven-product-configurator-parent';
     public const PRODUCT_CHILD_LINE_ITEM_TYPE = 'driven-product-configurator-child';
     public const PRODUCT_SEALING_LINE_ITEM_TYPE = 'driven-product-sealing-service';
+    public const SEALING_UID = 'DC1B7FFCB8D64DD2AE574A21F34F6FC5';
 
     /**
      * ...

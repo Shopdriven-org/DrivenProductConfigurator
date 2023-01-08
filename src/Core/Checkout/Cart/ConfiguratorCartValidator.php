@@ -24,6 +24,6 @@ class ConfiguratorCartValidator implements CartValidatorInterface
      */
     public function validate(Cart $cart, ErrorCollection $errors, SalesChannelContext $context): void
     {
-
+//        dd($cart->get("driven-product-configurator--parent-id"));
     }
 }

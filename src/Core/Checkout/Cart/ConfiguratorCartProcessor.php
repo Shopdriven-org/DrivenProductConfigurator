@@ -48,6 +48,8 @@ class ConfiguratorCartProcessor implements CartProcessorInterface
      */
     public function process(CartDataCollection $data, Cart $original, Cart $toCalculate, SalesChannelContext $context, CartBehavior $behavior): void
     {
+
+
         // get every line item which is a configurator
         $lineItems = $original->getLineItems()->filterType(
             "LineItemFactoryServiceInterface::CONFIGURATOR_LINE_ITEM_TYPE"

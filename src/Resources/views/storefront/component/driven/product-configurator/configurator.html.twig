@@ -23,8 +23,9 @@
             <h3>Schläger-Montage:</h3>
             <form id="driven-checkout-selection" data-driven-product-configurator="true" action="{{ path('frontend.driven.product-configurator.save-selection', { 'id': lineItem.id }) }}" method="post">
                 {{ sw_csrf('frontend.driven.product-configurator.save-selection') }}
+                <input type="hidden" id="driven-parent-id" name="driven-product-configurator--parent-id" value="{{ lineItem.id }}"/>
                 <select name="forehead" class="custom-select custom-select-lg mb-1" onChange=selectChange(this.value)>
-                    <option value="" disabled>Vorhand:</option>
+                    <option value="" disabled {% if Equipments.selection.foreheadSelection is defined %} selected {% endif %}>Vorhand:</option>
                     {% for i in 0..Equipments.length-1 %}
                         <option {% if Equipments.selection.foreheadSelection == Equipments.items[i].id %} selected {% endif %}
                                 class="driven_racquet_variant_forehead"
@@ -32,7 +33,7 @@
                     {% endfor %}
                 </select>
                 <select name="backhead" class="custom-select custom-select-lg mb-1" onChange=selectChange(this.value)>
-                    <option value="" disabled>Rückhand:</option>
+                    <option value="" disabled {% if Equipments.selection.backheadSelection is defined %} selected {% endif %}>Rückhand:</option>
                     {% for i in 0..Equipments.length-1 %}
                         <option {% if Equipments.selection.backheadSelection == Equipments.items[i].id %} selected {% endif %}
                                 class="driven_racquet_variant_backhead"
@@ -40,7 +41,7 @@
                     {% endfor %}
                 </select>
                 <select name="sealing" class="custom-select custom-select-lg mb-1" onChange=selectChange(this.value)>
-                    <option value="" disabled >Versiegelung:</option>
+                    <option value="" disabled {% if Equipments.selection.sealingSelection is defined %} selected {% endif %}>Versiegelung:</option>
                     <option value="0">keine Versiegelung</option>
                     <option
                             {% if Equipments.selection.sealingSelection > 0 %} selected {% endif %}
@@ -52,7 +53,8 @@
     </div>
     <script>
         function selectChange(el) {
-
+            // console.log(id, el)
+            // console.log($("#driven-parent-id").val())
             $('#driven-checkout-selection').submit();
             $.ajax
             ({

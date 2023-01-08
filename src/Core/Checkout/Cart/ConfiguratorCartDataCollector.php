@@ -61,6 +61,7 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
      */
     public function collect(CartDataCollection $data, Cart $original, SalesChannelContext $salesChannelContext, CartBehavior $behavior): void
     {
+
 //        dd($original->getLineItems()->getExtensions());
 
     }
