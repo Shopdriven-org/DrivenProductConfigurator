@@ -90,14 +90,14 @@ class SelectionService implements SelectionServiceInterface
      * ...
      *
      * @param string $productId
-     * @param string $forehead
-     * @param string $backhead
+     * @param ?string $forehead
+     * @param ?string $backhead
      * @param int $sealing
      * @param SalesChannelContext $salesChannelContext
      *
      * @return EntityWrittenContainerEvent
      */
-    public function saveSelection(string $productId, string $forehead, string $backhead, int $sealing, SalesChannelContext $salesChannelContext) : EntityWrittenContainerEvent
+    public function saveSelection(string $productId, ?string $forehead, ?string $backhead, int $sealing, SalesChannelContext $salesChannelContext) : EntityWrittenContainerEvent
     {
         return $this->drivenConfigurator->create([[
             'id' => Uuid::randomHex(),
@@ -116,13 +116,13 @@ class SelectionService implements SelectionServiceInterface
      * ...
      *
      * @param string $productId
-     * @param string $forehead
-     * @param string $backhead
+     * @param ?string $forehead
+     * @param ?string $backhead
      * @param int $sealing
      * @param SalesChannelContext $salesChannelContext
      * @return EntityWrittenContainerEvent|void
      */
-    public function updateSelection(string $productId, string $forehead, string $backhead, int $sealing, SalesChannelContext $salesChannelContext)
+    public function updateSelection(string $productId, ?string $forehead, ?string $backhead, int $sealing, SalesChannelContext $salesChannelContext)
     {
         $parentProduct = $this->getParentProduct($productId, $salesChannelContext);
         if ($parentProduct !== null) {
@@ -136,107 +136,6 @@ class SelectionService implements SelectionServiceInterface
                 'salesChannelId' => $salesChannelContext->getSalesChannel()->getId()
             ]], $salesChannelContext->getContext());
         }
-    }
-
-    /**
-     * Parse the configurator and its streams with the given selection.
-     * Any parent product which has a selected variant gets replaced within the streams.
-     * Returns a selected array for the template.
-     *
-     * @param ConfiguratorEntity $configurator
-     * @param array $selection
-     * @param SalesChannelContext $salesChannelContext
-     *
-     * @return array
-     */
-    private function parseSelection(ConfiguratorEntity $configurator, array $selection, SalesChannelContext $salesChannelContext): array
-    {
-        // replace the parents with the selected variants
-        $this->replaceParents(
-            $selection,
-            $salesChannelContext
-        );
-
-        // our selected return array
-        $selected = [];
-
-        // loop every selection element
-        foreach ($selection as $element) {
-            // and set the array for the template
-            $selected["__parent_id_" . $element['parentId'] . '__product_id_' . $element['productId']] = [
-                'selected' => true,
-                'parentId' => $element['parentId'],
-                'productId' => $element['productId'],
-                'quantity' => (integer) $element['quantity']
-            ];
-        }
-
-        // return the array
-        return $selected;
-    }
-
-    /**
-     * Replace every stream parent product with its selected variant.
-     *
-     * @param array $selection
-     * @param SalesChannelContext $salesChannelContext
-     */
-    private function replaceParents(array $selection, SalesChannelContext $salesChannelContext): void
-    {
-        // we need to replace a specific variant for a parent product
-        foreach ($selection as $element) {
-            // is this the parent?
-            if ($element['parentId'] === $element['productId']) {
-                // ignore this one
-                continue;
-            }
-
-            // get full product
-            $product = $this->getSalesChannelProduct(
-                $element['productId'],
-                $salesChannelContext
-            );
-
-            // get a full variant name
-            $name = $this->variantTextService->getName(
-                $product
-            );
-
-            // set the name
-            $product->setName($name);
-
-            // and the translation
-            $product->setTranslated(
-                array_merge(
-                    $product->getTranslated(),
-                    ['name' => $name]
-                )
-            );
-        }
-    }
-
-    /**
-     * ...
-     *
-     * @param string $id
-     * @param SalesChannelContext $salesChannelContext
-     *
-     * @return SalesChannelProductEntity
-     */
-    private function getSalesChannelProduct(string $id, SalesChannelContext $salesChannelContext): SalesChannelProductEntity
-    {
-        // create criteria
-        $criteria = (new Criteria([$id]))
-            ->addAssociation('options.group');
-
-        /** @var SalesChannelProductEntity $products */
-        $product = $this->salesChannelProductRepository
-            ->search($criteria, $salesChannelContext)
-            ->getEntities()
-            ->first();
-
-        // retrn it
-        return $product;
     }
 
     /**
@@ -257,17 +156,38 @@ class SelectionService implements SelectionServiceInterface
             ->search($criteria, $salesChannelContext->getContext())
             ->getElements();
 
-        // retrn it
+        // return it
         return $products;
     }
 
-    private function getParentProduct($id, SalesChannelContext $salesChannelContext)
+    public function getParentProduct($id, SalesChannelContext $salesChannelContext)
     {
-//        dd($id);
         /** @var DrivenProductConfigurator $drivenConfigurator */
         return $this->drivenConfigurator->search(
             (new Criteria())
                 ->addFilter(new EqualsFilter('driven_product_configurator.productId', $id)),
+            $salesChannelContext->getContext()
+        )->first();
+    }
+
+    /**
+     * ...
+     *
+     * @param string $id
+     * @param SalesChannelContext $salesChannelContext
+     *
+     * @return ProductEntity
+     */
+    public function getProduct(string $id, SalesChannelContext $salesChannelContext): ProductEntity
+    {
+        /** @var ProductEntity $productRepository */
+        return $this->productRepository->search(
+            (new Criteria())
+                ->addFilter(new EqualsFilter('product.id', $id))
+                ->addAssociation('cover.media')
+                ->addAssociation('options.group')
+                ->addAssociation('productTranslation')
+                ->addAssociation('customFields'),
             $salesChannelContext->getContext()
         )->first();
     }

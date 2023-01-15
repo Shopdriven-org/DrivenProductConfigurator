@@ -14,6 +14,7 @@ use Dompdf\Exception;
 use Driven\ProductConfigurator\DrivenProductConfigurator;
 use Driven\ProductConfigurator\Service\Cart\LineItemFactoryService;
 use Driven\ProductConfigurator\Service\SelectionServiceInterface;
+use Ramsey\Uuid\Type\Hexadecimal;
 use Shopware\Core\Checkout\Cart\Cart;
 use Shopware\Core\Checkout\Cart\Cart as CoreCart;
 use Shopware\Core\Checkout\Cart\CartBehavior;
@@ -69,8 +70,6 @@ class ConfiguratorController extends StorefrontController
     private lineItemFactoryService $lineItemFactoryService;
 
     /**
-     * ...
-     *
      * @param EntityRepositoryInterface $drivenConfigurator
      * @param CartService $cartService
      * @param LineItemFactoryService $factoryService
@@ -102,20 +101,15 @@ class ConfiguratorController extends StorefrontController
     }
 
     /**
-     * ...
-     *
      * @RouteScope(scopes={"storefront"})
      * @Route("/driven/set-configurator",
      *     name="frontend.driven.set-configurator",
      *     options={"seo"="false"},
-     *     methods={"GET"}
-     * )
-     *
+     *     methods={"GET"})
      * @param Request $request
      * @param RequestDataBag $data
      * @param Context $context
      * @param SalesChannelContext $salesChannelContext
-     *
      * @return Response
      * @throws \Exception
      */
@@ -130,25 +124,18 @@ class ConfiguratorController extends StorefrontController
     public function saveSelection(CoreCart $cart, string $id, RequestDataBag $data, Request $request, SalesChannelContext $context): Response
     {
 //        dd($id);
+
         $backhead = $_POST["backhead"] ?? "";
         $forehead = $_POST["forehead"] ?? "";
         $sealing = $_POST["sealing"] ?? 0;
-//        dd($id);
-        if ($this->getParentProduct($id, $context) !== null) {
-            $this->selectionService->updateSelection(
-                $id,$forehead,$backhead, $sealing,$context
-            );
-        } else {
-            $this->selectionService->saveSelection(
-                $id,$forehead,$backhead, $sealing,$context
-            );
-        }
+
+        $this->checkProductStock($backhead, $forehead,$sealing,  $id, $context);
 
         $this->addFlash(
             'success', "Successfully saved selection!"
         );
 
-        if ($sealing != null) {
+        if ($sealing != 0) {
             try {
                 $sealingLineItem = $this->lineItemFactoryService->createProduct($this->getProduct($id, $context),1, true, $context);
                 $cart->getLineItems()->add($sealingLineItem);
@@ -159,6 +146,55 @@ class ConfiguratorController extends StorefrontController
             }
         }
         return $this->redirectToRoute("frontend.checkout.cart.page");
+    }
+
+    /**
+     * @param $backhead
+     * @param $forehead
+     * @param $sealing
+     * @param $id
+     * @param SalesChannelContext $context
+     * @return void
+     */
+    private function checkProductStock($backhead, $forehead, $sealing, $id, SalesChannelContext $context)
+    {
+
+        if ($this->getParentProduct($id, $context) !== null) {
+            $this->selectionService->updateSelection(
+                $id,$forehead,$backhead, $sealing,$context
+            );
+        } else{
+            $this->selectionService->saveSelection(
+                $id,$forehead,$backhead, $sealing,$context
+            );
+        }
+        $configurator = $this->getParentProduct($id, $context);
+        if ($backhead !== ""){
+            $backheadProduct = $this->getProduct($backhead, $context);
+            if ($backheadProduct->getAvailableStock() > 1){
+                $backheadProduct->setAvailableStock($backheadProduct->getAvailableStock() - 1);
+            }else{
+                $this->selectionService->updateSelection($configurator->getId(),  $configurator->getForehead(), "", $configurator->getSealing(), $context);
+
+                $this->addFlash(
+                    'warning', "Product " . $backheadProduct->getName() . "is out of the stock!"
+                );
+            }
+        }
+
+        if ($forehead !== ""){
+            $foreheadProduct = $this->getProduct($forehead, $context);
+            if ($foreheadProduct->getAvailableStock() > 1){
+                $foreheadProduct->setAvailableStock($foreheadProduct->getAvailableStock() - 1);
+            }else{
+                $configurator->setForehead("");
+                $this->selectionService->updateSelection($configurator->getId(), "", $configurator->getBackhead(), $configurator->getSealing(), $context);
+//                dd($configurator->getForehead());
+                $this->addFlash(
+                    'warning', "Product " . $foreheadProduct->getName() . "is out of the stock!"
+                );
+            }
+        }
     }
 
     /**

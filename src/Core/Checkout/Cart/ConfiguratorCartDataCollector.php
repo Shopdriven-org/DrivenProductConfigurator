@@ -17,6 +17,7 @@ use Driven\ProductConfigurator\Core\Checkout\Cart\Error\InvalidConfiguratorQuant
 use Driven\ProductConfigurator\Core\Checkout\Cart\Error\InvalidSelectionError;
 use Driven\ProductConfigurator\Core\Content\Configurator\ConfiguratorEntity;
 use Driven\ProductConfigurator\Service\Cart\LineItemFactoryServiceInterface;
+use Driven\ProductConfigurator\Service\SelectionService;
 use Shopware\Core\Checkout\Cart\Cart;
 use Shopware\Core\Checkout\Cart\CartBehavior;
 use Shopware\Core\Checkout\Cart\CartDataCollectorInterface;
@@ -31,6 +32,7 @@ use Shopware\Core\Checkout\Cart\Price\Struct\CalculatedPrice;
 use Shopware\Core\Checkout\Cart\Price\Struct\PercentagePriceDefinition;
 use Shopware\Core\Checkout\Cart\Price\Struct\QuantityPriceDefinition;
 use Shopware\Core\Content\Product\Cart\ProductCartProcessor;
+use Shopware\Core\Content\Product\ProductEntity;
 use Shopware\Core\Content\Product\SalesChannel\Price\AbstractProductPriceCalculator;
 use Shopware\Core\Content\Product\SalesChannel\SalesChannelProductEntity;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
@@ -42,15 +44,19 @@ use Shopware\Core\System\SystemConfig\SystemConfigService;
 
 class ConfiguratorCartDataCollector implements CartDataCollectorInterface
 {
+    private SelectionService $selectionService;
     private SalesChannelRepositoryInterface $salesChannelProductRepository;
     private AbstractProductPriceCalculator $productPriceCalculator;
     private SystemConfigService $systemConfigService;
 
     public function __construct(
+        SelectionService                $selectionService,
         SalesChannelRepositoryInterface $salesChannelProductRepository,
-        AbstractProductPriceCalculator $productPriceCalculator,
-        SystemConfigService $systemConfigService
-    ) {
+        AbstractProductPriceCalculator  $productPriceCalculator,
+        SystemConfigService             $systemConfigService
+    )
+    {
+        $this->selectionService = $selectionService;
         $this->salesChannelProductRepository = $salesChannelProductRepository;
         $this->productPriceCalculator = $productPriceCalculator;
         $this->systemConfigService = $systemConfigService;
@@ -62,8 +68,52 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
     public function collect(CartDataCollection $data, Cart $original, SalesChannelContext $salesChannelContext, CartBehavior $behavior): void
     {
 
-//        dd($original->getLineItems()->getExtensions());
+        // get every line item which is a configurator
+        $lineItems = $original->getLineItems();
 
+        // do we even have a configurator?
+        if ($lineItems->count() === 0) {
+            // we dont
+            return;
+        }
+
+        // loop every configurator
+        foreach ($lineItems as $lineItem) {
+            if (isset($lineItem->getPayload()["customFields"]["driven_product_configurator_racquet_option"])) {
+                if ($lineItem->getPayload()["customFields"]["driven_product_configurator_racquet_option"] === "racquet") {
+                    $configurator = $this->selectionService->getParentProduct($lineItem->getId(), $salesChannelContext);
+                    if ($configurator !== null) {
+                        $backheadProduct = $this->selectionService->getProduct($configurator->getBackhead(), $salesChannelContext);
+                        $foreheadProduct = $this->selectionService->getProduct($configurator->getForehead(), $salesChannelContext);
+
+                        $this->checkProductStock($foreheadProduct, $backheadProduct, $lineItem, $lineItems, $salesChannelContext);
+                    }
+                }
+//                dd($lineItem);
+            }
+        }
+
+    }
+
+
+    /**
+     * @param ProductEntity $foreheadProduct
+     * @param ProductEntity $backheadProduct
+     * @param LineItem $parentProduct
+     * @param $lineItems
+     * @param SalesChannelContext $salesChannelContext
+     * @return void
+     */
+    private function checkProductStock(ProductEntity $foreheadProduct, ProductEntity $backheadProduct, LineItem $parentProduct, $lineItems, SalesChannelContext $salesChannelContext)
+    {
+        foreach ($lineItems as $lineItem) {
+            if ($foreheadProduct->getId() === $lineItem->getId()) {
+                    $lineItem->setQuantity($parentProduct->getQuantity());
+            }
+            if ($backheadProduct->getId() == $lineItem->getId()) {
+                    $lineItem->setQuantity($parentProduct->getQuantity());
+            }
+        }
     }
 
     /**
@@ -224,10 +274,10 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
      */
     private function getDeliveryInformation(LineItem $lineItem, SalesChannelProductEntity $product, SalesChannelContext $salesChannelContext): DeliveryInformation
     {
-        $weight = (float) $product->getWeight();
-        $maxHeight = (float) $product->getHeight();
-        $maxWidth = (float) $product->getWidth();
-        $maxLength = (float) $product->getLength();
+        $weight = (float)$product->getWeight();
+        $maxHeight = (float)$product->getHeight();
+        $maxWidth = (float)$product->getWidth();
+        $maxLength = (float)$product->getLength();
         $volume = 0.0;
 
         foreach ($lineItem->getChildren() as $child) {
@@ -235,17 +285,17 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
                 continue;
             }
 
-            $weight += ((int) $child->getQuantity() / (int) $lineItem->getQuantity()) * (float) $child->getPayloadValue('weight');
+            $weight += ((int)$child->getQuantity() / (int)$lineItem->getQuantity()) * (float)$child->getPayloadValue('weight');
 
-            $maxHeight = max([(float) $maxHeight, (float) $child->getPayloadValue('height')]);
-            $maxWidth = max([(float) $maxWidth, (float) $child->getPayloadValue('width')]);
-            $maxLength = max([(float) $maxLength, (float) $child->getPayloadValue('length')]);
+            $maxHeight = max([(float)$maxHeight, (float)$child->getPayloadValue('height')]);
+            $maxWidth = max([(float)$maxWidth, (float)$child->getPayloadValue('width')]);
+            $maxLength = max([(float)$maxLength, (float)$child->getPayloadValue('length')]);
         }
 
         return new DeliveryInformation(
-            (int) $product->getAvailableStock(),
-            (float) $weight,
-            (bool) $product->getShippingFree(),
+            (int)$product->getAvailableStock(),
+            (float)$weight,
+            (bool)$product->getShippingFree(),
             $product->getRestockTime(),
             ($product->getDeliveryTime() instanceof DeliveryTimeEntity) ? DeliveryTime::createFromEntity($product->getDeliveryTime()) : null,
             ($maxHeight > 0.0) ? $maxHeight : null,
@@ -395,7 +445,7 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
                 }
 
                 // the quantity of the product for one parent
-                $quantityPerParent = (int) ($quantity / $configurator->getQuantity());
+                $quantityPerParent = (int)($quantity / $configurator->getQuantity());
 
                 // 2.) we cant have one quantity of the configurator so we have to drop it
                 if ($quantityPerParent > $stock) {
@@ -410,7 +460,7 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
                 }
 
                 // 3.) we have to reduce the configurator quantity
-                $changedQuantity = (int) floor($stock / $quantityPerParent);
+                $changedQuantity = (int)floor($stock / $quantityPerParent);
 
                 // reduce quantity of the configurator which reduces the quantity
                 // of every child
@@ -437,7 +487,7 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
         // group them by parent to check the max purchase
         $grouped = $this->getGroupedConfigurators($cart);
 
-        /** @var $lineItems LineItemCollection  */
+        /** @var $lineItems LineItemCollection */
         foreach ($grouped as $productId => $productLineItems) {
             // if we have only 1 configurator, then shopware will take care
             // of the max purchase by default. the only problem is having
@@ -448,7 +498,7 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
             }
 
             // get the max purchase
-            $maxPurchase = (int) $productLineItems->first()->getQuantityInformation()->getMaxPurchase();
+            $maxPurchase = (int)$productLineItems->first()->getQuantityInformation()->getMaxPurchase();
 
             // default value?
             if ($maxPurchase >= 99) {
@@ -534,7 +584,7 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
         // group by parent to drop them or change quantity
         $grouped = $this->getGroupedConfigurators($cart);
 
-        /** @var $lineItems LineItemCollection  */
+        /** @var $lineItems LineItemCollection */
         foreach ($grouped as $productId => $productLineItems) {
             // if we have only 1 configurator, then shopware will take care
             // of the max purchase by default. the only problem is having
@@ -545,7 +595,7 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
             }
 
             // get the max purchase
-            $maxPurchase = (int) $productLineItems->first()->getQuantityInformation()->getMaxPurchase();
+            $maxPurchase = (int)$productLineItems->first()->getQuantityInformation()->getMaxPurchase();
 
             // default value?
             if ($maxPurchase >= 99) {
@@ -597,7 +647,7 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
         $grouped = [];
 
         foreach ($lineItems as $lineItem) {
-            $id = (string) $lineItem->getPayloadValue('DrivenProductConfiguratorProductId');
+            $id = (string)$lineItem->getPayloadValue('DrivenProductConfiguratorProductId');
             if (!isset($grouped[$id])) {
                 $grouped[$id] = new LineItemCollection();
             }

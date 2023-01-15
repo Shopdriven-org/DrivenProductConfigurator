@@ -59,7 +59,7 @@ class CartSavedSubscriber implements EventSubscriberInterface
      */
     public function OnCartChangedEvent(CartChangedEvent $event)
     {
-//        dd($event->getContext());
+        // TODO
     }
 
     /**
@@ -70,17 +70,19 @@ class CartSavedSubscriber implements EventSubscriberInterface
     {
         $equipments = [];
         $racquets = [];
+        $configurators = [];
         $equipments_length = 0;
         $racquets_length = 0;
+        $configurators_lenght = 0;
         $foreheadProduct = "";
         $backheadProduct = "";
         $sealing = "";
 
         foreach ($event->getCart()->getLineItems() as $lineItem) {
-//            if ($lineItem->getType() == LineItemFactoryServiceInterface::CONFIGURATOR_LINE_ITEM_TYPE) {
-//                array_push($racquets, $lineItem);
-//                $racquets_length++;
-//            }
+            if ($lineItem->getType() == LineItemFactoryServiceInterface::CONFIGURATOR_LINE_ITEM_TYPE) {
+                array_push($configurators, $lineItem);
+                $racquets_length++;
+            }
             if ($lineItem->getType() === LineItem::PRODUCT_LINE_ITEM_TYPE) {
                 $options = $lineItem->getPayload()["customFields"];
                 if (isset($options["driven_product_configurator_racquet_option"])) {
@@ -96,12 +98,11 @@ class CartSavedSubscriber implements EventSubscriberInterface
             }
         }
         $count = 0;
-//        dd(count($racquets));
         if (count($racquets) !== 0) {
             $event->getCart()->addArrayExtension("racquet_counter", (array)$racquets_length);
             $event->getCart()->addArrayExtension("equipment_counter", (array)$equipments_length);
             foreach ($racquets as $racquet) {
-//            dd($racquet->getId());
+
                 $parentProduct = $this->getParentProduct($racquet->getId(), $event->getSalesChannelContext());
 
                 if ($parentProduct !== null) {
@@ -121,7 +122,7 @@ class CartSavedSubscriber implements EventSubscriberInterface
                     if ($count < 1) {
                         $count = +1;
                     }
-//                    dd($count);
+
                     $event->getCart()->getLineItems()->removeElement(
                         $this->lineItemFactoryService->createProduct(
                             $this->getChildrenProduct($racquet->getId(), $event->getSalesChannelContext()), $count, true, $event->getSalesChannelContext()
@@ -129,7 +130,8 @@ class CartSavedSubscriber implements EventSubscriberInterface
                     );
                 }
                 $sameSides = false;
-                if ($foreheadProduct != "" || $backheadProduct != "") {
+                if ($foreheadProduct != null && $backheadProduct != null) {
+
                     if ($foreheadProduct->variation[0]["option"] == $backheadProduct->variation[0]["option"]) {
                         $sameSides = true;
                     }
@@ -156,7 +158,6 @@ class CartSavedSubscriber implements EventSubscriberInterface
      */
     private function getParentProduct($id, SalesChannelContext $salesChannelContext)
     {
-//        dd($id);
         return $this->drivenConfiguratorRepository->search(
             (new Criteria())
                 ->addFilter(new EqualsFilter('driven_product_configurator.productId', $id)),

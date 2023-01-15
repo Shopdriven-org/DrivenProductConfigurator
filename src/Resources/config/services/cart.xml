@@ -4,13 +4,15 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
         <service id="Driven\ProductConfigurator\Core\Checkout\Cart\ConfiguratorCartProcessor">
-            <argument type="service" id="Shopware\Core\Checkout\Cart\Price\QuantityPriceCalculator" />
-            <argument type="service" id="Shopware\Core\Checkout\Cart\Price\PercentagePriceCalculator" />
-            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
+<!--            <argument type="service" id="Shopware\Core\Checkout\Cart\Price\QuantityPriceCalculator" />-->
+<!--            <argument type="service" id="Shopware\Core\Checkout\Cart\Price\PercentagePriceCalculator" />-->
+<!--            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />-->
+            <argument type="service" id="Driven\ProductConfigurator\Service\SelectionService"/>
             <tag name="shopware.cart.processor" priority="4950"/>
         </service>
 
         <service id="Driven\ProductConfigurator\Core\Checkout\Cart\ConfiguratorCartDataCollector">
+            <argument type="service" id="Driven\ProductConfigurator\Service\SelectionService"/>
             <argument type="service" id="sales_channel.product.repository" />
             <argument type="service" id="Shopware\Core\Content\Product\SalesChannel\Price\ProductPriceCalculator" />
             <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />

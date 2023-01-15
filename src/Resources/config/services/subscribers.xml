@@ -8,6 +8,9 @@
         <service id="Driven\ProductConfigurator\Subscriber\Storefront\Page\Product\ProductPageSubscriber">
             <argument type="service" id="session" />
             <argument type="service" id="product.repository"/>
+            <argument type="service" id="category_translation.repository"/>
+            <argument type="service" id="product_category.repository"/>
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
             <tag name="kernel.event_subscriber" />
         </service>
 
@@ -15,6 +18,20 @@
             <argument type="service" id="driven_product_configurator.repository"/>
             <argument type="service" id="product.repository"/>
             <argument type="service" id="Driven\ProductConfigurator\Service\Cart\LineItemFactoryService"/>
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <service id="Driven\ProductConfigurator\Subscriber\Core\Checkout\Cart\BeforeLineItemRemovedSubscriber">
+            <argument type="service" id="driven_product_configurator.repository"/>
+            <argument type="service" id="product.repository"/>
+            <argument type="service" id="Driven\ProductConfigurator\Service\Cart\LineItemFactoryService"/>
+            <argument type="service" id="Driven\ProductConfigurator\Service\SelectionService"/>
+            <tag name="kernel.event_subscriber" />
+        </service>
+
+        <service id="Driven\ProductConfigurator\Subscriber\Core\Checkout\Cart\BeforeLineItemQuantityChangedSubscriber">
+            <argument type="service" id="driven_product_configurator.repository"/>
+            <argument type="service" id="Driven\ProductConfigurator\Service\SelectionService"/>
             <tag name="kernel.event_subscriber" />
         </service>
     </services>
