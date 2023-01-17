@@ -176,9 +176,9 @@ class SelectionService implements SelectionServiceInterface
      * @param string $id
      * @param SalesChannelContext $salesChannelContext
      *
-     * @return ProductEntity
+     * @return ?ProductEntity
      */
-    public function getProduct(string $id, SalesChannelContext $salesChannelContext): ProductEntity
+    public function getProduct(string $id, SalesChannelContext $salesChannelContext): ?ProductEntity
     {
         /** @var ProductEntity $productRepository */
         return $this->productRepository->search(

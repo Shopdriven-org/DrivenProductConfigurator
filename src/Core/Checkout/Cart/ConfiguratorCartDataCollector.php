@@ -83,13 +83,13 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
                 if ($lineItem->getPayload()["customFields"]["driven_product_configurator_racquet_option"] === "racquet") {
                     $configurator = $this->selectionService->getParentProduct($lineItem->getId(), $salesChannelContext);
                     if ($configurator !== null) {
+//                        dd($configurator);
                         $backheadProduct = $this->selectionService->getProduct($configurator->getBackhead(), $salesChannelContext);
                         $foreheadProduct = $this->selectionService->getProduct($configurator->getForehead(), $salesChannelContext);
 
                         $this->checkProductStock($foreheadProduct, $backheadProduct, $lineItem, $lineItems, $salesChannelContext);
                     }
                 }
-//                dd($lineItem);
             }
         }
 
@@ -97,21 +97,25 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
 
 
     /**
-     * @param ProductEntity $foreheadProduct
-     * @param ProductEntity $backheadProduct
+     * @param ?ProductEntity $foreheadProduct
+     * @param ?ProductEntity $backheadProduct
      * @param LineItem $parentProduct
      * @param $lineItems
      * @param SalesChannelContext $salesChannelContext
      * @return void
      */
-    private function checkProductStock(ProductEntity $foreheadProduct, ProductEntity $backheadProduct, LineItem $parentProduct, $lineItems, SalesChannelContext $salesChannelContext)
+    private function checkProductStock(?ProductEntity $foreheadProduct, ?ProductEntity $backheadProduct, LineItem $parentProduct, $lineItems, SalesChannelContext $salesChannelContext)
     {
         foreach ($lineItems as $lineItem) {
-            if ($foreheadProduct->getId() === $lineItem->getId()) {
+            if ($foreheadProduct != null) {
+                if ($foreheadProduct->getId() === $lineItem->getId()) {
                     $lineItem->setQuantity($parentProduct->getQuantity());
+                }
             }
-            if ($backheadProduct->getId() == $lineItem->getId()) {
+            if ($backheadProduct != null) {
+                if ($backheadProduct->getId() == $lineItem->getId()) {
                     $lineItem->setQuantity($parentProduct->getQuantity());
+                }
             }
         }
     }

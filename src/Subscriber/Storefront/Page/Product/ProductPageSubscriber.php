@@ -18,6 +18,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
+use Shopware\Storefront\Page\LandingPage\LandingPageLoadedEvent;
 use Shopware\Storefront\Page\Product\ProductPageLoadedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -65,111 +66,105 @@ class ProductPageSubscriber implements EventSubscriberInterface
      *
      * @param ProductPageLoadedEvent $event
      * @return void
-     * @throws Exception
      */
     public function onPageLoaded(ProductPageLoadedEvent $event)
     {
-//        $racquetCategories = $this->getRacquetCategories($event);
-//        $toppingsCategories = $this->getToppingsCategories($event);
-//
-//        $racquetCategoryIds = [];
-//        $toppingsCategoryIds = [];
-//        foreach ($racquetCategories as $racquetCategory) {
-//            array_push($racquetCategoryIds, $racquetCategory->getCategoryId());
-//        }
-//
-//        foreach ($toppingsCategories as $toppingsCategory) {
-//            array_push($toppingsCategoryIds, $toppingsCategory->getCategoryId());
-//        }
-//
-//        $racquetproducts = $this->getProductIds(array_unique($racquetCategoryIds), $event);
-//        $toppingsproducts = $this->getProductIds(array_unique($toppingsCategoryIds), $event);
+        $customFields = $event->getPage()->getProduct()->getCustomFields();
+        $breadcrumb = $event->getPage()->getProduct()->getSeoCategory()->getBreadcrumb();
+        if (in_array("Beläge", $breadcrumb)) {
+            if (!isset($customFields["driven_product_configurator_racquet_option"])) {
+                $customFields["driven_product_configurator_racquet_option"] = "toppings";
+                $this->productRepository->upsert([[
+                    'id' => $event->getPage()->getProduct()->getId(),
+                    'customFields' => $customFields
+                ]], $event->getContext());
+            }
+        }
 
+        if (in_array("Hölzer", $breadcrumb)) {
+            if (!isset($customFields["driven_product_configurator_racquet_option"])) {
+                $customFields["driven_product_configurator_racquet_option"] = "racquet";
 
-//        dd($racquetproducts);
-//        foreach ($racquetproducts as $racquetproduct) {
-//
-//            $racquetproduct->update(["driven_product_configurator_racquet_option" => "racquet"], $event->getContext());
-//
-//            dd($racquetproduct);
-//
-//        }
-//        dd($racquetCategories->getCategoryId());
+                $this->productRepository->upsert([[
+                    'id' => $event->getPage()->getProduct()->getId(),
+                    'customFields' => $customFields
+                ]], $event->getContext());
+            }
+        }
     }
-//
-//
-//    /**
-//     * ...
-//     *
-//     * @param ProductPageLoadedEvent $event
-//     * @return array
-//     */
-//    public function getRacquetCategories(ProductPageLoadedEvent $event): array
-//    {
-//
-//        return $this->categoryTranslation->search(
-//            (new Criteria())
-//                ->addFilter(new EqualsFilter('category_translation.name', self::RACQUET_CATEGORY)),
-//            $event->getContext()
-//        )->getElements();
-//    }
-//
-//    /**
-//     * ...
-//     *
-//     * @param ProductPageLoadedEvent $event
-//     * @return array
-//     */
-//    public function getToppingsCategories(ProductPageLoadedEvent $event): array
-//    {
-//
-//        return $this->categoryTranslation->search(
-//            (new Criteria())
-//                ->addFilter(new EqualsFilter('category_translation.name', self::TOPPING_CATEGORY)),
-//            $event->getContext()
-//        )->getElements();
-//    }
-//
-//    /**
-//     * ...
-//     *
-//     * @param array $categoryIds
-//     * @param ProductPageLoadedEvent $event
-//     * @return array
-//     * @throws Exception
-//     */
-//    public function getProductIds(array $categoryIds, ProductPageLoadedEvent $event): array
-//    {
-//        $products = [];
-//        foreach ($categoryIds as $categoryId) {
-//
-////            $sqlQuery = "SELECT product_id FROM `product_category` WHERE `category_id` = '".$categoryId."'";
-//            $sqlQuery = "SELECT HEX(`product_id`) AS `product_id` FROM `product_category` WHERE `category_id` = UNHEX('".$categoryId."')";
-//
-//            $sqlResult = $this->connection->executeQuery($sqlQuery)->fetchAll();
-//            foreach ( $sqlResult as $item) {
-//                $product = $this->getProduct($item["product_id"], $event->getSalesChannelContext());
-//                array_push($products, $product);
-//
-//            }
-//        }
-//        return $products;
-//    }
-//
-//    /**
-//     * @param $id
-//     * @param SalesChannelContext $salesChannelContext
-//     * @return mixed|null
-//     */
-//    private function getProduct($id, SalesChannelContext $salesChannelContext)
-//    {
-//
-//        return $this->productRepository->search(
-//            (new Criteria())
-//                ->addFilter(new EqualsFilter('product.id', $id))
-//                ->addAssociation('customFields'),
-//            $salesChannelContext->getContext()
-//        )->first();
-//    }
+
+    /**
+     * ...
+     *
+     * @param ProductPageLoadedEvent $event
+     * @return array
+     */
+    public function getRacquetCategories(ProductPageLoadedEvent $event): array
+    {
+
+        return $this->categoryTranslation->search(
+            (new Criteria())
+                ->addFilter(new EqualsFilter('category_translation.name', self::RACQUET_CATEGORY)),
+            $event->getContext()
+        )->getElements();
+    }
+
+    /**
+     * ...
+     *
+     * @param ProductPageLoadedEvent $event
+     * @return array
+     */
+    public function getToppingsCategories(ProductPageLoadedEvent $event): array
+    {
+
+        return $this->categoryTranslation->search(
+            (new Criteria())
+                ->addFilter(new EqualsFilter('category_translation.name', self::TOPPING_CATEGORY)),
+            $event->getContext()
+        )->getElements();
+    }
+
+    /**
+     * ...
+     *
+     * @param array $categoryIds
+     * @param ProductPageLoadedEvent $event
+     * @return array
+     * @throws Exception
+     */
+    public function getProductIds(array $categoryIds, ProductPageLoadedEvent $event): array
+    {
+        $products = [];
+        foreach ($categoryIds as $categoryId) {
+
+            $sqlQuery = "SELECT product_id FROM `product_category` WHERE `category_id` = '".$categoryId."'";
+            $sqlQuery = "SELECT HEX(`product_id`) AS `product_id` FROM `product_category` WHERE `category_id` = UNHEX('".$categoryId."')";
+
+            $sqlResult = $this->connection->executeQuery($sqlQuery)->fetchAll();
+            foreach ( $sqlResult as $item) {
+                $product = $this->getProduct($item["product_id"], $event->getSalesChannelContext());
+                array_push($products, $product);
+
+            }
+        }
+        return $products;
+    }
+
+    /**
+     * @param $id
+     * @param SalesChannelContext $salesChannelContext
+     * @return mixed|null
+     */
+    private function getProduct($id, SalesChannelContext $salesChannelContext)
+    {
+
+        return $this->productRepository->search(
+            (new Criteria())
+                ->addFilter(new EqualsFilter('product.id', $id))
+                ->addAssociation('customFields'),
+            $salesChannelContext->getContext()
+        )->first();
+    }
 }
 

@@ -1,11 +1,18 @@
 {% sw_extends '@Storefront/storefront/component/checkout/offcanvas-cart.html.twig' %}
 
 {% block utilities_offcanvas_content %}
-    {% set racquet_counter = page.cart.extensions["racquet_counter"][0] %}
-    {% set equipment_counter = page.cart.extensions["equipment_counter"][0] %}
     {% block component_offcanvas_cart %}
         {% set isCartNotEmpty = (page.cart.lineItems|length > 0) %}
-
+        {% set racquet_counter = 0 %}
+        {% set equipment_counter = 0 %}
+        {% for LineItem in  page.cart.LineItems.payload%}
+            {% if LineItem["customFields"]["driven_product_configurator_racquet_option"] === "racquet" %}
+                {% set racquet_counter = racquet_counter +1 %}
+            {% endif %}
+            {% if LineItem["customFields"]["driven_product_configurator_racquet_option"] === "toppings" %}
+                {% set equipment_counter = equipment_counter + 1%}
+            {% endif %}
+        {% endfor %}
         <div class="offcanvas-cart">
             {% block component_offcanvas_cart_header %}
                 {{ parent() }}

@@ -171,28 +171,32 @@ class ConfiguratorController extends StorefrontController
         $configurator = $this->getParentProduct($id, $context);
         if ($backhead !== ""){
             $backheadProduct = $this->getProduct($backhead, $context);
-            if ($backheadProduct->getAvailableStock() > 1){
-                $backheadProduct->setAvailableStock($backheadProduct->getAvailableStock() - 1);
-            }else{
-                $this->selectionService->updateSelection($configurator->getId(),  $configurator->getForehead(), "", $configurator->getSealing(), $context);
+            if ($backheadProduct != "") {
+                if ($backheadProduct->getAvailableStock() > 1){
+                    $backheadProduct->setAvailableStock($backheadProduct->getAvailableStock() - 1);
+                }else{
+                    $this->selectionService->updateSelection($configurator->getId(),  $configurator->getForehead(), "", $configurator->getSealing(), $context);
 
-                $this->addFlash(
-                    'warning', "Product " . $backheadProduct->getName() . "is out of the stock!"
-                );
+                    $this->addFlash(
+                        'warning', "Product " . $backheadProduct->getName() . "is out of the stock!"
+                    );
+                }
             }
         }
 
         if ($forehead !== ""){
             $foreheadProduct = $this->getProduct($forehead, $context);
-            if ($foreheadProduct->getAvailableStock() > 1){
-                $foreheadProduct->setAvailableStock($foreheadProduct->getAvailableStock() - 1);
-            }else{
-                $configurator->setForehead("");
-                $this->selectionService->updateSelection($configurator->getId(), "", $configurator->getBackhead(), $configurator->getSealing(), $context);
+            if ($foreheadProduct != "") {
+                if ($foreheadProduct->getAvailableStock() > 1){
+                    $foreheadProduct->setAvailableStock($foreheadProduct->getAvailableStock() - 1);
+                }else{
+                    $configurator->setForehead("");
+                    $this->selectionService->updateSelection($configurator->getId(), "", $configurator->getBackhead(), $configurator->getSealing(), $context);
 //                dd($configurator->getForehead());
-                $this->addFlash(
-                    'warning', "Product " . $foreheadProduct->getName() . "is out of the stock!"
-                );
+                    $this->addFlash(
+                        'warning', "Product " . $foreheadProduct->getName() . "is out of the stock!"
+                    );
+                }
             }
         }
     }
@@ -230,9 +234,9 @@ class ConfiguratorController extends StorefrontController
      * @param string $id
      * @param SalesChannelContext $salesChannelContext
      *
-     * @return ProductEntity
+     * @return ?ProductEntity
      */
-    private function getProduct(string $id, SalesChannelContext $salesChannelContext): ProductEntity
+    private function getProduct(string $id, SalesChannelContext $salesChannelContext): ?ProductEntity
     {
         /** @var ProductEntity $productRepository */
         return $this->productRepository->search(
