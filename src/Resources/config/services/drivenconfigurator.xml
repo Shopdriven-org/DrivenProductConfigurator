@@ -7,8 +7,6 @@
     <services>
         <service id="Driven\ProductConfigurator\Storefront\Controller\ConfiguratorController" public="true">
             <argument type="service" id="driven_product_configurator.repository"/>
-            <argument type="service" id="Shopware\Core\Checkout\Cart\SalesChannel\CartService"/>
-            <argument type="service" id="Driven\ProductConfigurator\Service\Cart\LineItemFactoryService"/>
             <argument type="service" id="product.repository"/>
             <argument type="service" id="Driven\ProductConfigurator\Service\SelectionService"/>
             <argument type="service" id="Symfony\Component\EventDispatcher\EventDispatcherInterface"/>

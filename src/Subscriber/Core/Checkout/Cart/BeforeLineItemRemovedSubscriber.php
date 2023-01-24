@@ -10,6 +10,8 @@
 
 namespace Driven\ProductConfigurator\Subscriber\Core\Checkout\Cart;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Driven\ProductConfigurator\DrivenProductConfigurator;
 use Driven\ProductConfigurator\Service\Cart\LineItemFactoryService;
 use Driven\ProductConfigurator\Service\SelectionService;
@@ -20,31 +22,32 @@ use Shopware\Core\Checkout\Cart\Event\CartChangedEvent;
 use Shopware\Core\Checkout\Cart\Event\CartSavedEvent;
 use Shopware\Core\Checkout\Cart\Event\CheckoutOrderPlacedCriteriaEvent;
 use Shopware\Core\Checkout\Cart\LineItem\LineItem;
+use Shopware\Core\Content\Category\Event\CategoryIndexerEvent;
+use Shopware\Core\Content\Category\Event\NavigationLoadedEvent;
+use Shopware\Core\Content\Cms\Events\CmsPageLoaderCriteriaEvent;
 use Shopware\Core\Content\Product\ProductEntity;
+use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\Struct\ArrayStruct;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
+use Shopware\Storefront\Page\LandingPage\LandingPageLoadedEvent;
+use Shopware\Storefront\Page\Navigation\NavigationPageLoader;
+use Shopware\Storefront\Page\PageLoadedEvent;
+use Shopware\Storefront\Pagelet\Footer\FooterPageletLoadedEvent;
+use Shopware\Storefront\Pagelet\Header\HeaderPageletLoadedEvent;
+use Shopware\Storefront\Pagelet\PageletLoadedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class BeforeLineItemRemovedSubscriber implements EventSubscriberInterface
 {
 
     private EntityRepositoryInterface $drivenConfiguratorRepository;
-    private EntityRepositoryInterface $productRepository;
-    private lineItemFactoryService $lineItemFactoryService;
-    private SelectionService $selectionService;
 
-    public function __construct(EntityRepositoryInterface $drivenConfiguratorRepository,
-                                EntityRepositoryInterface $productRepository,
-                                lineItemFactoryService    $lineItemFactoryService,
-                                SelectionService          $selectionService)
+    public function __construct(EntityRepositoryInterface $drivenConfiguratorRepository)
     {
         $this->drivenConfiguratorRepository = $drivenConfiguratorRepository;
-        $this->productRepository = $productRepository;
-        $this->lineItemFactoryService = $lineItemFactoryService;
-        $this->selectionService = $selectionService;
     }
 
     /**
@@ -81,7 +84,6 @@ class BeforeLineItemRemovedSubscriber implements EventSubscriberInterface
 
         }
     }
-
 
     /**
      * @param $id

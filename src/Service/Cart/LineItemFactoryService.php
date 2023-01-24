@@ -40,6 +40,9 @@ class LineItemFactoryService implements LineItemFactoryServiceInterface
     public function createProduct(ProductEntity $product, int $quantity, bool $parent, SalesChannelContext $salesChannelContext): LineItem
     {
 //        dd($quantity);
+        if ($quantity === 0){
+            $quantity = 1;
+        }
         $lineItem = new LineItem(
             self::SEALING_UID,
             self::PRODUCT_SEALING_LINE_ITEM_TYPE,
@@ -48,8 +51,8 @@ class LineItemFactoryService implements LineItemFactoryServiceInterface
         $calculatedTaxes = new CalculatedTaxCollection();
         $taxRules = new TaxRuleCollection();
         $newPrice = new CalculatedPrice(
-            5,
-            5,
+            $quantity * 5,
+            $quantity * 5,
             $calculatedTaxes,
             $taxRules,
             $quantity

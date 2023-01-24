@@ -55,10 +55,6 @@ class ConfiguratorController extends StorefrontController
 
     private EntityRepositoryInterface $drivenConfigurator;
 
-    private CartService $cartService;
-
-    private  \Driven\ProductConfigurator\Service\Cart\LineItemFactoryService $factoryService;
-
     private EntityRepositoryInterface $productRepository;
 
     private SelectionServiceInterface $selectionService;
@@ -71,8 +67,6 @@ class ConfiguratorController extends StorefrontController
 
     /**
      * @param EntityRepositoryInterface $drivenConfigurator
-     * @param CartService $cartService
-     * @param LineItemFactoryService $factoryService
      * @param EntityRepositoryInterface $productRepository
      * @param SelectionServiceInterface $selectionService
      * @param EventDispatcherInterface $eventDispatcher
@@ -80,19 +74,14 @@ class ConfiguratorController extends StorefrontController
      * @param LineItemFactoryService $lineItemFactoryService
      */
     public function __construct(EntityRepositoryInterface $drivenConfigurator,
-                                CartService               $cartService,
-                                LineItemFactoryService               $factoryService,
                                 EntityRepositoryInterface $productRepository,
                                 SelectionServiceInterface $selectionService,
-                                EventDispatcherInterface $eventDispatcher,
-                                CartRuleLoader $cartRuleLoader,
-                                lineItemFactoryService $lineItemFactoryService
+                                EventDispatcherInterface  $eventDispatcher,
+                                CartRuleLoader            $cartRuleLoader,
+                                lineItemFactoryService    $lineItemFactoryService
     )
     {
-        // set params
         $this->drivenConfigurator = $drivenConfigurator;
-        $this->cartService = $cartService;
-        $this->factoryService = $factoryService;
         $this->productRepository = $productRepository;
         $this->selectionService = $selectionService;
         $this->eventDispatcher = $eventDispatcher;
@@ -123,13 +112,26 @@ class ConfiguratorController extends StorefrontController
      */
     public function saveSelection(CoreCart $cart, string $id, RequestDataBag $data, Request $request, SalesChannelContext $context): Response
     {
-//        dd($id);
 
         $backhead = $_POST["backhead"] ?? "";
         $forehead = $_POST["forehead"] ?? "";
         $sealing = $_POST["sealing"] ?? 0;
 
-        $this->checkProductStock($backhead, $forehead,$sealing,  $id, $context);
+        foreach ($cart->getLineItems() as $lineItem) {
+            if (isset($lineItem->getPayload()["customFields"]["driven_product_configurator_racquet_option"])) {
+                if ($lineItem->getPayload()["customFields"]["driven_product_configurator_racquet_option"] === "racquet") {
+                    for ($i = 0 ; $i < count($lineItem->getExtensions()["Equipments"]["items"]); $i++) {
+//                        foreach ($lineItem->getExtensions()["Equipments"]["items"] as $item) {
+                            if ($lineItem->getExtensions()["Equipments"]["items"][$i]->getId() === $backhead) {
+//                                unset($lineItem->getExtensions()["Equipments"]["items"][$i]);
+//                                $lineItem->removeExtension($lineItem->getExtensions()["Equipments"]["items"][$i]);
+                            }
+//                        }
+                    }
+                }
+            }
+        }
+        $this->checkProductStock($backhead, $forehead, $sealing, $id, $context);
 
         $this->addFlash(
             'success', "Successfully saved selection!"
@@ -137,7 +139,7 @@ class ConfiguratorController extends StorefrontController
 
         if ($sealing != 0) {
             try {
-                $sealingLineItem = $this->lineItemFactoryService->createProduct($this->getProduct($id, $context),1, true, $context);
+                $sealingLineItem = $this->lineItemFactoryService->createProduct($this->getProduct($id, $context), 1, true, $context);
                 $cart->getLineItems()->add($sealingLineItem);
                 $this->eventDispatcher->dispatch(new CartSavedEvent($context, $cart));
 
@@ -161,21 +163,21 @@ class ConfiguratorController extends StorefrontController
 
         if ($this->getParentProduct($id, $context) !== null) {
             $this->selectionService->updateSelection(
-                $id,$forehead,$backhead, $sealing,$context
+                $id, $forehead, $backhead, $sealing, $context
             );
-        } else{
+        } else {
             $this->selectionService->saveSelection(
-                $id,$forehead,$backhead, $sealing,$context
+                $id, $forehead, $backhead, $sealing, $context
             );
         }
         $configurator = $this->getParentProduct($id, $context);
-        if ($backhead !== ""){
+        if ($backhead !== "") {
             $backheadProduct = $this->getProduct($backhead, $context);
             if ($backheadProduct != "") {
-                if ($backheadProduct->getAvailableStock() > 1){
+                if ($backheadProduct->getAvailableStock() > 1) {
                     $backheadProduct->setAvailableStock($backheadProduct->getAvailableStock() - 1);
-                }else{
-                    $this->selectionService->updateSelection($configurator->getId(),  $configurator->getForehead(), "", $configurator->getSealing(), $context);
+                } else {
+                    $this->selectionService->updateSelection($configurator->getId(), $configurator->getForehead(), "", $configurator->getSealing(), $context);
 
                     $this->addFlash(
                         'warning', "Product " . $backheadProduct->getName() . "is out of the stock!"
@@ -184,15 +186,14 @@ class ConfiguratorController extends StorefrontController
             }
         }
 
-        if ($forehead !== ""){
+        if ($forehead !== "") {
             $foreheadProduct = $this->getProduct($forehead, $context);
             if ($foreheadProduct != "") {
-                if ($foreheadProduct->getAvailableStock() > 1){
+                if ($foreheadProduct->getAvailableStock() > 1) {
                     $foreheadProduct->setAvailableStock($foreheadProduct->getAvailableStock() - 1);
-                }else{
+                } else {
                     $configurator->setForehead("");
                     $this->selectionService->updateSelection($configurator->getId(), "", $configurator->getBackhead(), $configurator->getSealing(), $context);
-//                dd($configurator->getForehead());
                     $this->addFlash(
                         'warning', "Product " . $foreheadProduct->getName() . "is out of the stock!"
                     );
@@ -202,16 +203,12 @@ class ConfiguratorController extends StorefrontController
     }
 
     /**
-     * ...
-     *
      * @param array $ids
      * @param SalesChannelContext $salesChannelContext
-     *
      * @return ProductEntity[]
      */
     private function getProducts(array $ids, SalesChannelContext $salesChannelContext): array
     {
-        // create criteria
         $criteria = (new Criteria($ids))
             ->addAssociation('cover.media')
             ->addAssociation('options.group')
@@ -227,13 +224,9 @@ class ConfiguratorController extends StorefrontController
     }
 
 
-
     /**
-     * ...
-     *
      * @param string $id
      * @param SalesChannelContext $salesChannelContext
-     *
      * @return ?ProductEntity
      */
     private function getProduct(string $id, SalesChannelContext $salesChannelContext): ?ProductEntity
