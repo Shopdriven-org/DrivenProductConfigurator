@@ -117,20 +117,6 @@ class ConfiguratorController extends StorefrontController
         $forehead = $_POST["forehead"] ?? "";
         $sealing = $_POST["sealing"] ?? 0;
 
-        foreach ($cart->getLineItems() as $lineItem) {
-            if (isset($lineItem->getPayload()["customFields"]["driven_product_configurator_racquet_option"])) {
-                if ($lineItem->getPayload()["customFields"]["driven_product_configurator_racquet_option"] === "racquet") {
-                    for ($i = 0 ; $i < count($lineItem->getExtensions()["Equipments"]["items"]); $i++) {
-//                        foreach ($lineItem->getExtensions()["Equipments"]["items"] as $item) {
-                            if ($lineItem->getExtensions()["Equipments"]["items"][$i]->getId() === $backhead) {
-//                                unset($lineItem->getExtensions()["Equipments"]["items"][$i]);
-//                                $lineItem->removeExtension($lineItem->getExtensions()["Equipments"]["items"][$i]);
-                            }
-//                        }
-                    }
-                }
-            }
-        }
         $this->checkProductStock($backhead, $forehead, $sealing, $id, $context);
 
         $this->addFlash(
@@ -219,10 +205,8 @@ class ConfiguratorController extends StorefrontController
             ->search($criteria, $salesChannelContext->getContext())
             ->getElements();
 
-        // return it
         return $products;
     }
-
 
     /**
      * @param string $id

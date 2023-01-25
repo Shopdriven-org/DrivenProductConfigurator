@@ -15,22 +15,22 @@ export default class DrivenProductConfiguratorPlugin extends Plugin {
      //     var valueSelected = this.value;
      //     //  TODO : MAKE AJAX REQUEST
      //
-         $.ajax
-         ({
-             url: 'reservebook.php',
-             data: {"bookID": book_id},
-             type: 'post',
-             success: function(result)
-             {
-                 $('.modal-box').text(result).fadeIn(700, function()
-                 {
-                     setTimeout(function()
-                     {
-                         $('.modal-box').fadeOut();
-                     }, 2000);
-                 });
-             }
-         });
+     //     $.ajax
+     //     ({
+     //         url: 'reservebook.php',
+     //         data: {"bookID": book_id},
+     //         type: 'post',
+     //         success: function(result)
+     //         {
+     //             $('.modal-box').text(result).fadeIn(700, function()
+     //             {
+     //                 setTimeout(function()
+     //                 {
+     //                     $('.modal-box').fadeOut();
+     //                 }, 2000);
+     //             });
+     //         }
+     //     });
      // });
  }
 }

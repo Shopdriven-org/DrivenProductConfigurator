@@ -49,17 +49,7 @@ class CartSavedSubscriber implements EventSubscriberInterface
     {
         return [
             CartSavedEvent::class => 'OnCartSavedEvent',
-            CartChangedEvent::class => 'OnCartChangedEvent'
         ];
-    }
-
-    /**
-     * ...
-     * @param CartChangedEvent $event
-     */
-    public function OnCartChangedEvent(CartChangedEvent $event)
-    {
-        // TODO
     }
 
     /**
@@ -136,12 +126,40 @@ class CartSavedSubscriber implements EventSubscriberInterface
                         $sameSides = true;
                     }
                 }
+                $foreheadEquipments = [];
+                $backheadEquipments = [];
+                $foreheadSelection = "";
+                $backheadSelection = "";
+
+                if (isset($parentProduct) !== null){
+                    $foreheadSelection = $parentProduct->getForehead();
+                }
+                if (isset($parentProduct) !== null){
+                    $backheadSelection = $parentProduct->getBackhead();
+                }
+
+
+                for ($i = 0; $i <= count($equipments)-1; $i++) {
+                    if ($equipments[$i]->getId() == $backheadSelection) {
+                        $foreheadEquipments = $equipments;
+                        unset($foreheadEquipments[$i]);
+                    }
+
+                    if ($equipments[$i]->getId() == $foreheadSelection) {
+                        $backheadEquipments = $equipments;
+                        unset($backheadEquipments[$i]);
+                    }
+                }
 
                 $racquet->addArrayExtension("Equipments",
-                    ["items" => $equipments, "length" => $equipments_length,
+                    ["items" => $equipments,
+                        "back" => ["backheadEquipments" => $backheadEquipments, "length" => count($backheadEquipments)],
+                        "front" => ["foreheadEquipments" => $foreheadEquipments, "length" => count($foreheadEquipments)],
+                        "length" => $equipments_length,
                         "selection" =>
-                            ["parentId" => $racquet->getId(), "foreheadProduct" => $foreheadProduct, "foreheadSelection" => $parentProduct !== null ? $parentProduct->getForehead() : "",
-                                "backheadProduct" => $backheadProduct, "backheadSelection" => isset($parentProduct) ? $parentProduct->getBackhead() : "",
+                            ["parentId" => $racquet->getId(),
+                                "foreheadProduct" => $foreheadProduct, "foreheadSelection" => $foreheadSelection,
+                                "backheadProduct" => $backheadProduct, "backheadSelection" => $backheadSelection,
                                 "sealing" => $sealing, "sealingSelection" => isset($parentProduct) ? $parentProduct->getSealing() : ""
                             ],
                         "sameSides" => $sameSides

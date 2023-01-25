@@ -1,7 +1,6 @@
 {% block driven_set_configurator %}
     {% set Equipments = lineItem.extensions["Equipments"] %}
     <div class="container">
-
     {% if lineItem.type === "dvsn-set-configurator" || lineItem.payload.customFields["driven_product_configurator_racquet_option"] === "racquet" %}
     {% if Equipments.selection.foreheadSelection == "" and Equipments.selection.backheadSelection == "" %}
         <div class="mb-3 mt-3">
@@ -28,33 +27,53 @@
                 {{ sw_csrf('frontend.driven.product-configurator.save-selection') }}
                 <input type="hidden" id="driven-parent-id" name="driven-product-configurator--parent-id"
                        value="{{ lineItem.id }}"/>
-                <select name="forehead" class="custom-select custom-select-lg mb-1" onChange=selectChange(this.value)>
+                <select name="forehead" class="driven-equipments custom-select custom-select-lg mb-1"
+                        onChange=selectChange(this)>
                     <option value=""
                             disabled {% if Equipments.selection.foreheadSelection is defined %} selected {% endif %}>
                         Vorhand:
                     </option>
-                    {% for i in 0..Equipments.length-1 %}
-                        {% set color = Equipments.items[i].payload["options"][0].option %}
-                        {% set size =  Equipments.items[i].payload["options"][1].option %}
-                        <option {% if Equipments.selection.foreheadSelection == Equipments.items[i].id %} {% if Equipments.selection.foreheadProduct.availableStock > 1 %} selected {% endif %} {% endif %}
-                                class="driven_racquet_variant_forehead"
-                                value="{{ Equipments.items[i].id }}">{{ Equipments.items[i].label }} | {{ color }}, {{ size }}</option>
+                    {% for i in 0..Equipments.front.length %}
+                        {% set color = Equipments.front.foreheadEquipments[i].payload["options"][0].option %}
+                        {% set size =  Equipments.front.foreheadEquipments[i].payload["options"][1].option %}
+                        {% if  Equipments.front.foreheadEquipments[i].id != null %}
+                            <option {% if Equipments.selection.foreheadSelection == Equipments.front.foreheadEquipments[i].id %}
+                                        {% if Equipments.selection.foreheadProduct.availableStock > 1 %}
+                                            selected
+                                        {% endif %}
+                                    {% endif %}
+                                    class="driven_racquet_variant_forehead"
+                                    value="{{ Equipments.front.foreheadEquipments[i].id }}">{{ Equipments.front.foreheadEquipments[i].label }} | {{ color }}, {{ size }}</option>
+                        {% else %}
+                            <option value="" class="d-none"></option>
+                        {% endif %}
                     {% endfor %}
                 </select>
-                <select name="backhead" class="custom-select custom-select-lg mb-1" onChange=selectChange(this.value)>
+                <select name="backhead" class="driven-equipments custom-select custom-select-lg mb-1"
+                        onChange=selectChange(this.value)
+                >
                     <option value=""
                             disabled {% if Equipments.selection.backheadSelection is defined %} selected {% endif %}>
                         Rückhand:
                     </option>
-                    {% for i in 0..Equipments.length-1 %}
-                        {% set color = Equipments.items[i].payload["options"][0].option %}
-                        {% set size =  Equipments.items[i].payload["options"][1].option %}
-                        <option {% if Equipments.selection.backheadSelection == Equipments.items[i].id %} {% if Equipments.selection.backheadProduct.availableStock > 1 %} selected {% endif %} {% endif %}
-                                class="driven_racquet_variant_backhead"
-                                value="{{ Equipments.items[i].id }}">{{ Equipments.items[i].label }} | {{ color }}, {{ size }}</option>
+                    {% for i in 0..Equipments.back.length %}
+                        {% set color = Equipments.back.backheadEquipments[i].payload["options"][0].option %}
+                        {% set size =  Equipments.back.backheadEquipments[i].payload["options"][1].option %}
+                        {% if  Equipments.back.backheadEquipments[i].id != null %}
+                            <option {% if Equipments.selection.backheadSelection == Equipments.back.backheadEquipments[i].id %}
+                                        {% if Equipments.selection.backheadProduct.availableStock > 1 %}
+                                            selected
+                                        {% endif %}
+                                    {% endif %}
+                                    class="driven_racquet_variant_backhead"
+                                    value="{{ Equipments.items[i].id }}">{{ Equipments.items[i].label }} | {{ color }}, {{ size }}</option>
+                        {% else %}
+                            <option value="" class="d-none"></option>
+                        {% endif %}
                     {% endfor %}
                 </select>
-                <select name="sealing" class="custom-select custom-select-lg mb-1" onChange=selectChange(this.value)>
+                <select name="sealing" class="custom-select custom-select-lg mb-1"
+                        onChange=selectChange(this.value)>
                     <option value=""
                             disabled {% if Equipments.selection.sealingSelection is defined %} selected {% endif %}>
                         Versiegelung:
@@ -71,8 +90,6 @@
     </div>
     <script>
         function selectChange(el) {
-            // console.log(id, el)
-            // console.log($("#driven-parent-id").val())
             $('#driven-checkout-selection').submit();
             $.ajax
             ({
@@ -80,7 +97,6 @@
                 data: {selection: el},
                 type: 'post',
                 success: function (result) {
-                    // console.log(result.data)
                 }
             });
         }
