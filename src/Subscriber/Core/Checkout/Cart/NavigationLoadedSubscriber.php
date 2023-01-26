@@ -80,7 +80,7 @@ class NavigationLoadedSubscriber implements EventSubscriberInterface
                 $sqlResult = $this->connection->executeQuery($sqlQuery)->fetchAll();
                 foreach ($sqlResult as $item) {
                     $product = $this->getProduct($item["product_id"], $event->getSalesChannelContext());
-                    if (in_array(self::TOPPING_CATEGORY, $breadcrumb)) {
+                    if (in_array(self::TOPPING_CATEGORY, $breadcrumb) || in_array("Belaege", $breadcrumb)) {
                         if (!isset($customFields["driven_product_configurator_racquet_option"])) {
                             $customFields["driven_product_configurator_racquet_option"] = "toppings";
                             $this->productRepository->upsert([[
@@ -89,7 +89,7 @@ class NavigationLoadedSubscriber implements EventSubscriberInterface
                             ]], $event->getContext());
                         }
                     }
-                    if (in_array(self::RACQUET_CATEGORY, $breadcrumb)) {
+                    if (in_array(self::RACQUET_CATEGORY, $breadcrumb) || in_array("Hoelzer", $breadcrumb)) {
                         if (!isset($customFields["driven_product_configurator_racquet_option"])) {
                             $customFields["driven_product_configurator_racquet_option"] = "racquet";
                             $this->productRepository->upsert([[
