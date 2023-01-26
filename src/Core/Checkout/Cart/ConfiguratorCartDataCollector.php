@@ -83,7 +83,6 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
                 if ($lineItem->getPayload()["customFields"]["driven_product_configurator_racquet_option"] === "racquet") {
                     $configurator = $this->selectionService->getParentProduct($lineItem->getId(), $salesChannelContext);
                     if ($configurator !== null) {
-//                        dd($configurator);
                         $backheadProduct = $this->selectionService->getProduct($configurator->getBackhead(), $salesChannelContext);
                         $foreheadProduct = $this->selectionService->getProduct($configurator->getForehead(), $salesChannelContext);
 
