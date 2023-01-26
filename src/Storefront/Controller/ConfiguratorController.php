@@ -10,35 +10,21 @@
 
 namespace Driven\ProductConfigurator\Storefront\Controller;
 
-use Dompdf\Exception;
 use Driven\ProductConfigurator\DrivenProductConfigurator;
 use Driven\ProductConfigurator\Service\Cart\LineItemFactoryService;
 use Driven\ProductConfigurator\Service\SelectionServiceInterface;
-use Ramsey\Uuid\Type\Hexadecimal;
 use Shopware\Core\Checkout\Cart\Cart;
 use Shopware\Core\Checkout\Cart\Cart as CoreCart;
 use Shopware\Core\Checkout\Cart\CartBehavior;
-use Shopware\Core\Checkout\Cart\CartException;
-use Shopware\Core\Checkout\Cart\CartPersisterInterface;
 use Shopware\Core\Checkout\Cart\CartRuleLoader;
-use Shopware\Core\Checkout\Cart\Event\AfterLineItemAddedEvent;
-use Shopware\Core\Checkout\Cart\Event\BeforeLineItemAddedEvent;
-use Shopware\Core\Checkout\Cart\Event\CartChangedEvent;
 use Shopware\Core\Checkout\Cart\Event\CartSavedEvent;
-use Shopware\Core\Checkout\Cart\Exception\LineItemNotFoundException;
-use Shopware\Core\Checkout\Cart\LineItem\LineItem;
-use Shopware\Core\Checkout\Cart\LineItemFactoryRegistry;
-use Shopware\Core\Checkout\Cart\SalesChannel\CartService;
 use Shopware\Core\Content\Product\ProductEntity;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
-use Shopware\Core\Framework\Feature;
 use Shopware\Core\Framework\Validation\DataBag\RequestDataBag;
-use Shopware\Core\Profiling\Profiler;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
-use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Shopware\Storefront\Controller\StorefrontController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -186,26 +172,6 @@ class ConfiguratorController extends StorefrontController
                 }
             }
         }
-    }
-
-    /**
-     * @param array $ids
-     * @param SalesChannelContext $salesChannelContext
-     * @return ProductEntity[]
-     */
-    private function getProducts(array $ids, SalesChannelContext $salesChannelContext): array
-    {
-        $criteria = (new Criteria($ids))
-            ->addAssociation('cover.media')
-            ->addAssociation('options.group')
-            ->addAssociation('customFields');
-
-        /** @var ProductEntity[] $products */
-        $products = $this->productRepository
-            ->search($criteria, $salesChannelContext->getContext())
-            ->getElements();
-
-        return $products;
     }
 
     /**

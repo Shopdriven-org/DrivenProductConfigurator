@@ -12,7 +12,6 @@ namespace Driven\ProductConfigurator\Service\Cart;
 
 use Shopware\Core\Checkout\Cart\LineItem\LineItem;
 use Shopware\Core\Content\Product\ProductEntity;
-use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 
 interface LineItemFactoryServiceInterface

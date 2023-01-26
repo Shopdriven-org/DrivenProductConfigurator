@@ -62,48 +62,9 @@ class BeforeLineItemQuantityChangedSubscriber implements EventSubscriberInterfac
      */
     public function OnBeforeLineItemQuantityChangedEvent(AfterLineItemQuantityChangedEvent $event)
     {
-//        $parentProduct = $event->getItems()[0]["id"];
-////        dd($parentProduct);
-//        $configurator = $this->selectionService->getParentProduct($parentProduct, $event->getSalesChannelContext());
-//        if ($configurator !== null) {
-//            $backheadProduct = $this->selectionService->getProduct($configurator->getBackhead(), $event->getSalesChannelContext());
-//            $foreheadProduct = $this->selectionService->getProduct($configurator->getForehead(), $event->getSalesChannelContext());
-//
-//            $this->checkProductStock($foreheadProduct, $backheadProduct, $parentProduct, $event);
-//        }
+    // TODO:
 
 
-    }
-
-
-    /**
-     * @param ProductEntity $foreheadProduct
-     * @param ProductEntity $backheadProduct
-     * @param string $parentProduct
-     * @param $event
-     * @return void
-     */
-    private function checkProductStock(ProductEntity $foreheadProduct, ProductEntity $backheadProduct, string $parentProduct, $event)
-    {
-        // TODO:
-        foreach ($event->getCart()->getLineItems() as $lineItem) {
-            if ($parentProduct === $lineItem->getId()) {
-                $configuratorQuantity = $lineItem->getQuantity();
-//                    dd($foreheadProduct->getAvailableStock());
-                if ($foreheadProduct->getAvailableStock() > $configuratorQuantity) {
-                    $lineItem->setQuantity($lineItem->getQuantity() + $configuratorQuantity);
-//                    dd($lineItem->getQuantity());
-                } else {
-                    $lineItem->setQuantity($foreheadProduct->getAvailableStock());
-                }
-//                dd($backheadProduct->getAvailableStock());
-                if ($backheadProduct->getAvailableStock() > $configuratorQuantity) {
-                    $lineItem->setQuantity($lineItem->getQuantity() + $configuratorQuantity);
-                } else {
-                    $lineItem->setQuantity($foreheadProduct->getAvailableStock());
-                }
-            }
-        }
     }
 
 

@@ -10,22 +10,13 @@
 
 namespace Driven\ProductConfigurator\Service\Cart;
 
-use Driven\ProductConfigurator\Service\VariantTextServiceInterface;
 use Shopware\Core\Checkout\Cart\LineItem\LineItem;
-use Shopware\Core\Checkout\Cart\LineItem\LineItemCollection;
-use Shopware\Core\Checkout\Cart\LineItem\QuantityInformation;
 use Shopware\Core\Checkout\Cart\Price\Struct\CalculatedPrice;
-use Shopware\Core\Checkout\Cart\Price\Struct\PriceDefinitionCollection;
-use Shopware\Core\Checkout\Cart\Price\Struct\QuantityPriceDefinition;
 use Shopware\Core\Checkout\Cart\Tax\Struct\CalculatedTaxCollection;
 use Shopware\Core\Checkout\Cart\Tax\Struct\TaxRuleCollection;
-use Shopware\Core\Content\Product\Aggregate\ProductMedia\ProductMediaEntity;
 use Shopware\Core\Content\Product\ProductEntity;
 use Shopware\Core\Content\Property\Aggregate\PropertyGroupOption\PropertyGroupOptionEntity;
-use Shopware\Core\Framework\DataAbstractionLayer\Pricing\PriceCollection;
-use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
-use Shopware\Core\System\SystemConfig\SystemConfigService;
 
 class LineItemFactoryService implements LineItemFactoryServiceInterface
 {
@@ -39,7 +30,6 @@ class LineItemFactoryService implements LineItemFactoryServiceInterface
      */
     public function createProduct(ProductEntity $product, int $quantity, bool $parent, SalesChannelContext $salesChannelContext): LineItem
     {
-//        dd($quantity);
         if ($quantity === 0){
             $quantity = 1;
         }

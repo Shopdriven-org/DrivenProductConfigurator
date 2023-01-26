@@ -10,34 +10,11 @@
 
 namespace Driven\ProductConfigurator\Subscriber\Core\Checkout\Cart;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Exception;
-use Driven\ProductConfigurator\DrivenProductConfigurator;
-use Driven\ProductConfigurator\Service\Cart\LineItemFactoryService;
-use Driven\ProductConfigurator\Service\SelectionService;
-use Dvsn\SetConfigurator\Service\Cart\LineItemFactoryServiceInterface;
-use Shopware\Core\Checkout\Cart\Event\AfterLineItemRemovedEvent;
 use Shopware\Core\Checkout\Cart\Event\BeforeLineItemRemovedEvent;
-use Shopware\Core\Checkout\Cart\Event\CartChangedEvent;
-use Shopware\Core\Checkout\Cart\Event\CartSavedEvent;
-use Shopware\Core\Checkout\Cart\Event\CheckoutOrderPlacedCriteriaEvent;
-use Shopware\Core\Checkout\Cart\LineItem\LineItem;
-use Shopware\Core\Content\Category\Event\CategoryIndexerEvent;
-use Shopware\Core\Content\Category\Event\NavigationLoadedEvent;
-use Shopware\Core\Content\Cms\Events\CmsPageLoaderCriteriaEvent;
-use Shopware\Core\Content\Product\ProductEntity;
-use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
-use Shopware\Core\Framework\Struct\ArrayStruct;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
-use Shopware\Storefront\Page\LandingPage\LandingPageLoadedEvent;
-use Shopware\Storefront\Page\Navigation\NavigationPageLoader;
-use Shopware\Storefront\Page\PageLoadedEvent;
-use Shopware\Storefront\Pagelet\Footer\FooterPageletLoadedEvent;
-use Shopware\Storefront\Pagelet\Header\HeaderPageletLoadedEvent;
-use Shopware\Storefront\Pagelet\PageletLoadedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class BeforeLineItemRemovedSubscriber implements EventSubscriberInterface
@@ -52,7 +29,6 @@ class BeforeLineItemRemovedSubscriber implements EventSubscriberInterface
 
     /**
      * {@inheritDoc}
-     *
      */
     public static function getSubscribedEvents(): array
     {
@@ -62,7 +38,6 @@ class BeforeLineItemRemovedSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * ...
      * @param BeforeLineItemRemovedEvent $event
      */
     public function OnBeforeLineItemRemovedEvent(BeforeLineItemRemovedEvent $event)
@@ -81,7 +56,6 @@ class BeforeLineItemRemovedSubscriber implements EventSubscriberInterface
             ], $event->getContext());
 
             $this->checkProductStock($foreheadProductId, $backheadProductId, $event);
-
         }
     }
 
@@ -110,12 +84,12 @@ class BeforeLineItemRemovedSubscriber implements EventSubscriberInterface
         foreach ($event->getCart()->getLineItems() as $lineItem) {
             if ($lineItem->getId() == $foreheadProductId) {
                 if ($lineItem->getQuantity() > 1) {
-                    $lineItem->setQuantity($lineItem->getQuantity() - 1);
+                    $lineItem->setQuantity(1);
                 }
             }
             if ($lineItem->getId() == $backheadProductId) {
                 if ($lineItem->getQuantity() > 1) {
-                    $lineItem->setQuantity($lineItem->getQuantity() - 1);
+                    $lineItem->setQuantity(1);
                 }
             }
         }

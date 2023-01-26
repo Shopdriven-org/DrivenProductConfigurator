@@ -10,18 +10,14 @@
 
 namespace Driven\ProductConfigurator\Subscriber\Core\Checkout\Cart;
 
-use Driven\ProductConfigurator\DrivenProductConfigurator;
 use Driven\ProductConfigurator\Service\Cart\LineItemFactoryService;
 use Dvsn\SetConfigurator\Service\Cart\LineItemFactoryServiceInterface;
-use Shopware\Core\Checkout\Cart\Event\CartChangedEvent;
 use Shopware\Core\Checkout\Cart\Event\CartSavedEvent;
-use Shopware\Core\Checkout\Cart\Event\CheckoutOrderPlacedCriteriaEvent;
 use Shopware\Core\Checkout\Cart\LineItem\LineItem;
-use Shopware\Core\Content\Product\ProductEntity;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
-use Shopware\Core\Framework\Struct\ArrayStruct;
+use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -31,6 +27,7 @@ class CartSavedSubscriber implements EventSubscriberInterface
     private EntityRepositoryInterface $drivenConfiguratorRepository;
     private EntityRepositoryInterface $productRepository;
     private lineItemFactoryService $lineItemFactoryService;
+    public const KEIN_BELAG = 'DC1B7FFCB8D64DD2AE574A21F34F6FC5';
 
     public function __construct(EntityRepositoryInterface $drivenConfiguratorRepository,
                                 EntityRepositoryInterface $productRepository,
@@ -67,6 +64,11 @@ class CartSavedSubscriber implements EventSubscriberInterface
         $foreheadProduct = "";
         $backheadProduct = "";
         $sealing = "";
+        // TODO
+//        $no_choice = [
+//            "id" => Uuid::fromStringToHex(self::KEIN_BELAG),
+//            "label" => "kein Belag"
+//        ];
 
         foreach ($event->getCart()->getLineItems() as $lineItem) {
             if ($lineItem->getType() == LineItemFactoryServiceInterface::CONFIGURATOR_LINE_ITEM_TYPE) {
@@ -131,15 +133,15 @@ class CartSavedSubscriber implements EventSubscriberInterface
                 $foreheadSelection = "";
                 $backheadSelection = "";
 
-                if (isset($parentProduct)){
+                if (isset($parentProduct)) {
                     $foreheadSelection = $parentProduct->getForehead();
                 }
-                if (isset($parentProduct)){
+                if (isset($parentProduct)) {
                     $backheadSelection = $parentProduct->getBackhead();
                 }
 
 
-                for ($i = 0; $i <= count($equipments)-1; $i++) {
+                for ($i = 0; $i <= count($equipments) - 1; $i++) {
                     if ($foreheadEquipments[$i]->getId() == $backheadSelection) {
                         unset($foreheadEquipments[$i]);
                     }
@@ -148,6 +150,9 @@ class CartSavedSubscriber implements EventSubscriberInterface
                         unset($backheadEquipments[$i]);
                     }
                 }
+                // TODO:
+//                array_push($backheadEquipments, $no_choice);
+//                array_push($foreheadEquipments, $no_choice);
 
                 $racquet->addArrayExtension("Equipments",
                     ["items" => $equipments,
