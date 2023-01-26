@@ -23,8 +23,6 @@
                                     {% if feature('v6.5.0.0') %}
                                         {% sw_include '@Storefront/storefront/component/line-item/line-item.html.twig' %}
                                     {% else %}
-                                        {# TODO based on product type add configurator with valid backhead and fronthead options with valid flash messages #}
-{#                                        {{ dump(lineItem) }}#}
                                         {% sw_include '@Storefront/storefront/page/checkout/checkout-item.html.twig' %}
                                     {% endif %}
                                 {% endblock %}

@@ -38,9 +38,9 @@
                         {% set size =  Equipments.front.foreheadEquipments[i].payload["options"][1].option %}
                         {% if  Equipments.front.foreheadEquipments[i].id != null %}
                             <option {% if Equipments.selection.foreheadSelection == Equipments.front.foreheadEquipments[i].id %}
-                                        {% if Equipments.selection.foreheadProduct.availableStock > 1 %}
+{#                                        {% if Equipments.selection.foreheadProduct.availableStock > 1 %}#}
                                             selected
-                                        {% endif %}
+{#                                        {% endif %}#}
                                     {% endif %}
                                     class="driven_racquet_variant_forehead"
                                     value="{{ Equipments.front.foreheadEquipments[i].id }}">{{ Equipments.front.foreheadEquipments[i].label }} | {{ color }}, {{ size }}</option>
@@ -61,9 +61,9 @@
                         {% set size =  Equipments.back.backheadEquipments[i].payload["options"][1].option %}
                         {% if  Equipments.back.backheadEquipments[i].id != null %}
                             <option {% if Equipments.selection.backheadSelection == Equipments.back.backheadEquipments[i].id %}
-                                        {% if Equipments.selection.backheadProduct.availableStock > 1 %}
+{#                                        {% if Equipments.selection.backheadProduct.availableStock > 1 %}#}
                                             selected
-                                        {% endif %}
+{#                                        {% endif %}#}
                                     {% endif %}
                                     class="driven_racquet_variant_backhead"
                                     value="{{ Equipments.items[i].id }}">{{ Equipments.items[i].label }} | {{ color }}, {{ size }}</option>

@@ -126,27 +126,25 @@ class CartSavedSubscriber implements EventSubscriberInterface
                         $sameSides = true;
                     }
                 }
-                $foreheadEquipments = [];
-                $backheadEquipments = [];
+                $foreheadEquipments = $equipments;
+                $backheadEquipments = $equipments;
                 $foreheadSelection = "";
                 $backheadSelection = "";
 
-                if (isset($parentProduct) !== null){
+                if (isset($parentProduct)){
                     $foreheadSelection = $parentProduct->getForehead();
                 }
-                if (isset($parentProduct) !== null){
+                if (isset($parentProduct)){
                     $backheadSelection = $parentProduct->getBackhead();
                 }
 
 
                 for ($i = 0; $i <= count($equipments)-1; $i++) {
-                    if ($equipments[$i]->getId() == $backheadSelection) {
-                        $foreheadEquipments = $equipments;
+                    if ($foreheadEquipments[$i]->getId() == $backheadSelection) {
                         unset($foreheadEquipments[$i]);
                     }
 
-                    if ($equipments[$i]->getId() == $foreheadSelection) {
-                        $backheadEquipments = $equipments;
+                    if ($backheadEquipments[$i]->getId() == $foreheadSelection) {
                         unset($backheadEquipments[$i]);
                     }
                 }
