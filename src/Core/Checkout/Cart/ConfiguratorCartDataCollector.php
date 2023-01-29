@@ -47,6 +47,7 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
 
     private SelectionService $selectionService;
     private SalesChannelRepositoryInterface $salesChannelProductRepository;
+
     private AbstractProductPriceCalculator $productPriceCalculator;
     private SystemConfigService $systemConfigService;
 
