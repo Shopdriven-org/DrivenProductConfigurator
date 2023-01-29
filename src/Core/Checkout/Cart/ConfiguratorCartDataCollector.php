@@ -44,6 +44,7 @@ use Shopware\Core\System\SystemConfig\SystemConfigService;
 
 class ConfiguratorCartDataCollector implements CartDataCollectorInterface
 {
+
     private SelectionService $selectionService;
     private SalesChannelRepositoryInterface $salesChannelProductRepository;
     private AbstractProductPriceCalculator $productPriceCalculator;
