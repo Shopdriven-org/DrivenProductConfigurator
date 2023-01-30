@@ -101,7 +101,7 @@ class ConfiguratorController extends StorefrontController
 
         $backhead = $_POST["backhead"] ?? "";
         $forehead = $_POST["forehead"] ?? "";
-        $sealing = $_POST["sealing"] ?? 0;
+        $sealing = $_POST["sealing"] ?? "";
 
         $this->checkProductStock($backhead, $forehead, $sealing, $id, $context);
 
@@ -219,9 +219,6 @@ class ConfiguratorController extends StorefrontController
         $cart = $this->cartRuleLoader
             ->loadByCart($context, $cart, $behavior)
             ->getCart();
-
-
-//        $this->cart[$cart->getToken()] = $cart;
 
         $cart->markUnmodified();
         foreach ($cart->getLineItems()->getFlat() as $lineItem) {

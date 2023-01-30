@@ -83,8 +83,14 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
                 if ($lineItem->getPayload()["customFields"]["driven_product_configurator_racquet_option"] === "racquet") {
                     $configurator = $this->selectionService->getParentProduct($lineItem->getId(), $salesChannelContext);
                     if ($configurator !== null) {
-                        $backheadProduct = $this->selectionService->getProduct($configurator->getBackhead(), $salesChannelContext);
-                        $foreheadProduct = $this->selectionService->getProduct($configurator->getForehead(), $salesChannelContext);
+                        $foreheadProduct = "";
+                        $backheadProduct = "";
+                        if ($configurator->getBackhead() != ""){
+                            $backheadProduct = $this->selectionService->getProduct($configurator->getBackhead(), $salesChannelContext);
+                        }
+                        if ($configurator->getForehead() != ""){
+                            $foreheadProduct = $this->selectionService->getProduct($configurator->getForehead(), $salesChannelContext);
+                        }
 
                         $this->checkProductStock($foreheadProduct, $backheadProduct, $lineItem, $lineItems, $salesChannelContext);
                     }
@@ -96,14 +102,14 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
 
 
     /**
-     * @param ?ProductEntity $foreheadProduct
-     * @param ?ProductEntity $backheadProduct
+     * @param $foreheadProduct
+     * @param $backheadProduct
      * @param LineItem $parentProduct
      * @param $lineItems
      * @param SalesChannelContext $salesChannelContext
      * @return void
      */
-    private function checkProductStock(?ProductEntity $foreheadProduct, ?ProductEntity $backheadProduct, LineItem $parentProduct, $lineItems, SalesChannelContext $salesChannelContext)
+    private function checkProductStock($foreheadProduct, $backheadProduct, LineItem $parentProduct, $lineItems, SalesChannelContext $salesChannelContext)
     {
         foreach ($lineItems as $lineItem) {
             if ($foreheadProduct != null) {

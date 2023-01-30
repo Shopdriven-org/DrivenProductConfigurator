@@ -90,14 +90,14 @@ class SelectionService implements SelectionServiceInterface
      * ...
      *
      * @param string $productId
-     * @param ?string $forehead
-     * @param ?string $backhead
-     * @param int $sealing
+     * @param string $forehead
+     * @param string $backhead
+     * @param string $sealing
      * @param SalesChannelContext $salesChannelContext
      *
      * @return EntityWrittenContainerEvent
      */
-    public function saveSelection(string $productId, ?string $forehead, ?string $backhead, int $sealing, SalesChannelContext $salesChannelContext) : EntityWrittenContainerEvent
+    public function saveSelection(string $productId, string $forehead, string $backhead, string $sealing, SalesChannelContext $salesChannelContext) : EntityWrittenContainerEvent
     {
         return $this->drivenConfigurator->create([[
             'id' => Uuid::randomHex(),
@@ -118,12 +118,19 @@ class SelectionService implements SelectionServiceInterface
      * @param string $productId
      * @param ?string $forehead
      * @param ?string $backhead
-     * @param int $sealing
+     * @param ?string $sealing
      * @param SalesChannelContext $salesChannelContext
      * @return EntityWrittenContainerEvent|void
      */
-    public function updateSelection(string $productId, ?string $forehead, ?string $backhead, int $sealing, SalesChannelContext $salesChannelContext)
+    public function updateSelection(string $productId, ?string $forehead, ?string $backhead, ?string $sealing, SalesChannelContext $salesChannelContext)
     {
+        $data = [];
+        if ($forehead != ""){
+            array_push($data, $forehead);
+        }
+        if ($backhead != ""){
+            array_push($data, $backhead);
+        }
         $parentProduct = $this->getParentProduct($productId, $salesChannelContext);
         if ($parentProduct !== null) {
             return $this->drivenConfigurator->update([[

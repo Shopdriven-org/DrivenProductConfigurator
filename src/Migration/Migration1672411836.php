@@ -18,9 +18,9 @@ class Migration1672411836 extends MigrationStep
         $query = '
         CREATE TABLE IF NOT EXISTS `driven_product_configurator` (
             `id` BINARY(16) NOT NULL,
-            `forehead` BINARY(16) NULL DEFAULT NULL,
-            `backhead` BINARY(16) NULL DEFAULT NULL,
-            `sealing` BINARY(16) NULL DEFAULT NULL,
+            `forehead` VARCHAR(255) NULL DEFAULT NULL,
+            `backhead` VARCHAR(255) NULL DEFAULT NULL,
+            `sealing` VARCHAR(255) NULL DEFAULT NULL,
             `customer_id` BINARY(16) NULL DEFAULT NULL,
             `product_id` BINARY(16) NULL DEFAULT NULL,
             `product_version_id` BINARY(16) NULL DEFAULT NULL,

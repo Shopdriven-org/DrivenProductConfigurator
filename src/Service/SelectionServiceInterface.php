@@ -17,8 +17,6 @@ use Shopware\Core\System\SalesChannel\SalesChannelContext;
 interface SelectionServiceInterface
 {
     /**
-     * ...
-     *
      * @param string $id
      * @param ConfiguratorEntity $configurator
      * @param SalesChannelContext $salesChannelContext
@@ -28,29 +26,25 @@ interface SelectionServiceInterface
     public function getSelectionByLineItemId(string $id, ConfiguratorEntity $configurator, SalesChannelContext $salesChannelContext): array;
 
     /**
-     * ...
-     *
      * @param string $productId
-     * @param ?string $forehead
-     * @param ?string $backhead
-     * @param int $sealing
+     * @param string $forehead
+     * @param string $backhead
+     * @param string $sealing
      * @param SalesChannelContext $salesChannelContext
      *
      * @return EntityWrittenContainerEvent
      */
-    public function saveSelection(string $productId, ?string $forehead, ?string $backhead, int $sealing, SalesChannelContext $salesChannelContext): EntityWrittenContainerEvent;
+    public function saveSelection(string $productId, string $forehead, string $backhead, string $sealing, SalesChannelContext $salesChannelContext): EntityWrittenContainerEvent;
 
 
     /**
-     * ...
-     *
      * @param string $productId
      * @param ?string $forehead
      * @param ?string $backhead
-     * @param int $sealing
+     * @param ?string $sealing
      * @param SalesChannelContext $salesChannelContext
      *
      * @return EntityWrittenContainerEvent|void
      */
-    public function updateSelection(string $productId, ?string $forehead, ?string $backhead, int $sealing, SalesChannelContext $salesChannelContext);
+    public function updateSelection(string $productId, ?string $forehead, ?string $backhead, ?string $sealing, SalesChannelContext $salesChannelContext);
 }

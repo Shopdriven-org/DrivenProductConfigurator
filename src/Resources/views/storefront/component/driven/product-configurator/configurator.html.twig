@@ -34,6 +34,9 @@
                             disabled {% if Equipments.selection.foreheadSelection is defined %} selected {% endif %}>
                         Vorhand:
                     </option>
+                    <option value="0">
+                            Keine Beläg
+                    </option>
                     {% for i in 0..Equipments.front.length %}
                         {% set color = Equipments.front.foreheadEquipments[i].payload["options"][0].option %}
                         {% set size =  Equipments.front.foreheadEquipments[i].payload["options"][1].option %}
@@ -56,6 +59,9 @@
                     <option value=""
                             disabled {% if Equipments.selection.backheadSelection is defined %} selected {% endif %}>
                         Rückhand:
+                    </option>
+                    <option value="0">
+                        Keine Beläg
                     </option>
                     {% for i in 0..Equipments.back.length %}
                         {% set color = Equipments.back.backheadEquipments[i].payload["options"][0].option %}

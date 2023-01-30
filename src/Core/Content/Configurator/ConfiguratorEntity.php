@@ -21,9 +21,9 @@ class ConfiguratorEntity extends Entity
 
     use EntityIdTrait;
 
-    protected string $forehead;
-    protected string $backhead;
-    protected int $sealing;
+    protected ?string $forehead;
+    protected ?string $backhead;
+    protected ?string $sealing;
     protected string $customerId;
     protected CustomerEntity $customer;
     protected string $salesChannelId;
@@ -35,9 +35,9 @@ class ConfiguratorEntity extends Entity
     /**
      * Getter method for the property.
      *
-     * @return string
+     * @return ?string
      */
-    public function getForehead(): string
+    public function getForehead(): ?string
     {
         return $this->forehead;
     }
@@ -45,11 +45,11 @@ class ConfiguratorEntity extends Entity
     /**
      * Setter method for the property.
      *
-     * @param string $forehead
+     * @param ?string $forehead
      *
      * @return void
      */
-    public function setForehead(string $forehead): void
+    public function setForehead(?string $forehead): void
     {
         $this->forehead = $forehead;
     }
@@ -57,9 +57,9 @@ class ConfiguratorEntity extends Entity
     /**
      * Getter method for the property.
      *
-     * @return string
+     * @return ?string
      */
-    public function getBackhead(): string
+    public function getBackhead(): ?string
     {
         return $this->backhead;
     }
@@ -79,9 +79,9 @@ class ConfiguratorEntity extends Entity
     /**
      * Getter method for the property.
      *
-     * @return int
+     * @return ?string
      */
-    public function getSealing(): int
+    public function getSealing(): ?string
     {
         return $this->sealing;
     }
@@ -89,11 +89,11 @@ class ConfiguratorEntity extends Entity
     /**
      * Setter method for the property.
      *
-     * @param int $sealing
+     * @param string $sealing
      *
      * @return void
      */
-    public function setSealing(int $sealing): void
+    public function setSealing(string $sealing): void
     {
         $this->sealing = $sealing;
     }
