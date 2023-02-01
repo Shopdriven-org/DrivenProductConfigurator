@@ -43,7 +43,7 @@ class LineItemFactoryService implements LineItemFactoryServiceInterface
         $calculatedTaxes = new CalculatedTaxCollection();
         $taxRules = new TaxRuleCollection();
         $newPrice = new CalculatedPrice(
-            $quantity * 5,
+            5,
             $quantity * 5,
             $calculatedTaxes,
             $taxRules,

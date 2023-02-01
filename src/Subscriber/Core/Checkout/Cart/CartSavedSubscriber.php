@@ -23,12 +23,10 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class CartSavedSubscriber implements EventSubscriberInterface
 {
-
     private EntityRepositoryInterface $drivenConfiguratorRepository;
     private EntityRepositoryInterface $productRepository;
     private lineItemFactoryService $lineItemFactoryService;
     public const KEIN_BELAG = 'DC1B7FFCB8D64DD2AE574A21F34F6FC5';
-
     public function __construct(EntityRepositoryInterface $drivenConfiguratorRepository,
                                 EntityRepositoryInterface $productRepository,
                                 lineItemFactoryService    $lineItemFactoryService)
@@ -37,10 +35,8 @@ class CartSavedSubscriber implements EventSubscriberInterface
         $this->productRepository = $productRepository;
         $this->lineItemFactoryService = $lineItemFactoryService;
     }
-
     /**
      * {@inheritDoc}
-     *
      */
     public static function getSubscribedEvents(): array
     {
@@ -50,7 +46,6 @@ class CartSavedSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * ...
      * @param CartSavedEvent $event
      */
     public function OnCartSavedEvent(CartSavedEvent $event): void
@@ -101,7 +96,6 @@ class CartSavedSubscriber implements EventSubscriberInterface
                     $backheadProduct = $this->getChildrenProduct($parentProduct->getBackhead(), $event->getSalesChannelContext());
                     $sealing = $parentProduct->getSealing();
                 }
-
                 if ($sealing != "") {
                     $event->getCart()->getLineItems()->add(
                         $this->lineItemFactoryService->createSealingLineItem(
@@ -117,7 +111,6 @@ class CartSavedSubscriber implements EventSubscriberInterface
                 }
                 $sameSides = false;
                 if ($foreheadProduct != null && $backheadProduct != null) {
-
                     if ($foreheadProduct->variation[0]["option"] == $backheadProduct->variation[0]["option"]) {
                         $sameSides = true;
                     }
@@ -144,7 +137,6 @@ class CartSavedSubscriber implements EventSubscriberInterface
                     if ($foreheadEquipments[$i]->getId() == $backheadSelection) {
                         unset($foreheadEquipments[$i]);
                     }
-
                     if ($backheadEquipments[$i]->getId() == $foreheadSelection) {
                         unset($backheadEquipments[$i]);
                     }
