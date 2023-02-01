@@ -13,6 +13,7 @@ namespace Driven\ProductConfigurator\Storefront\Controller;
 use Driven\ProductConfigurator\DrivenProductConfigurator;
 use Driven\ProductConfigurator\Service\Cart\LineItemFactoryService;
 use Driven\ProductConfigurator\Service\SelectionServiceInterface;
+use Exception;
 use Shopware\Core\Checkout\Cart\Cart;
 use Shopware\Core\Checkout\Cart\Cart as CoreCart;
 use Shopware\Core\Checkout\Cart\CartBehavior;
@@ -86,11 +87,11 @@ class ConfiguratorController extends StorefrontController
      * @param Context $context
      * @param SalesChannelContext $salesChannelContext
      * @return Response
-     * @throws \Exception
+     * @throws Exception
      */
     public function index(Request $request, RequestDataBag $data, Context $context, SalesChannelContext $salesChannelContext): Response
     {
-        throw new \Exception('not implemented yet');
+        throw new Exception('not implemented yet');
     }
 
     /**
@@ -101,7 +102,7 @@ class ConfiguratorController extends StorefrontController
 
         $backhead = $_POST["backhead"] ?? "";
         $forehead = $_POST["forehead"] ?? "";
-        $sealing = $_POST["sealing"] ?? "";
+        $sealing = $_POST["sealing"] ?? 0;
 
         $this->checkProductStock($backhead, $forehead, $sealing, $id, $context);
 
@@ -115,7 +116,7 @@ class ConfiguratorController extends StorefrontController
                 $cart->getLineItems()->add($sealingLineItem);
                 $this->eventDispatcher->dispatch(new CartSavedEvent($context, $cart));
 
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 dd($exception);
             }
         }
