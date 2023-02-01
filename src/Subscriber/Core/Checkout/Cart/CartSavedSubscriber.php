@@ -64,11 +64,11 @@ class CartSavedSubscriber implements EventSubscriberInterface
         $foreheadProduct = "";
         $backheadProduct = "";
         $sealing = "";
-        // TODO
-//        $no_choice = [
-//            "id" => Uuid::fromStringToHex(self::KEIN_BELAG),
-//            "label" => "kein Belag"
-//        ];
+
+        $no_choice = [
+            "id" => Uuid::fromStringToHex(self::KEIN_BELAG),
+            "label" => "kein Belag"
+        ];
 
         foreach ($event->getCart()->getLineItems() as $lineItem) {
             if ($lineItem->getType() == LineItemFactoryServiceInterface::CONFIGURATOR_LINE_ITEM_TYPE) {
@@ -150,9 +150,9 @@ class CartSavedSubscriber implements EventSubscriberInterface
                         unset($backheadEquipments[$i]);
                     }
                 }
-                // TODO:
-//                array_push($backheadEquipments, $no_choice);
-//                array_push($foreheadEquipments, $no_choice);
+
+                array_unshift($backheadEquipments, $no_choice);
+                array_unshift($foreheadEquipments, $no_choice);
 
                 $racquet->addArrayExtension("Equipments",
                     ["items" => $equipments,

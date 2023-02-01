@@ -18,6 +18,7 @@ use Driven\ProductConfigurator\Core\Checkout\Cart\Error\InvalidSelectionError;
 use Driven\ProductConfigurator\Core\Content\Configurator\ConfiguratorEntity;
 use Driven\ProductConfigurator\Service\Cart\LineItemFactoryServiceInterface;
 use Driven\ProductConfigurator\Service\SelectionService;
+use Ramsey\Uuid\Exception\UnableToBuildUuidException;
 use Shopware\Core\Checkout\Cart\Cart;
 use Shopware\Core\Checkout\Cart\CartBehavior;
 use Shopware\Core\Checkout\Cart\CartDataCollectorInterface;

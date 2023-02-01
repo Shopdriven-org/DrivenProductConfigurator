@@ -34,20 +34,17 @@
                             disabled {% if Equipments.selection.foreheadSelection is defined %} selected {% endif %}>
                         Vorhand:
                     </option>
-                    <option value="0">
-                            Keine Beläg
-                    </option>
                     {% for i in 0..Equipments.front.length %}
                         {% set color = Equipments.front.foreheadEquipments[i].payload["options"][0].option %}
                         {% set size =  Equipments.front.foreheadEquipments[i].payload["options"][1].option %}
                         {% if  Equipments.front.foreheadEquipments[i].id != null %}
                             <option {% if Equipments.selection.foreheadSelection == Equipments.front.foreheadEquipments[i].id %}
-                                        {% if Equipments.selection.foreheadProduct.availableStock > 1 %}
+{#                                        {% if Equipments.selection.foreheadProduct.availableStock > 1 %}#}
                                             selected
-                                        {% endif %}
+{#                                        {% endif %}#}
                                     {% endif %}
                                     class="driven_racquet_variant_forehead"
-                                    value="{{ Equipments.front.foreheadEquipments[i].id }}">{{ Equipments.front.foreheadEquipments[i].label }} | {{ color }}, {{ size }}</option>
+                                    value="{{ Equipments.front.foreheadEquipments[i].id }}">{{ Equipments.front.foreheadEquipments[i].label }} {{ color }} {{ size }}</option>
                         {% else %}
                             <option value="" class="d-none"></option>
                         {% endif %}
@@ -60,20 +57,17 @@
                             disabled {% if Equipments.selection.backheadSelection is defined %} selected {% endif %}>
                         Rückhand:
                     </option>
-                    <option value="0">
-                        Keine Beläg
-                    </option>
                     {% for i in 0..Equipments.back.length %}
                         {% set color = Equipments.back.backheadEquipments[i].payload["options"][0].option %}
                         {% set size =  Equipments.back.backheadEquipments[i].payload["options"][1].option %}
                         {% if  Equipments.back.backheadEquipments[i].id != null %}
                             <option {% if Equipments.selection.backheadSelection == Equipments.back.backheadEquipments[i].id %}
-                                        {% if Equipments.selection.backheadProduct.availableStock > 1 %}
+{#                                        {% if Equipments.selection.backheadProduct.availableStock > 1 %}#}
                                             selected
-                                        {% endif %}
+{#                                        {% endif %}#}
                                     {% endif %}
                                     class="driven_racquet_variant_backhead"
-                                    value="{{ Equipments.items[i].id }}">{{ Equipments.items[i].label }} | {{ color }}, {{ size }}</option>
+                                    value="{{ Equipments.back.backheadEquipments[i].id }}">{{ Equipments.back.backheadEquipments[i].label }} {{ color }} {{ size }}</option>
                         {% else %}
                             <option value="" class="d-none"></option>
                         {% endif %}
