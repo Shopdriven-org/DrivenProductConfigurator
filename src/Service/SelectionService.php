@@ -33,18 +33,15 @@ class SelectionService implements SelectionServiceInterface
 {
     private EntityRepositoryInterface $drivenConfigurator;
     private EntityRepositoryInterface $productRepository;
-    private SalesChannelRepositoryInterface $salesChannelProductRepository;
     private CartService $cartService;
 
     public function __construct(
         EntityRepositoryInterface $drivenConfigurator,
         EntityRepositoryInterface $productRepository,
-        SalesChannelRepositoryInterface $salesChannelProductRepository,
         CartService $cartService
     ) {
         $this->drivenConfigurator = $drivenConfigurator;
         $this->productRepository = $productRepository;
-        $this->salesChannelProductRepository = $salesChannelProductRepository;
         $this->cartService = $cartService;
     }
 
@@ -87,8 +84,6 @@ class SelectionService implements SelectionServiceInterface
 
 
     /**
-     * ...
-     *
      * @param string $productId
      * @param string $forehead
      * @param string $backhead
@@ -113,8 +108,6 @@ class SelectionService implements SelectionServiceInterface
 
 
     /**
-     * ...
-     *
      * @param string $productId
      * @param ?string $forehead
      * @param ?string $backhead
@@ -124,13 +117,6 @@ class SelectionService implements SelectionServiceInterface
      */
     public function updateSelection(string $productId, ?string $forehead, ?string $backhead, ?int $sealing, SalesChannelContext $salesChannelContext)
     {
-        $data = [];
-        if ($forehead != ""){
-            array_push($data, $forehead);
-        }
-        if ($backhead != ""){
-            array_push($data, $backhead);
-        }
         $parentProduct = $this->getParentProduct($productId, $salesChannelContext);
         if ($parentProduct !== null) {
             return $this->drivenConfigurator->update([[
@@ -146,8 +132,6 @@ class SelectionService implements SelectionServiceInterface
     }
 
     /**
-     * ...
-     *
      * @param array $ids
      * @param SalesChannelContext $salesChannelContext
      *
@@ -178,11 +162,8 @@ class SelectionService implements SelectionServiceInterface
     }
 
     /**
-     * ...
-     *
      * @param string $id
      * @param SalesChannelContext $salesChannelContext
-     *
      * @return ?ProductEntity
      */
     public function getProduct(string $id, SalesChannelContext $salesChannelContext): ?ProductEntity

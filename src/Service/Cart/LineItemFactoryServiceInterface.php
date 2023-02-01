@@ -26,11 +26,11 @@ interface LineItemFactoryServiceInterface
      * ...
      *
      * @param ProductEntity $product
-     * @param int $quantity
+     * @param $quantity
      * @param bool $parent
      * @param SalesChannelContext $salesChannelContext
      *
      * @return LineItem
      */
-    public function createProduct(ProductEntity $product, int $quantity, bool $parent, SalesChannelContext $salesChannelContext): LineItem;
+    public function createSealingLineItem(ProductEntity $product, $quantity, bool $parent, SalesChannelContext $salesChannelContext): LineItem;
 }

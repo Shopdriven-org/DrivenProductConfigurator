@@ -63,7 +63,7 @@ class BeforeLineItemQuantityChangedSubscriber implements EventSubscriberInterfac
     public function OnBeforeLineItemQuantityChangedEvent(AfterLineItemQuantityChangedEvent $event)
     {
     // TODO:
-
+//    dd($event->getItems());
 
     }
 

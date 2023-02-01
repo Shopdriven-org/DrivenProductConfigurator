@@ -49,7 +49,7 @@ class CartService implements CartServiceInterface
 
         // add the parent product as first child
 //        $lineItem->addChild(
-            $this->lineItemFactoryService->createProduct(
+            $this->lineItemFactoryService->createSealingLineItem(
                 $productId,
                 $quantity,
                 true,

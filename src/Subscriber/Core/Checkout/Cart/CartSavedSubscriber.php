@@ -60,6 +60,7 @@ class CartSavedSubscriber implements EventSubscriberInterface
         $configurators = [];
         $equipments_length = 0;
         $racquets_length = 0;
+        // TODO $configurators_lenght
         $configurators_lenght = 0;
         $foreheadProduct = "";
         $backheadProduct = "";
@@ -69,7 +70,6 @@ class CartSavedSubscriber implements EventSubscriberInterface
             "id" => Uuid::fromStringToHex(self::KEIN_BELAG),
             "label" => "kein Belag"
         ];
-
         foreach ($event->getCart()->getLineItems() as $lineItem) {
             if ($lineItem->getType() == LineItemFactoryServiceInterface::CONFIGURATOR_LINE_ITEM_TYPE) {
                 array_push($configurators, $lineItem);
@@ -89,12 +89,11 @@ class CartSavedSubscriber implements EventSubscriberInterface
                 }
             }
         }
-        $count = 0;
         if (count($racquets) !== 0) {
             $event->getCart()->addArrayExtension("racquet_counter", (array)$racquets_length);
             $event->getCart()->addArrayExtension("equipment_counter", (array)$equipments_length);
             foreach ($racquets as $racquet) {
-
+                $sealingQuantity = $racquet->getQuantity();
                 $parentProduct = $this->getParentProduct($racquet->getId(), $event->getSalesChannelContext());
 
                 if ($parentProduct !== null) {
@@ -104,20 +103,15 @@ class CartSavedSubscriber implements EventSubscriberInterface
                 }
 
                 if ($sealing != "") {
-                    $count++;
                     $event->getCart()->getLineItems()->add(
-                        $this->lineItemFactoryService->createProduct(
-                            $this->getChildrenProduct($racquet->getId(), $event->getSalesChannelContext()), $count, true, $event->getSalesChannelContext()
+                        $this->lineItemFactoryService->createSealingLineItem(
+                            $this->getChildrenProduct($racquet->getId(), $event->getSalesChannelContext()), $sealing, true, $event->getSalesChannelContext()
                         )
                     );
                 } else {
-                    if ($count < 1) {
-                        $count = +1;
-                    }
-
                     $event->getCart()->getLineItems()->removeElement(
-                        $this->lineItemFactoryService->createProduct(
-                            $this->getChildrenProduct($racquet->getId(), $event->getSalesChannelContext()), $count, true, $event->getSalesChannelContext()
+                        $this->lineItemFactoryService->createSealingLineItem(
+                            $this->getChildrenProduct($racquet->getId(), $event->getSalesChannelContext()), $sealing, true, $event->getSalesChannelContext()
                         )
                     );
                 }
@@ -132,6 +126,7 @@ class CartSavedSubscriber implements EventSubscriberInterface
                 $backheadEquipments = $equipments;
                 $foreheadSelection = "";
                 $backheadSelection = "";
+                $sealingSelection = "";
 
                 if (isset($parentProduct)) {
                     $foreheadSelection = $parentProduct->getForehead();
@@ -139,7 +134,11 @@ class CartSavedSubscriber implements EventSubscriberInterface
                 if (isset($parentProduct)) {
                     $backheadSelection = $parentProduct->getBackhead();
                 }
+                if (isset($parentProduct)) {
+                    $sealingSelection = $parentProduct->getSealing();
+                }
 
+                $this->setRacquetConfiguratorQuantity($racquet, $backheadSelection, $foreheadSelection);
 
                 for ($i = 0; $i <= count($equipments) - 1; $i++) {
                     if ($foreheadEquipments[$i]->getId() == $backheadSelection) {
@@ -158,12 +157,13 @@ class CartSavedSubscriber implements EventSubscriberInterface
                     ["items" => $equipments,
                         "back" => ["backheadEquipments" => $backheadEquipments, "length" => count($backheadEquipments)],
                         "front" => ["foreheadEquipments" => $foreheadEquipments, "length" => count($foreheadEquipments)],
+                        "sealing" => ["length" => $sealingQuantity],
                         "length" => $equipments_length,
                         "selection" =>
                             ["parentId" => $racquet->getId(),
                                 "foreheadProduct" => $foreheadProduct, "foreheadSelection" => $foreheadSelection,
                                 "backheadProduct" => $backheadProduct, "backheadSelection" => $backheadSelection,
-                                "sealing" => $sealing, "sealingSelection" => isset($parentProduct) ? $parentProduct->getSealing() : ""
+                                "sealing" => $sealing, "sealingSelection" => $sealingSelection
                             ],
                         "sameSides" => $sameSides
                     ]
@@ -200,6 +200,21 @@ class CartSavedSubscriber implements EventSubscriberInterface
                 ->addAssociation('options.group'),
             $salesChannelContext->getContext()
         )->first();
+    }
+
+    /**
+     * @param LineItem $racquet
+     * @param string $backheadSelection
+     * @param string $foreheadSelection
+     * @return void
+     */
+    private function setRacquetConfiguratorQuantity(LineItem $racquet, string $backheadSelection, string $foreheadSelection)
+    {
+        if ($backheadSelection != Uuid::fromStringToHex(self::KEIN_BELAG) || $foreheadSelection != Uuid::fromStringToHex(self::KEIN_BELAG)) {
+            $racquet->setStackable(false);
+        } else {
+            $racquet->setStackable(true);
+        }
     }
 
 }

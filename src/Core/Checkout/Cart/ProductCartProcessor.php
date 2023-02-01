@@ -50,7 +50,7 @@ class ProductCartProcessor implements CartProcessorInterface
     public function process(CartDataCollection $data, Cart $original, Cart $toCalculate, SalesChannelContext $context, CartBehavior $behavior): void
     {
 //        $id = "B9933FB7347C46FB9BB7617E30828E18";
-//        $lineItem = $this->lineItemFactoryService->createProduct($this->getProduct($id, $context), 1, true, $context);
+//        $lineItem = $this->lineItemFactoryService->createSealingLineItem($this->getProduct($id, $context), 1, true, $context);
 //        $original->getLineItems()->add($lineItem);
 //        dd($original->getLineItems()->count());
 //        foreach ($lineItems as $lineItem) {

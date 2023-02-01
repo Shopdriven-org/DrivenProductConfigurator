@@ -16,7 +16,6 @@
         <service id="Driven\ProductConfigurator\Service\SelectionService">
             <argument type="service" id="driven_product_configurator.repository"/>
             <argument type="service" id="product.repository"/>
-            <argument type="service" id="sales_channel.product.repository"/>
             <argument type="service" id="Shopware\Core\Checkout\Cart\SalesChannel\CartService"/>
         </service>
 

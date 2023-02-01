@@ -30,19 +30,19 @@
                        value="{{ lineItem.id }}"/>
                 <select name="forehead" class="driven-equipments custom-select custom-select-lg mb-1"
                         onChange=selectChange(this)>
-                    <option value=""
-                            disabled {% if Equipments.selection.foreheadSelection is defined %} selected {% endif %}>
-                        Vorhand:
-                    </option>
+{#                    <option value=""#}
+{#                            disabled {% if Equipments.selection.foreheadSelection is defined %} selected {% endif %}>#}
+{#                        Vorhand:#}
+{#                    </option>#}
                     {% for i in 0..Equipments.front.length %}
                         {% set color = Equipments.front.foreheadEquipments[i].payload["options"][0].option %}
                         {% set size =  Equipments.front.foreheadEquipments[i].payload["options"][1].option %}
                         {% if  Equipments.front.foreheadEquipments[i].id != null %}
                             <option {% if Equipments.selection.foreheadSelection == Equipments.front.foreheadEquipments[i].id %}
-{#                                        {% if Equipments.selection.foreheadProduct.availableStock > 1 %}#}
-                                            selected
-{#                                        {% endif %}#}
-                                    {% endif %}
+                                {#                                        {% if Equipments.selection.foreheadProduct.availableStock > 1 %} #}
+                                selected
+                                {#                                        {% endif %} #}
+                            {% endif %}
                                     class="driven_racquet_variant_forehead"
                                     value="{{ Equipments.front.foreheadEquipments[i].id }}">{{ Equipments.front.foreheadEquipments[i].label }} {{ color }} {{ size }}</option>
                         {% else %}
@@ -53,19 +53,19 @@
                 <select name="backhead" class="driven-equipments custom-select custom-select-lg mb-1"
                         onChange=selectChange(this.value)
                 >
-                    <option value=""
-                            disabled {% if Equipments.selection.backheadSelection is defined %} selected {% endif %}>
-                        Rückhand:
-                    </option>
+{#                    <option value=""#}
+{#                            disabled {% if Equipments.selection.backheadSelection is defined %} selected {% endif %}>#}
+{#                        Rückhand:#}
+{#                    </option>#}
                     {% for i in 0..Equipments.back.length %}
                         {% set color = Equipments.back.backheadEquipments[i].payload["options"][0].option %}
                         {% set size =  Equipments.back.backheadEquipments[i].payload["options"][1].option %}
                         {% if  Equipments.back.backheadEquipments[i].id != null %}
                             <option {% if Equipments.selection.backheadSelection == Equipments.back.backheadEquipments[i].id %}
-{#                                        {% if Equipments.selection.backheadProduct.availableStock > 1 %}#}
-                                            selected
-{#                                        {% endif %}#}
-                                    {% endif %}
+                                {#                                        {% if Equipments.selection.backheadProduct.availableStock > 1 %} #}
+                                selected
+                                {#                                        {% endif %} #}
+                            {% endif %}
                                     class="driven_racquet_variant_backhead"
                                     value="{{ Equipments.back.backheadEquipments[i].id }}">{{ Equipments.back.backheadEquipments[i].label }} {{ color }} {{ size }}</option>
                         {% else %}
@@ -80,10 +80,20 @@
                         Versiegelung:
                     </option>
                     <option value="0">keine Versiegelung</option>
-                    <option
-                            {% if Equipments.selection.sealingSelection > 0 %} selected {% endif %}
-                            value="1">inkl. Versiegelung (zzgl. 5 EUR)
-                    </option>
+                    {% if Equipments.sealing.length <= 1 %}
+                        <option
+                                {% if Equipments.selection.sealingSelection > 0 %} selected {% endif %}
+                                value="1">inkl. Versiegelung (zzgl. 5 EUR)
+                        </option>
+                    {% else %}
+                        {% for i in 1..Equipments.sealing.length %}
+                            <option {% if Equipments.selection.sealing == i %}
+                                selected
+                            {% endif %}
+                                    value="{{ i }}"> {{ i }} Schläger versiegeln (zzgl. {{ i * 5 }} EUR)
+                            </option>
+                        {% endfor %}
+                    {% endif %}
                 </select>
             </form>
         </div>

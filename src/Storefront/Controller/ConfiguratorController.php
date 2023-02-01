@@ -112,7 +112,7 @@ class ConfiguratorController extends StorefrontController
 
         if ($sealing != 0) {
             try {
-                $sealingLineItem = $this->lineItemFactoryService->createProduct($this->getProduct($id, $context), 1, true, $context);
+                $sealingLineItem = $this->lineItemFactoryService->createSealingLineItem($this->getProduct($id, $context), 1, true, $context);
                 $cart->getLineItems()->add($sealingLineItem);
                 $this->eventDispatcher->dispatch(new CartSavedEvent($context, $cart));
 

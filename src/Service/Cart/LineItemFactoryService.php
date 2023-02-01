@@ -21,16 +21,18 @@ use Shopware\Core\System\SalesChannel\SalesChannelContext;
 class LineItemFactoryService implements LineItemFactoryServiceInterface
 {
 
-    public function __construct(
-    ) {
-    }
+    public function __construct(){}
 
     /**
-     * {@inheritDoc}
+     * @param ProductEntity $product
+     * @param $quantity
+     * @param bool $parent
+     * @param SalesChannelContext $salesChannelContext
+     * @return LineItem
      */
-    public function createProduct(ProductEntity $product, int $quantity, bool $parent, SalesChannelContext $salesChannelContext): LineItem
+    public function createSealingLineItem(ProductEntity $product, $quantity, bool $parent, SalesChannelContext $salesChannelContext): LineItem
     {
-        if ($quantity === 0){
+        if ($quantity == 0){
             $quantity = 1;
         }
         $lineItem = new LineItem(
@@ -47,7 +49,7 @@ class LineItemFactoryService implements LineItemFactoryServiceInterface
             $taxRules,
             $quantity
         );
-        $lineItem->setLabel("Versiegelung")
+        $lineItem->setLabel("Schlagflächenversiegelung")
             ->setPayload([
                 'productNumber' => "versiegelung",
                 'weight' => $product->getWeight(),
@@ -71,10 +73,7 @@ class LineItemFactoryService implements LineItemFactoryServiceInterface
     }
 
     /**
-     * ...
-     *
      * @param ProductEntity $product
-     *
      * @return array
      */
     private function getOptions(ProductEntity $product): array
