@@ -23,6 +23,8 @@ interface SelectionServiceInterface
      *
      * @return array
      */
+
+    public const KEIN_BELAG = 'DC1B7FFCB8D64DD2AE574A21F34F6FC5';
     public function getSelectionByLineItemId(string $id, ConfiguratorEntity $configurator, SalesChannelContext $salesChannelContext): array;
 
     /**

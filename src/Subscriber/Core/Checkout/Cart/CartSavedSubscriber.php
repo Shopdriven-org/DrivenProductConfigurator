@@ -27,7 +27,6 @@ class CartSavedSubscriber implements EventSubscriberInterface
     private EntityRepositoryInterface $drivenConfiguratorRepository;
     private EntityRepositoryInterface $productRepository;
     private lineItemFactoryService $lineItemFactoryService;
-    public const KEIN_BELAG = 'DC1B7FFCB8D64DD2AE574A21F34F6FC5';
     private SelectionService $selectionService;
 
     public function __construct(EntityRepositoryInterface $drivenConfiguratorRepository,
@@ -67,7 +66,7 @@ class CartSavedSubscriber implements EventSubscriberInterface
         $sealing = "";
 
         $no_choice = [
-            "id" => Uuid::fromStringToHex(self::KEIN_BELAG),
+            "id" => Uuid::fromStringToHex($this->selectionService::KEIN_BELAG),
             "label" => "kein Belag"
         ];
         foreach ($event->getCart()->getLineItems() as $lineItem) {
@@ -205,7 +204,7 @@ class CartSavedSubscriber implements EventSubscriberInterface
      */
     private function setRacquetConfiguratorQuantity(LineItem $racquet, string $backheadSelection, string $foreheadSelection)
     {
-        if ($backheadSelection != Uuid::fromStringToHex(self::KEIN_BELAG) || $foreheadSelection != Uuid::fromStringToHex(self::KEIN_BELAG)) {
+        if ($backheadSelection != Uuid::fromStringToHex($this->selectionService::KEIN_BELAG) || $foreheadSelection != Uuid::fromStringToHex($this->selectionService::KEIN_BELAG)) {
             $racquet->setStackable(false);
         } else {
             $racquet->setStackable(true);

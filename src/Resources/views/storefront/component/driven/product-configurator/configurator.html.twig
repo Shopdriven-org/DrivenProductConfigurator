@@ -30,10 +30,10 @@
                        value="{{ lineItem.id }}"/>
                 <select name="forehead" class="driven-equipments custom-select custom-select-lg mb-1"
                         onChange=selectChange(this)>
-                    <option value=""
-                            disabled {% if Equipments.selection.foreheadSelection is defined %} selected {% endif %}>
-                        Vorhand:
-                    </option>
+{#                    <option value=""#}
+{#                            disabled {% if Equipments.selection.foreheadSelection is defined %} selected {% endif %}>#}
+{#                        Vorhand:#}
+{#                    </option>#}
                     {% for i in 0..Equipments.front.length %}
                         {% set color = Equipments.front.foreheadEquipments[i].payload["options"][0].option %}
                         {% set size =  Equipments.front.foreheadEquipments[i].payload["options"][1].option %}
@@ -53,10 +53,10 @@
                 <select name="backhead" class="driven-equipments custom-select custom-select-lg mb-1"
                         onChange=selectChange(this.value)
                 >
-                    <option value=""
-                            disabled {% if Equipments.selection.backheadSelection is defined %} selected {% endif %}>
-                        Rückhand:
-                    </option>
+{#                    <option value=""#}
+{#                            disabled {% if Equipments.selection.backheadSelection is defined %} selected {% endif %}>#}
+{#                        Rückhand:#}
+{#                    </option>#}
                     {% for i in 0..Equipments.back.length %}
                         {% set color = Equipments.back.backheadEquipments[i].payload["options"][0].option %}
                         {% set size =  Equipments.back.backheadEquipments[i].payload["options"][1].option %}

@@ -81,6 +81,31 @@ class Install
     {
         // install everything
         $this->installCustomFields();
+
+        // create custom entity
+        $query = '
+        CREATE TABLE IF NOT EXISTS `driven_product_configurator` (
+            `id` BINARY(16) NOT NULL,
+            `forehead` BINARY(16) NULL DEFAULT NULL,
+            `backhead` BINARY(16) NULL DEFAULT NULL,
+            `sealing` VARCHAR(255) NULL DEFAULT NULL,
+            `customer_id` BINARY(16) NULL DEFAULT NULL,
+            `product_id` BINARY(16) NULL DEFAULT NULL,
+            `product_version_id` BINARY(16) NULL DEFAULT NULL,
+            `sales_channel_id` BINARY(16) NULL DEFAULT NULL,
+            CONSTRAINT `fk.driven_product_configurator.customer_id` FOREIGN KEY (`customer_id`)
+                REFERENCES `customer` (`id`) ON DELETE SET NULL,
+            CONSTRAINT `fk.driven_product_configurator.pid__pvid` FOREIGN KEY (`product_id`, `product_version_id`)
+                    REFERENCES `product` (`id`, `version_id`) ON DELETE SET NULL,
+            CONSTRAINT `fk.driven_product_configurator.sales_channel_id` FOREIGN KEY (`sales_channel_id`)
+                REFERENCES `sales_channel` (`id`) ON DELETE SET NULL,
+            `created_at` DATETIME(3) NOT NULL,
+            `updated_at` DATETIME(3),
+            PRIMARY KEY (`id`)
+        )
+        ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+    ';
+        $this->connection->executeStatement($query);
     }
 
     /**

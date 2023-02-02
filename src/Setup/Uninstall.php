@@ -89,6 +89,10 @@ class Uninstall
 
         // clear plugin data
         $this->removeCustomFields();
+
+        $query = '
+        DROP TABLE IF EXISTS `driven_product_configurator`';
+        $this->connection->executeStatement($query);
     }
 
     /**
