@@ -11,6 +11,7 @@
 namespace Driven\ProductConfigurator\Subscriber\Core\Checkout\Cart;
 
 use Driven\ProductConfigurator\Service\Cart\LineItemFactoryService;
+use Driven\ProductConfigurator\Service\SelectionService;
 use Dvsn\SetConfigurator\Service\Cart\LineItemFactoryServiceInterface;
 use Shopware\Core\Checkout\Cart\Event\CartSavedEvent;
 use Shopware\Core\Checkout\Cart\LineItem\LineItem;
@@ -27,13 +28,17 @@ class CartSavedSubscriber implements EventSubscriberInterface
     private EntityRepositoryInterface $productRepository;
     private lineItemFactoryService $lineItemFactoryService;
     public const KEIN_BELAG = 'DC1B7FFCB8D64DD2AE574A21F34F6FC5';
+    private SelectionService $selectionService;
+
     public function __construct(EntityRepositoryInterface $drivenConfiguratorRepository,
                                 EntityRepositoryInterface $productRepository,
-                                lineItemFactoryService    $lineItemFactoryService)
+                                lineItemFactoryService    $lineItemFactoryService,
+                                SelectionService $selectionService)
     {
         $this->drivenConfiguratorRepository = $drivenConfiguratorRepository;
         $this->productRepository = $productRepository;
         $this->lineItemFactoryService = $lineItemFactoryService;
+        $this->selectionService = $selectionService;
     }
     /**
      * {@inheritDoc}
@@ -132,7 +137,9 @@ class CartSavedSubscriber implements EventSubscriberInterface
                 }
 
                 $this->setRacquetConfiguratorQuantity($racquet, $backheadSelection, $foreheadSelection);
-
+                if (isset($parentProduct)){
+                    $this->createNewProductConfigurator($parentProduct, $racquet, $event->getSalesChannelContext());
+                }
                 for ($i = 0; $i <= count($equipments) - 1; $i++) {
                     if ($foreheadEquipments[$i]->getId() == $backheadSelection) {
                         unset($foreheadEquipments[$i]);
@@ -163,7 +170,6 @@ class CartSavedSubscriber implements EventSubscriberInterface
             }
         }
     }
-
     /**
      * @param $id
      * @param SalesChannelContext $salesChannelContext
@@ -177,7 +183,6 @@ class CartSavedSubscriber implements EventSubscriberInterface
             $salesChannelContext->getContext()
         )->first();
     }
-
     /**
      * @param $id
      * @param SalesChannelContext $salesChannelContext
@@ -185,7 +190,6 @@ class CartSavedSubscriber implements EventSubscriberInterface
      */
     private function getChildrenProduct($id, SalesChannelContext $salesChannelContext)
     {
-
         return $this->productRepository->search(
             (new Criteria())
                 ->addFilter(new EqualsFilter('product.id', $id))
@@ -193,7 +197,6 @@ class CartSavedSubscriber implements EventSubscriberInterface
             $salesChannelContext->getContext()
         )->first();
     }
-
     /**
      * @param LineItem $racquet
      * @param string $backheadSelection
@@ -207,6 +210,21 @@ class CartSavedSubscriber implements EventSubscriberInterface
         } else {
             $racquet->setStackable(true);
         }
+    }
+
+    /**
+     * @param $parentProduct
+     * @param $racquet
+     * @param $context
+     * @return void
+     */
+    private function createNewProductConfigurator($parentProduct, $racquet, $context)
+    {
+        // TODO: finish createNewProductConfigurator functionality
+        // TODO: clone parent product and add all other functionalities
+//        if ($racquet->getQuantity() > 1){
+//            $this->selectionService->saveSelection($parentProduct->getId(), "", "", 0, $context);
+//        }
     }
 
 }
