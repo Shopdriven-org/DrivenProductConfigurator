@@ -63,7 +63,6 @@ class BeforeLineItemAddedSubscriber implements EventSubscriberInterface
                     'id' => $product->getId(),
                     'customFields' => $customFields
                 ]], $event->getContext());
-//            dd($customFields);
         }
         if (in_array(self::RACQUET_CATEGORY, $breadcrumb)) {
             $customFields["driven_product_configurator_racquet_option"] = "racquet";
@@ -71,7 +70,6 @@ class BeforeLineItemAddedSubscriber implements EventSubscriberInterface
                     'id' => $product->getId(),
                     'customFields' => $customFields
                 ]], $event->getContext());
-//            dd($customFields);
         }
     }
 
