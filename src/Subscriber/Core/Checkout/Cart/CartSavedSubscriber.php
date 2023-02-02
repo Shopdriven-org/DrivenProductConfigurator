@@ -124,7 +124,7 @@ class CartSavedSubscriber implements EventSubscriberInterface
                 $backheadEquipments = $equipments;
                 $foreheadSelection = $no_choice["id"];
                 $backheadSelection = $no_choice["id"];
-                $sealingSelection = "";
+                $sealingSelection = 0;
 
                 if (isset($parentProduct)) {
                     $foreheadSelection = $parentProduct->getForehead();
