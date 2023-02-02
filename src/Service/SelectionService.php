@@ -85,14 +85,14 @@ class SelectionService implements SelectionServiceInterface
 
     /**
      * @param string $productId
-     * @param string $forehead
-     * @param string $backhead
-     * @param int $sealing
+     * @param ?string $forehead
+     * @param ?string $backhead
+     * @param ?int $sealing
      * @param SalesChannelContext $salesChannelContext
      *
      * @return EntityWrittenContainerEvent
      */
-    public function saveSelection(string $productId, string $forehead, string $backhead, int $sealing, SalesChannelContext $salesChannelContext) : EntityWrittenContainerEvent
+    public function saveSelection(string $productId, ?string $forehead, ?string $backhead, ?int $sealing, SalesChannelContext $salesChannelContext) : EntityWrittenContainerEvent
     {
         return $this->drivenConfigurator->create([[
             'id' => Uuid::randomHex(),

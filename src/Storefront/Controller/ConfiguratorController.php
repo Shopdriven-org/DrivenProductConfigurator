@@ -102,8 +102,8 @@ class ConfiguratorController extends StorefrontController
 
         $backhead = $_POST["backhead"] ?? "";
         $forehead = $_POST["forehead"] ?? "";
-        $sealing = $_POST["sealing"] ?? 0;
-
+        $sealing = $_POST["sealing"];
+//        dd($sealing);
         $this->checkProductStock($backhead, $forehead, $sealing, $id, $context);
 
         $this->addFlash(

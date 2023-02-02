@@ -89,11 +89,11 @@ class ConfiguratorEntity extends Entity
     /**
      * Setter method for the property.
      *
-     * @param string $sealing
+     * @param int $sealing
      *
      * @return void
      */
-    public function setSealing(string $sealing): void
+    public function setSealing(int $sealing): void
     {
         $this->sealing = $sealing;
     }
