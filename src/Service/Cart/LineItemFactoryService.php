@@ -24,13 +24,10 @@ class LineItemFactoryService implements LineItemFactoryServiceInterface
     public function __construct(){}
 
     /**
-     * @param ProductEntity $product
      * @param $quantity
-     * @param bool $parent
-     * @param SalesChannelContext $salesChannelContext
      * @return LineItem
      */
-    public function createSealingLineItem(ProductEntity $product, $quantity, bool $parent, SalesChannelContext $salesChannelContext): LineItem
+    public function createSealingLineItem($quantity): LineItem
     {
         if ($quantity == 0){
             $quantity = 1;
@@ -38,7 +35,7 @@ class LineItemFactoryService implements LineItemFactoryServiceInterface
         $lineItem = new LineItem(
             self::SEALING_UID,
             self::PRODUCT_SEALING_LINE_ITEM_TYPE,
-            $product->getId()
+            self::SEALING_UID
         );
         $calculatedTaxes = new CalculatedTaxCollection();
         $taxRules = new TaxRuleCollection();
@@ -52,22 +49,48 @@ class LineItemFactoryService implements LineItemFactoryServiceInterface
         $lineItem->setLabel("Schlagflächenversiegelung")
             ->setPayload([
                 'productNumber' => "versiegelung",
-                'weight' => $product->getWeight(),
-                'height' => $product->getHeight(),
-                'width' => $product->getWidth(),
-                'length' => $product->getLength(),
-                'taxId' => $product->getTaxId(),
-                'manufacturerId' => $product->getManufacturerId(),
-                'propertyIds' => $product->getPropertyIds(),
-                'optionIds' => $product->getOptionIds(),
-                'options' => $this->getOptions($product),
-                'tagIds' => $product->getTagIds()
             ]);
         $lineItem->setGood(true);
         $lineItem->setStackable(true);
         $lineItem->setPrice($newPrice);
         $lineItem->setQuantity($quantity);
         $lineItem->setType(self::PRODUCT_SEALING_LINE_ITEM_TYPE);
+
+        return $lineItem;
+    }
+
+    /**
+     * @param $quantity
+     * @return LineItem
+     */
+    public function createMontageLineItem($quantity): LineItem
+    {
+        if ($quantity == 0){
+            $quantity = 1;
+        }
+        $lineItem = new LineItem(
+            self::MONTAGE_UID,
+            self::PRODUCT_MONTAGE_LINE_ITEM_TYPE,
+            self::MONTAGE_UID
+        );
+        $calculatedTaxes = new CalculatedTaxCollection();
+        $taxRules = new TaxRuleCollection();
+        $newPrice = new CalculatedPrice(
+            1.5,
+            $quantity * 1.5,
+            $calculatedTaxes,
+            $taxRules,
+            $quantity
+        );
+        $lineItem->setLabel("Montage Neuanfertigung")
+            ->setPayload([
+                'productNumber' => "montage"
+            ]);
+        $lineItem->setGood(true);
+        $lineItem->setStackable(true);
+        $lineItem->setPrice($newPrice);
+        $lineItem->setQuantity($quantity);
+        $lineItem->setType(self::PRODUCT_MONTAGE_LINE_ITEM_TYPE);
 
         return $lineItem;
     }

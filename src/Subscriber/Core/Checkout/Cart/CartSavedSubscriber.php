@@ -20,6 +20,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class CartSavedSubscriber implements EventSubscriberInterface
@@ -28,17 +29,21 @@ class CartSavedSubscriber implements EventSubscriberInterface
     private EntityRepositoryInterface $productRepository;
     private lineItemFactoryService $lineItemFactoryService;
     private SelectionService $selectionService;
+    private EventDispatcherInterface $eventDispatcher;
 
     public function __construct(EntityRepositoryInterface $drivenConfiguratorRepository,
                                 EntityRepositoryInterface $productRepository,
                                 lineItemFactoryService    $lineItemFactoryService,
-                                SelectionService $selectionService)
+                                SelectionService          $selectionService,
+                                EventDispatcherInterface  $eventDispatcher)
     {
         $this->drivenConfiguratorRepository = $drivenConfiguratorRepository;
         $this->productRepository = $productRepository;
         $this->lineItemFactoryService = $lineItemFactoryService;
         $this->selectionService = $selectionService;
+        $this->eventDispatcher = $eventDispatcher;
     }
+
     /**
      * {@inheritDoc}
      */
@@ -64,6 +69,7 @@ class CartSavedSubscriber implements EventSubscriberInterface
         $foreheadProduct = "";
         $backheadProduct = "";
         $sealing = "";
+        $racquetProduct = null;
 
         $no_choice = [
             "id" => Uuid::fromStringToHex($this->selectionService::KEIN_BELAG),
@@ -94,25 +100,26 @@ class CartSavedSubscriber implements EventSubscriberInterface
             foreach ($racquets as $racquet) {
                 $sealingQuantity = $racquet->getQuantity();
                 $parentProduct = $this->getParentProduct($racquet->getId(), $event->getSalesChannelContext());
+                $racquetProduct = $this->selectionService->getProduct($racquet->getId(), $event->getSalesChannelContext());
 
                 if ($parentProduct !== null) {
                     $foreheadProduct = $this->getChildrenProduct($parentProduct->getForehead(), $event->getSalesChannelContext());
                     $backheadProduct = $this->getChildrenProduct($parentProduct->getBackhead(), $event->getSalesChannelContext());
                     $sealing = $parentProduct->getSealing();
                 }
-                if ($sealing != "") {
-                    $event->getCart()->getLineItems()->add(
-                        $this->lineItemFactoryService->createSealingLineItem(
-                            $this->getChildrenProduct($racquet->getId(), $event->getSalesChannelContext()), $sealing, true, $event->getSalesChannelContext()
-                        )
-                    );
-                } else {
-                    $event->getCart()->getLineItems()->removeElement(
-                        $this->lineItemFactoryService->createSealingLineItem(
-                            $this->getChildrenProduct($racquet->getId(), $event->getSalesChannelContext()), $sealing, true, $event->getSalesChannelContext()
-                        )
-                    );
-                }
+//                if ($sealing != "") {
+//                    $event->getCart()->getLineItems()->add(
+//                        $this->lineItemFactoryService->createSealingLineItem(
+//                            $this->getChildrenProduct($racquet->getId(), $event->getSalesChannelContext()), $sealing, true, $event->getSalesChannelContext()
+//                        )
+//                    );
+//                } else {
+//                    $event->getCart()->getLineItems()->removeElement(
+//                        $this->lineItemFactoryService->createSealingLineItem(
+//                            $this->getChildrenProduct($racquet->getId(), $event->getSalesChannelContext()), $sealing, true, $event->getSalesChannelContext()
+//                        )
+//                    );
+//                }
                 $sameSides = false;
                 if ($foreheadProduct != null && $backheadProduct != null) {
                     if ($foreheadProduct->variation[0]["option"] == $backheadProduct->variation[0]["option"]) {
@@ -136,7 +143,7 @@ class CartSavedSubscriber implements EventSubscriberInterface
                 }
 
                 $this->setRacquetConfiguratorQuantity($racquet, $backheadSelection, $foreheadSelection);
-                if (isset($parentProduct)){
+                if (isset($parentProduct)) {
                     $this->createNewProductConfigurator($parentProduct, $racquet, $event->getSalesChannelContext());
                 }
                 for ($i = 0; $i <= count($equipments) - 1; $i++) {
@@ -148,9 +155,14 @@ class CartSavedSubscriber implements EventSubscriberInterface
                     }
                 }
 
+//                if ($racquetProduct != null) {
+//                    $montageLineItem = $this->lineItemFactoryService->createMontageLineItem(1);
+//                    $event->getCart()->getLineItems()->add($montageLineItem);
+//                    $this->eventDispatcher->dispatch(new CartSavedEvent($event->getSalesChannelContext(), $event->getCart()));
+//                }
+
                 array_unshift($backheadEquipments, $no_choice);
                 array_unshift($foreheadEquipments, $no_choice);
-
                 $racquet->addArrayExtension("Equipments",
                     ["items" => $equipments,
                         "back" => ["backheadEquipments" => $backheadEquipments, "length" => count($backheadEquipments)],
@@ -169,6 +181,7 @@ class CartSavedSubscriber implements EventSubscriberInterface
             }
         }
     }
+
     /**
      * @param $id
      * @param SalesChannelContext $salesChannelContext
@@ -182,6 +195,7 @@ class CartSavedSubscriber implements EventSubscriberInterface
             $salesChannelContext->getContext()
         )->first();
     }
+
     /**
      * @param $id
      * @param SalesChannelContext $salesChannelContext
@@ -196,6 +210,7 @@ class CartSavedSubscriber implements EventSubscriberInterface
             $salesChannelContext->getContext()
         )->first();
     }
+
     /**
      * @param LineItem $racquet
      * @param string $backheadSelection

@@ -68,7 +68,6 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
      */
     public function collect(CartDataCollection $data, Cart $original, SalesChannelContext $salesChannelContext, CartBehavior $behavior): void
     {
-
         // get every line item which is a configurator
         $lineItems = $original->getLineItems();
 
@@ -77,7 +76,6 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
             // we dont
             return;
         }
-
         // loop every configurator
         foreach ($lineItems as $lineItem) {
             if (isset($lineItem->getPayload()["customFields"]["driven_product_configurator_racquet_option"])) {

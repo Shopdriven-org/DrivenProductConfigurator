@@ -103,23 +103,22 @@ class ConfiguratorController extends StorefrontController
         $backhead = $_POST["backhead"] ?? "";
         $forehead = $_POST["forehead"] ?? "";
         $sealing = $_POST["sealing"];
-//        dd($sealing);
         $this->checkProductStock($backhead, $forehead, $sealing, $id, $context);
 
         $this->addFlash(
             'success', "Successfully saved selection!"
         );
 
-        if ($sealing != 0) {
-            try {
-                $sealingLineItem = $this->lineItemFactoryService->createSealingLineItem($this->getProduct($id, $context), 1, true, $context);
-                $cart->getLineItems()->add($sealingLineItem);
-                $this->eventDispatcher->dispatch(new CartSavedEvent($context, $cart));
-
-            } catch (Exception $exception) {
-                dd($exception);
-            }
-        }
+//        if ($sealing != 0) {
+//            try {
+//                $sealingLineItem = $this->lineItemFactoryService->createSealingLineItem($this->getProduct($id, $context), 1, true, $context);
+//                $cart->getLineItems()->add($sealingLineItem);
+//                $this->eventDispatcher->dispatch(new CartSavedEvent($context, $cart));
+//
+//            } catch (Exception $exception) {
+//                dd($exception);
+//            }
+//        }
         return $this->redirectToRoute("frontend.checkout.cart.page");
     }
 
@@ -147,30 +146,14 @@ class ConfiguratorController extends StorefrontController
         if ($backhead !== "") {
             $backheadProduct = $this->getProduct($backhead, $context);
             if ($backheadProduct != "") {
-                if ($backheadProduct->getAvailableStock() > 1) {
-                    $backheadProduct->setAvailableStock($backheadProduct->getAvailableStock() - 1);
-                } else {
-                    $this->selectionService->updateSelection($configurator->getId(), $configurator->getForehead(), "", $configurator->getSealing(), $context);
-
-                    $this->addFlash(
-                        'warning', "Product " . $backheadProduct->getName() . "is out of the stock!"
-                    );
-                }
+                $backheadProduct->setAvailableStock($backheadProduct->getAvailableStock() - 1);
             }
         }
 
         if ($forehead !== "") {
             $foreheadProduct = $this->getProduct($forehead, $context);
             if ($foreheadProduct != "") {
-                if ($foreheadProduct->getAvailableStock() > 1) {
-                    $foreheadProduct->setAvailableStock($foreheadProduct->getAvailableStock() - 1);
-                } else {
-                    $configurator->setForehead("");
-                    $this->selectionService->updateSelection($configurator->getId(), "", $configurator->getBackhead(), $configurator->getSealing(), $context);
-                    $this->addFlash(
-                        'warning', "Product " . $foreheadProduct->getName() . "is out of the stock!"
-                    );
-                }
+                $foreheadProduct->setAvailableStock($foreheadProduct->getAvailableStock() - 1);
             }
         }
     }

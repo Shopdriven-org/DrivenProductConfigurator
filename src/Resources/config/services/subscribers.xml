@@ -16,6 +16,7 @@
             <argument type="service" id="product.repository"/>
             <argument type="service" id="Driven\ProductConfigurator\Service\Cart\LineItemFactoryService"/>
             <argument type="service" id="Driven\ProductConfigurator\Service\SelectionService"/>
+            <argument type="service" id="Symfony\Component\EventDispatcher\EventDispatcherInterface"/>
             <tag name="kernel.event_subscriber" />
         </service>
 
