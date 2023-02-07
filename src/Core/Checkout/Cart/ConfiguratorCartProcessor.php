@@ -88,6 +88,12 @@ class ConfiguratorCartProcessor implements CartProcessorInterface
                         if ($sealingSelection > 0){
                             $sealingQuantity += $sealingSelection;
                         }
+//                        dd($lineItem->getExtensions()["Equipments"]["selection"]["sealing"]);
+                        if ($lineItem->getQuantity() < $configuratorProduct->getSealing()){
+//                            $lineItem->getExtensions()["Equipments"]["selection"]["sealing"] = $lineItem->getQuantity();
+//                            $lineItem->getExtensions()["Equipments"]["selection"]["sealingSelection"] = $lineItem->getQuantity();
+                            $sealingQuantity = $lineItem->getQuantity();
+                        }
                     }
                 }
             }

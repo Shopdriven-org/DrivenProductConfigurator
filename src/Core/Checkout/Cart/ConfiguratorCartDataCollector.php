@@ -80,7 +80,9 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
         foreach ($lineItems as $lineItem) {
             if (isset($lineItem->getPayload()["customFields"]["driven_product_configurator_racquet_option"])) {
                 if ($lineItem->getPayload()["customFields"]["driven_product_configurator_racquet_option"] === "racquet") {
+
                     $configurator = $this->selectionService->getParentProduct($lineItem->getId(), $salesChannelContext);
+//
                     if ($configurator !== null) {
                         $foreheadProduct = "";
                         $backheadProduct = "";
@@ -91,7 +93,7 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
                             $foreheadProduct = $this->selectionService->getProduct($configurator->getForehead(), $salesChannelContext);
                         }
 
-                        $this->checkProductStock($foreheadProduct, $backheadProduct, $lineItem, $lineItems, $salesChannelContext);
+//                        $this->checkProductStock($foreheadProduct, $backheadProduct, $lineItem, $lineItems, $salesChannelContext);
                     }
                 }
             }

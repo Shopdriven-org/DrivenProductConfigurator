@@ -1,8 +1,5 @@
 {% sw_extends '@Storefront/storefront/page/checkout/checkout-item.html.twig' %}
 
 {% block page_checkout_item_children_template %}
-    {% block driven_set_configurator %}
-        {% sw_include '@Storefront/storefront/component/driven/product-configurator/configurator.html.twig' %}
-    {% endblock %}
     {{ parent() }}
 {% endblock %}

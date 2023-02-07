@@ -1,4 +1,4 @@
-{% block driven_set_configurator %}
+{% block driven_set_configurator_enabled %}
     {% set Equipments = lineItem.extensions["Equipments"] %}
     {% set kein_Belag = DC1B7FFCB8D64DD2AE574A21F34F6FC5 %}
     <div class="container">
@@ -20,51 +20,43 @@
         </div>
     {% endif %}
     <div class="row">
-        <div class="offset-1 col-md-6">
-            <h3>Schläger-Montage:</h3>
+        <div class="offset-2 col-md-8 mb-3 mt-3 border pb-3 pt-3 driven-configurator-wrapper">
+            <h3 class="mb-3 text-center">Schläger-Montage</h3>
             <form id="driven-checkout-selection" data-driven-product-configurator="true"
                   action="{{ path('frontend.driven.product-configurator.save-selection', { 'id': lineItem.id }) }}"
                   method="post">
                 {{ sw_csrf('frontend.driven.product-configurator.save-selection') }}
                 <input type="hidden" id="driven-parent-id" name="driven-product-configurator--parent-id"
                        value="{{ lineItem.id }}"/>
-                <select name="forehead" class="driven-equipments custom-select custom-select-lg mb-1"
-                        onChange=selectChange(this)>
-{#                    <option value=""#}
-{#                            disabled {% if Equipments.selection.foreheadSelection is defined %} selected {% endif %}>#}
-{#                        Vorhand:#}
-{#                    </option>#}
-                    {% for i in 0..Equipments.front.length %}
-                        {% set color = Equipments.front.foreheadEquipments[i].payload["options"][0].option %}
-                        {% set size =  Equipments.front.foreheadEquipments[i].payload["options"][1].option %}
-                        {% if  Equipments.front.foreheadEquipments[i].id != null %}
-                            <option {% if Equipments.selection.foreheadSelection == Equipments.front.foreheadEquipments[i].id %}
-                                {#                                        {% if Equipments.selection.foreheadProduct.availableStock > 1 %} #}
-                                selected
-                                {#                                        {% endif %} #}
+                <div class="flex justify-around">
+                    <label for="forehead">Vorhand:</label>
+                    <select name="forehead" class="driven-equipments custom-select custom-select-lg mb-1"
+                            onChange=selectChange(this)>
+                        {% for i in 0..Equipments.front.length %}
+                            {% set color = Equipments.front.foreheadEquipments[i].payload["options"][0].option %}
+                            {% set size =  Equipments.front.foreheadEquipments[i].payload["options"][1].option %}
+                            {% if  Equipments.front.foreheadEquipments[i].id != null %}
+                                <option {% if Equipments.selection.foreheadSelection == Equipments.front.foreheadEquipments[i].id %}
+                                    selected
+                                {% endif %}
+                                        class="driven_racquet_variant_forehead"
+                                        value="{{ Equipments.front.foreheadEquipments[i].id }}">{{ Equipments.front.foreheadEquipments[i].label }} {{ color }} {{ size }}</option>
+                            {% else %}
+                                <option value="" class="d-none"></option>
                             {% endif %}
-                                    class="driven_racquet_variant_forehead"
-                                    value="{{ Equipments.front.foreheadEquipments[i].id }}">{{ Equipments.front.foreheadEquipments[i].label }} {{ color }} {{ size }}</option>
-                        {% else %}
-                            <option value="" class="d-none"></option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
+                        {% endfor %}
+                    </select>
+                </div>
+                <label for="backhead">Rückhand:</label>
                 <select name="backhead" class="driven-equipments custom-select custom-select-lg mb-1"
                         onChange=selectChange(this.value)
                 >
-{#                    <option value=""#}
-{#                            disabled {% if Equipments.selection.backheadSelection is defined %} selected {% endif %}>#}
-{#                        Rückhand:#}
-{#                    </option>#}
                     {% for i in 0..Equipments.back.length %}
                         {% set color = Equipments.back.backheadEquipments[i].payload["options"][0].option %}
                         {% set size =  Equipments.back.backheadEquipments[i].payload["options"][1].option %}
                         {% if  Equipments.back.backheadEquipments[i].id != null %}
                             <option {% if Equipments.selection.backheadSelection == Equipments.back.backheadEquipments[i].id %}
-                                {#                                        {% if Equipments.selection.backheadProduct.availableStock > 1 %} #}
                                 selected
-                                {#                                        {% endif %} #}
                             {% endif %}
                                     class="driven_racquet_variant_backhead"
                                     value="{{ Equipments.back.backheadEquipments[i].id }}">{{ Equipments.back.backheadEquipments[i].label }} {{ color }} {{ size }}</option>
@@ -73,12 +65,9 @@
                         {% endif %}
                     {% endfor %}
                 </select>
+                <label for="sealing">Versiegelung:</label>
                 <select name="sealing" class="custom-select custom-select-lg mb-1"
                         onChange=selectChange(this.value)>
-{#                    <option value=""#}
-{#                            disabled {% if Equipments.selection.sealingSelection == "" %} selected {% endif %}>#}
-{#                        Versiegelung:#}
-{#                    </option>#}
                     <option value="0">keine Versiegelung</option>
                     {% if Equipments.sealing.length <= 1 %}
                         <option

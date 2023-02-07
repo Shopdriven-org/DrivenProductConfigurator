@@ -109,16 +109,6 @@ class ConfiguratorController extends StorefrontController
             'success', "Successfully saved selection!"
         );
 
-//        if ($sealing != 0) {
-//            try {
-//                $sealingLineItem = $this->lineItemFactoryService->createSealingLineItem($this->getProduct($id, $context), 1, true, $context);
-//                $cart->getLineItems()->add($sealingLineItem);
-//                $this->eventDispatcher->dispatch(new CartSavedEvent($context, $cart));
-//
-//            } catch (Exception $exception) {
-//                dd($exception);
-//            }
-//        }
         return $this->redirectToRoute("frontend.checkout.cart.page");
     }
 
@@ -142,38 +132,6 @@ class ConfiguratorController extends StorefrontController
                 $id, $forehead, $backhead, $sealing, $context
             );
         }
-        $configurator = $this->getParentProduct($id, $context);
-        if ($backhead !== "") {
-            $backheadProduct = $this->getProduct($backhead, $context);
-            if ($backheadProduct != "") {
-                $backheadProduct->setAvailableStock($backheadProduct->getAvailableStock() - 1);
-            }
-        }
-
-        if ($forehead !== "") {
-            $foreheadProduct = $this->getProduct($forehead, $context);
-            if ($foreheadProduct != "") {
-                $foreheadProduct->setAvailableStock($foreheadProduct->getAvailableStock() - 1);
-            }
-        }
-    }
-
-    /**
-     * @param string $id
-     * @param SalesChannelContext $salesChannelContext
-     * @return ?ProductEntity
-     */
-    private function getProduct(string $id, SalesChannelContext $salesChannelContext): ?ProductEntity
-    {
-        /** @var ProductEntity $productRepository */
-        return $this->productRepository->search(
-            (new Criteria())
-                ->addFilter(new EqualsFilter('product.id', $id))
-                ->addAssociation('cover.media')
-                ->addAssociation('options.group')
-                ->addAssociation('customFields'),
-            $salesChannelContext->getContext()
-        )->first();
     }
 
     /**

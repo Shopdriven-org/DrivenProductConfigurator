@@ -69,6 +69,7 @@ class CartSavedSubscriber implements EventSubscriberInterface
         $foreheadProduct = "";
         $backheadProduct = "";
         $sealing = "";
+        $sealingItemQuantity = "";
         $racquetProduct = null;
 
         $no_choice = [
@@ -93,6 +94,9 @@ class CartSavedSubscriber implements EventSubscriberInterface
                     }
                 }
             }
+            if ($lineItem->getType() === $this->lineItemFactoryService::PRODUCT_SEALING_LINE_ITEM_TYPE) {
+                $sealingItemQuantity = $lineItem->getQuantity();
+            }
         }
         if (count($racquets) !== 0) {
             $event->getCart()->addArrayExtension("racquet_counter", (array)$racquets_length);
@@ -100,26 +104,12 @@ class CartSavedSubscriber implements EventSubscriberInterface
             foreach ($racquets as $racquet) {
                 $sealingQuantity = $racquet->getQuantity();
                 $parentProduct = $this->getParentProduct($racquet->getId(), $event->getSalesChannelContext());
-                $racquetProduct = $this->selectionService->getProduct($racquet->getId(), $event->getSalesChannelContext());
 
                 if ($parentProduct !== null) {
                     $foreheadProduct = $this->getChildrenProduct($parentProduct->getForehead(), $event->getSalesChannelContext());
                     $backheadProduct = $this->getChildrenProduct($parentProduct->getBackhead(), $event->getSalesChannelContext());
                     $sealing = $parentProduct->getSealing();
                 }
-//                if ($sealing != "") {
-//                    $event->getCart()->getLineItems()->add(
-//                        $this->lineItemFactoryService->createSealingLineItem(
-//                            $this->getChildrenProduct($racquet->getId(), $event->getSalesChannelContext()), $sealing, true, $event->getSalesChannelContext()
-//                        )
-//                    );
-//                } else {
-//                    $event->getCart()->getLineItems()->removeElement(
-//                        $this->lineItemFactoryService->createSealingLineItem(
-//                            $this->getChildrenProduct($racquet->getId(), $event->getSalesChannelContext()), $sealing, true, $event->getSalesChannelContext()
-//                        )
-//                    );
-//                }
                 $sameSides = false;
                 if ($foreheadProduct != null && $backheadProduct != null) {
                     if ($foreheadProduct->variation[0]["option"] == $backheadProduct->variation[0]["option"]) {
@@ -154,12 +144,10 @@ class CartSavedSubscriber implements EventSubscriberInterface
                         unset($backheadEquipments[$i]);
                     }
                 }
-
-//                if ($racquetProduct != null) {
-//                    $montageLineItem = $this->lineItemFactoryService->createMontageLineItem(1);
-//                    $event->getCart()->getLineItems()->add($montageLineItem);
-//                    $this->eventDispatcher->dispatch(new CartSavedEvent($event->getSalesChannelContext(), $event->getCart()));
-//                }
+                if ($sealingItemQuantity < $sealing && $sealingItemQuantity < $sealingSelection) {
+                    $sealing = $sealingItemQuantity;
+                    $sealingSelection = $sealingItemQuantity;
+                }
 
                 array_unshift($backheadEquipments, $no_choice);
                 array_unshift($foreheadEquipments, $no_choice);
@@ -169,6 +157,7 @@ class CartSavedSubscriber implements EventSubscriberInterface
                         "front" => ["foreheadEquipments" => $foreheadEquipments, "length" => count($foreheadEquipments)],
                         "sealing" => ["length" => $sealingQuantity],
                         "length" => $equipments_length,
+                        "racquetQuantity" => $racquet->getQuantity(),
                         "selection" =>
                             ["parentId" => $racquet->getId(),
                                 "foreheadProduct" => $foreheadProduct, "foreheadSelection" => $foreheadSelection,

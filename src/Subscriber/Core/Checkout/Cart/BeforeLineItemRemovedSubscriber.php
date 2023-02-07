@@ -55,7 +55,7 @@ class BeforeLineItemRemovedSubscriber implements EventSubscriberInterface
                 ["id" => $configurator->getId()]
             ], $event->getContext());
 
-            $this->checkProductStock($foreheadProductId, $backheadProductId, $event);
+//            $this->checkProductStock($foreheadProductId, $backheadProductId, $event);
         }
     }
 
