@@ -11,27 +11,17 @@
 namespace Driven\ProductConfigurator\Core\Checkout\Cart;
 
 use Driven\ProductConfigurator\Service\Cart\LineItemFactoryService;
-use Driven\ProductConfigurator\Service\Cart\LineItemFactoryServiceInterface;
 use Driven\ProductConfigurator\Service\SelectionService;
 use Exception;
 use Shopware\Core\Checkout\Cart\Cart;
 use Shopware\Core\Checkout\Cart\CartBehavior;
 use Shopware\Core\Checkout\Cart\CartProcessorInterface;
-use Shopware\Core\Checkout\Cart\Event\CartSavedEvent;
-use Shopware\Core\Checkout\Cart\Exception\MissingLineItemPriceException;
 use Shopware\Core\Checkout\Cart\LineItem\CartDataCollection;
 use Shopware\Core\Checkout\Cart\LineItem\LineItem;
-use Shopware\Core\Checkout\Cart\LineItem\LineItemCollection;
 use Shopware\Core\Checkout\Cart\Price\PercentagePriceCalculator;
 use Shopware\Core\Checkout\Cart\Price\QuantityPriceCalculator;
-use Shopware\Core\Checkout\Cart\Price\Struct\CalculatedPrice;
-use Shopware\Core\Checkout\Cart\Price\Struct\PercentagePriceDefinition;
-use Shopware\Core\Checkout\Cart\Price\Struct\PriceCollection;
-use Shopware\Core\Checkout\Cart\Price\Struct\QuantityPriceDefinition;
-use Shopware\Core\Content\Product\ProductEntity;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
-use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ConfiguratorCartProcessor implements CartProcessorInterface
@@ -80,18 +70,12 @@ class ConfiguratorCartProcessor implements CartProcessorInterface
                             $montageQuantity += $lineItem->getQuantity();
                         }
                         if ($foreheadProduct != $keinBelag && $backheadProduct != $keinBelag ){
-                            $montageQuantity = 2 * $lineItem->getQuantity();
-                        }
-                        if ($foreheadProduct == $keinBelag && $backheadProduct == $keinBelag){
-                            $montageQuantity = 0;
+                            $montageQuantity += $lineItem->getQuantity();
                         }
                         if ($sealingSelection > 0){
                             $sealingQuantity += $sealingSelection;
                         }
-//                        dd($lineItem->getExtensions()["Equipments"]["selection"]["sealing"]);
                         if ($lineItem->getQuantity() < $configuratorProduct->getSealing()){
-//                            $lineItem->getExtensions()["Equipments"]["selection"]["sealing"] = $lineItem->getQuantity();
-//                            $lineItem->getExtensions()["Equipments"]["selection"]["sealingSelection"] = $lineItem->getQuantity();
                             $sealingQuantity = $lineItem->getQuantity();
                         }
                     }
@@ -102,21 +86,17 @@ class ConfiguratorCartProcessor implements CartProcessorInterface
             try {
                 $montageLineItem = $this->lineItemFactoryService->createMontageLineItem($montageQuantity);
                 $toCalculate->add($montageLineItem);
-
             } catch (Exception $exception) {
                 dd($exception);
             }
         }
-
         if ($sealingQuantity != 0) {
             try {
-                $sealingLineItem = $this->lineItemFactoryService->createSealingLineItem($sealingQuantity, $context);
+                $sealingLineItem = $this->lineItemFactoryService->createSealingLineItem($sealingQuantity);
                 $toCalculate->add($sealingLineItem);
-
             } catch (Exception $exception) {
                 dd($exception);
             }
         }
     }
-
 }

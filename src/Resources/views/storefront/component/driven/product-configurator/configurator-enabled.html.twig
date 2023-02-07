@@ -20,7 +20,7 @@
         </div>
     {% endif %}
     <div class="row">
-        <div class="offset-2 col-md-8 mb-3 mt-3 border pb-3 pt-3 driven-configurator-wrapper">
+        <div class="offset-2 col-md-9 mb-3 mt-3 border pb-3 pt-3 driven-configurator-wrapper">
             <h3 class="mb-3 text-center">Schläger-Montage</h3>
             <form id="driven-checkout-selection" data-driven-product-configurator="true"
                   action="{{ path('frontend.driven.product-configurator.save-selection', { 'id': lineItem.id }) }}"
@@ -30,8 +30,7 @@
                        value="{{ lineItem.id }}"/>
                 <div class="flex justify-around">
                     <label for="forehead">Vorhand:</label>
-                    <select name="forehead" class="driven-equipments custom-select custom-select-lg mb-1"
-                            onChange=selectChange(this)>
+                    <select name="forehead" class="driven-equipments custom-select custom-select-lg mb-1" >
                         {% for i in 0..Equipments.front.length %}
                             {% set color = Equipments.front.foreheadEquipments[i].payload["options"][0].option %}
                             {% set size =  Equipments.front.foreheadEquipments[i].payload["options"][1].option %}
@@ -48,9 +47,7 @@
                     </select>
                 </div>
                 <label for="backhead">Rückhand:</label>
-                <select name="backhead" class="driven-equipments custom-select custom-select-lg mb-1"
-                        onChange=selectChange(this.value)
-                >
+                <select name="backhead" class="driven-equipments custom-select custom-select-lg mb-1" >
                     {% for i in 0..Equipments.back.length %}
                         {% set color = Equipments.back.backheadEquipments[i].payload["options"][0].option %}
                         {% set size =  Equipments.back.backheadEquipments[i].payload["options"][1].option %}
@@ -66,8 +63,7 @@
                     {% endfor %}
                 </select>
                 <label for="sealing">Versiegelung:</label>
-                <select name="sealing" class="custom-select custom-select-lg mb-1"
-                        onChange=selectChange(this.value)>
+                <select name="sealing" class="custom-select custom-select-lg mb-1" >
                     <option value="0">keine Versiegelung</option>
                     {% if Equipments.sealing.length <= 1 %}
                         <option
@@ -84,21 +80,22 @@
                         {% endfor %}
                     {% endif %}
                 </select>
+                <button class="btn btn-primary mt-3 mb-2 p-2 pr-3 pl-3" type="submit">Änderungen speichern</button>
             </form>
         </div>
         {% endif %}
     </div>
-    <script>
-        function selectChange(el) {
-            $('#driven-checkout-selection').submit();
-            $.ajax
-            ({
-                url: '/driven/product-configurator/save-selection/',
-                data: {selection: el},
-                type: 'post',
-                success: function (result) {
-                }
-            });
-        }
-    </script>
+{#    <script>#}
+{#        function selectChange(el) {#}
+{#            $('#driven-configurator-button').click();#}
+{#            $.ajax#}
+{#            ({#}
+{#                url: '/driven/product-configurator/save-selection/',#}
+{#                data: {selection: el},#}
+{#                type: 'post',#}
+{#                success: function (result) {#}
+{#                }#}
+{#            });#}
+{#        }#}
+{#    </script>#}
 {% endblock %}
