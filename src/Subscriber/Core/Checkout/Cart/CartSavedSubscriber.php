@@ -228,6 +228,29 @@ class CartSavedSubscriber implements EventSubscriberInterface
         }
     }
 
+
+    /**
+     * @param string $foreheadProductId
+     * @param string $backheadProductId
+     * @param $event
+     * @return void
+     */
+    private function checkProductStock(string $foreheadProductId, string $backheadProductId, $event)
+    {
+        foreach ($event->getCart()->getLineItems() as $lineItem) {
+            if ($lineItem->getId() == $foreheadProductId) {
+                if ($lineItem->getQuantity() > 1) {
+                    $lineItem->setQuantity(1);
+                }
+            }
+            if ($lineItem->getId() == $backheadProductId) {
+                if ($lineItem->getQuantity() > 1) {
+                    $lineItem->setQuantity(1);
+                }
+            }
+        }
+    }
+
     /**
      * @param $parentProduct
      * @param $racquet

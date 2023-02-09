@@ -10,6 +10,7 @@
 
 namespace Driven\ProductConfigurator\Subscriber\Core\Checkout\Cart;
 
+use Driven\ProductConfigurator\DrivenProductConfigurator;
 use Driven\ProductConfigurator\Service\SelectionServiceInterface;
 use Shopware\Core\Checkout\Cart\Event\BeforeLineItemAddedEvent;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;

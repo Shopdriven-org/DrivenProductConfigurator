@@ -48,14 +48,9 @@ class BeforeLineItemRemovedSubscriber implements EventSubscriberInterface
         $configurator = $this->getParentProduct($deletedLineItemId->getId(), $event->getSalesChannelContext());
 
         if ($configurator != null) {
-            $foreheadProductId = $configurator->getForehead();
-            $backheadProductId = $configurator->getBackhead();
-
             $this->drivenConfiguratorRepository->delete([
                 ["id" => $configurator->getId()]
             ], $event->getContext());
-
-//            $this->checkProductStock($foreheadProductId, $backheadProductId, $event);
         }
     }
 
@@ -71,27 +66,5 @@ class BeforeLineItemRemovedSubscriber implements EventSubscriberInterface
                 ->addFilter(new EqualsFilter('driven_product_configurator.productId', $id)),
             $salesChannelContext->getContext()
         )->first();
-    }
-
-    /**
-     * @param string $foreheadProductId
-     * @param string $backheadProductId
-     * @param $event
-     * @return void
-     */
-    private function checkProductStock(string $foreheadProductId, string $backheadProductId, $event)
-    {
-        foreach ($event->getCart()->getLineItems() as $lineItem) {
-            if ($lineItem->getId() == $foreheadProductId) {
-                if ($lineItem->getQuantity() > 1) {
-                    $lineItem->setQuantity(1);
-                }
-            }
-            if ($lineItem->getId() == $backheadProductId) {
-                if ($lineItem->getQuantity() > 1) {
-                    $lineItem->setQuantity(1);
-                }
-            }
-        }
     }
 }
