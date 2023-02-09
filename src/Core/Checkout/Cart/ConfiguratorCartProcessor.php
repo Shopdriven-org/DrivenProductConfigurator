@@ -59,24 +59,26 @@ class ConfiguratorCartProcessor implements CartProcessorInterface
         foreach ($original->getLineItems() as $lineItem) {
             if ($lineItem->getType() === LineItem::PRODUCT_LINE_ITEM_TYPE) {
                 $options = $lineItem->getPayload()["customFields"];
-                if ($options["driven_product_configurator_racquet_option"] === "racquet") {
-                    $configuratorProduct = $this->selectionService->getParentProduct($lineItem->getId(), $context);
-                    if ($configuratorProduct != null) {
-                        $foreheadProduct = $configuratorProduct->getForehead();
-                        $backheadProduct = $configuratorProduct->getBackhead();
-                        $sealingSelection = $configuratorProduct->getSealing();
+                if (isset($options["driven_product_configurator_racquet_option"])){
+                    if ($options["driven_product_configurator_racquet_option"] === "racquet") {
+                        $configuratorProduct = $this->selectionService->getParentProduct($lineItem->getId(), $context);
+                        if ($configuratorProduct != null) {
+                            $foreheadProduct = $configuratorProduct->getForehead();
+                            $backheadProduct = $configuratorProduct->getBackhead();
+                            $sealingSelection = $configuratorProduct->getSealing();
 
-                        if ($foreheadProduct != $keinBelag || $backheadProduct != $keinBelag){
-                            $montageQuantity += $lineItem->getQuantity();
-                        }
-                        if ($foreheadProduct != $keinBelag && $backheadProduct != $keinBelag ){
-                            $montageQuantity += $lineItem->getQuantity();
-                        }
-                        if ($sealingSelection > 0){
-                            $sealingQuantity += $sealingSelection;
-                        }
-                        if ($lineItem->getQuantity() < $configuratorProduct->getSealing()){
-                            $sealingQuantity = $lineItem->getQuantity();
+                            if ($foreheadProduct != $keinBelag || $backheadProduct != $keinBelag){
+                                $montageQuantity += $lineItem->getQuantity();
+                            }
+                            if ($foreheadProduct != $keinBelag && $backheadProduct != $keinBelag ){
+                                $montageQuantity += $lineItem->getQuantity();
+                            }
+                            if ($sealingSelection > 0){
+                                $sealingQuantity += $sealingSelection;
+                            }
+                            if ($lineItem->getQuantity() < $configuratorProduct->getSealing()){
+                                $sealingQuantity = $lineItem->getQuantity();
+                            }
                         }
                     }
                 }

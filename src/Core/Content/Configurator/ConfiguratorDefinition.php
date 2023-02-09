@@ -65,8 +65,8 @@ class ConfiguratorDefinition extends EntityDefinition
             // default fields
             (new IdField('id', 'id'))->addFlags(new PrimaryKey(), new Required()),
 
-            (new StringField('forehead', 'forehead')),
-            (new StringField('backhead', 'backhead')),
+            (new IdField('forehead', 'forehead')),
+            (new IdField('backhead', 'backhead')),
             (new StringField('sealing', 'sealing')),
             // shopware customer
             (new FkField('customer_id', 'customerId', CustomerDefinition::class)),

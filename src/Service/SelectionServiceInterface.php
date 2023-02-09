@@ -29,24 +29,24 @@ interface SelectionServiceInterface
 
     /**
      * @param string $productId
-     * @param ?string $forehead
-     * @param ?string $backhead
-     * @param ?int $sealing
+     * @param string $forehead
+     * @param string $backhead
+     * @param string $sealing
      * @param SalesChannelContext $salesChannelContext
      *
      * @return EntityWrittenContainerEvent
      */
-    public function saveSelection(string $productId, ?string $forehead, ?string $backhead, ?int $sealing, SalesChannelContext $salesChannelContext): EntityWrittenContainerEvent;
+    public function saveSelection(string $productId, string $forehead, string $backhead, $sealing, SalesChannelContext $salesChannelContext): EntityWrittenContainerEvent;
 
 
     /**
      * @param string $productId
-     * @param ?string $forehead
-     * @param ?string $backhead
-     * @param ?int $sealing
+     * @param string $forehead
+     * @param string $backhead
+     * @param string $sealing
      * @param SalesChannelContext $salesChannelContext
      *
      * @return EntityWrittenContainerEvent|void
      */
-    public function updateSelection(string $productId, ?string $forehead, ?string $backhead, ?int $sealing, SalesChannelContext $salesChannelContext);
+    public function updateSelection(string $productId, string $forehead, string $backhead, string $sealing, SalesChannelContext $salesChannelContext);
 }

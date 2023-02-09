@@ -1,7 +1,7 @@
 {
   "name": "driven/product-configurator",
   "description": "Produkt Konfigurator",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "license": "proprietary",
   "type": "shopware-platform-plugin",
   "authors": [

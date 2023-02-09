@@ -28,6 +28,8 @@
         <service id="Driven\ProductConfigurator\Subscriber\Core\Checkout\Cart\BeforeLineItemAddedSubscriber">
             <argument type="service" id="product.repository"/>
             <argument type="service" id="category_translation.repository"/>
+            <argument type="service" id="driven_product_configurator.repository"/>
+            <argument type="service" id="Driven\ProductConfigurator\Service\SelectionService"/>
             <tag name="kernel.event_subscriber" />
         </service>
 

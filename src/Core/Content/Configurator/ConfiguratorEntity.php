@@ -23,7 +23,7 @@ class ConfiguratorEntity extends Entity
 
     protected ?string $forehead;
     protected ?string $backhead;
-    protected ?int $sealing;
+    protected ?string $sealing;
     protected string $customerId;
     protected CustomerEntity $customer;
     protected string $salesChannelId;
@@ -79,9 +79,9 @@ class ConfiguratorEntity extends Entity
     /**
      * Getter method for the property.
      *
-     * @return ?int
+     * @return ?string
      */
-    public function getSealing(): ?int
+    public function getSealing(): ?string
     {
         return $this->sealing;
     }
@@ -89,11 +89,11 @@ class ConfiguratorEntity extends Entity
     /**
      * Setter method for the property.
      *
-     * @param int $sealing
+     * @param string $sealing
      *
      * @return void
      */
-    public function setSealing(int $sealing): void
+    public function setSealing(string $sealing): void
     {
         $this->sealing = $sealing;
     }
