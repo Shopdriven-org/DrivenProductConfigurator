@@ -85,8 +85,17 @@ class CartSavedSubscriber implements EventSubscriberInterface
                 $options = $lineItem->getPayload()["customFields"];
                 if (isset($options["driven_product_configurator_racquet_option"])) {
                     if ($options["driven_product_configurator_racquet_option"] === "toppings") {
-                        array_push($equipments, $lineItem);
-                        $equipments_length++;
+                        if ($lineItem->getQuantity() > 1) {
+                            for ($y = 0; $y < $lineItem->getQuantity(); $y++) {
+                                $lineItem->addArrayExtension("driven_equipment", ["number" => $y]);
+                                array_push($equipments, $lineItem);
+                                $equipments_length++;
+                            }
+                        } else {
+                            $lineItem->addArrayExtension("driven_equipment", ["number" => 1]);
+                            array_push($equipments, $lineItem);
+                            $equipments_length++;
+                        }
                     }
                     if ($options["driven_product_configurator_racquet_option"] === "racquet") {
                         array_push($racquets, $lineItem);
@@ -138,10 +147,14 @@ class CartSavedSubscriber implements EventSubscriberInterface
                 }
                 for ($i = 0; $i <= count($equipments) - 1; $i++) {
                     if ($foreheadEquipments[$i]->getId() == $backheadSelection) {
-                        unset($foreheadEquipments[$i]);
+                        if ($backheadSelection !== $no_choice["id"]) {
+                            unset($foreheadEquipments[$i]);
+                        }
                     }
                     if ($backheadEquipments[$i]->getId() == $foreheadSelection) {
-                        unset($backheadEquipments[$i]);
+                        if ($foreheadSelection !== $no_choice["id"]) {
+                            unset($backheadEquipments[$i]);
+                        }
                     }
                 }
                 if ($sealingItemQuantity < $sealing && $sealingItemQuantity < $sealingSelection) {

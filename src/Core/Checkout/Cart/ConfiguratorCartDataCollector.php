@@ -77,27 +77,27 @@ class ConfiguratorCartDataCollector implements CartDataCollectorInterface
             return;
         }
         // loop every configurator
-        foreach ($lineItems as $lineItem) {
-            if (isset($lineItem->getPayload()["customFields"]["driven_product_configurator_racquet_option"])) {
-                if ($lineItem->getPayload()["customFields"]["driven_product_configurator_racquet_option"] === "racquet") {
-
-                    $configurator = $this->selectionService->getParentProduct($lineItem->getId(), $salesChannelContext);
+//        foreach ($lineItems as $lineItem) {
+//            if (isset($lineItem->getPayload()["customFields"]["driven_product_configurator_racquet_option"])) {
+//                if ($lineItem->getPayload()["customFields"]["driven_product_configurator_racquet_option"] === "racquet") {
 //
-                    if ($configurator !== null) {
-                        $foreheadProduct = "";
-                        $backheadProduct = "";
-                        if ($configurator->getBackhead() != ""){
-                            $backheadProduct = $this->selectionService->getProduct($configurator->getBackhead(), $salesChannelContext);
-                        }
-                        if ($configurator->getForehead() != ""){
-                            $foreheadProduct = $this->selectionService->getProduct($configurator->getForehead(), $salesChannelContext);
-                        }
-
-//                        $this->checkProductStock($foreheadProduct, $backheadProduct, $lineItem, $lineItems, $salesChannelContext);
-                    }
-                }
-            }
-        }
+//                    $configurator = $this->selectionService->getParentProduct($lineItem->getId(), $salesChannelContext);
+////
+//                    if ($configurator !== null) {
+//                        $foreheadProduct = "";
+//                        $backheadProduct = "";
+//                        if ($configurator->getBackhead() != ""){
+//                            $backheadProduct = $this->selectionService->getProduct($configurator->getBackhead(), $salesChannelContext);
+//                        }
+//                        if ($configurator->getForehead() != ""){
+//                            $foreheadProduct = $this->selectionService->getProduct($configurator->getForehead(), $salesChannelContext);
+//                        }
+//
+////                        $this->checkProductStock($foreheadProduct, $backheadProduct, $lineItem, $lineItems, $salesChannelContext);
+//                    }
+//                }
+//            }
+//        }
 
     }
 

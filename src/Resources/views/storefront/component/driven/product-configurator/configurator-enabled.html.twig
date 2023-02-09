@@ -30,7 +30,8 @@
                        value="{{ lineItem.id }}"/>
                 <div class="flex justify-around">
                     <label for="forehead">Vorhand:</label>
-                    <select name="forehead" class="driven-equipments custom-select custom-select-lg mb-1" >
+                    <select onchange="this.form.submit()" name="forehead"
+                            class="driven-equipments custom-select custom-select-lg mb-1">
                         {% for i in 0..Equipments.front.length %}
                             {% set color = Equipments.front.foreheadEquipments[i].payload["options"][0].option %}
                             {% set size =  Equipments.front.foreheadEquipments[i].payload["options"][1].option %}
@@ -47,7 +48,8 @@
                     </select>
                 </div>
                 <label for="backhead">Rückhand:</label>
-                <select name="backhead" class="driven-equipments custom-select custom-select-lg mb-1" >
+                <select onchange="this.form.submit()" name="backhead"
+                        class="driven-equipments custom-select custom-select-lg mb-1">
                     {% for i in 0..Equipments.back.length %}
                         {% set color = Equipments.back.backheadEquipments[i].payload["options"][0].option %}
                         {% set size =  Equipments.back.backheadEquipments[i].payload["options"][1].option %}
@@ -63,7 +65,7 @@
                     {% endfor %}
                 </select>
                 <label for="sealing">Versiegelung:</label>
-                <select name="sealing" class="custom-select custom-select-lg mb-1" >
+                <select onchange="this.form.submit()" name="sealing" class="custom-select custom-select-lg mb-1">
                     <option value="0">keine Versiegelung</option>
                     {% if Equipments.sealing.length <= 1 %}
                         <option
@@ -80,22 +82,34 @@
                         {% endfor %}
                     {% endif %}
                 </select>
-                <button class="btn btn-primary mt-3 mb-2 p-2 pr-3 pl-3" type="submit">Änderungen speichern</button>
             </form>
         </div>
         {% endif %}
     </div>
-{#    <script>#}
-{#        function selectChange(el) {#}
-{#            $('#driven-configurator-button').click();#}
-{#            $.ajax#}
-{#            ({#}
-{#                url: '/driven/product-configurator/save-selection/',#}
-{#                data: {selection: el},#}
-{#                type: 'post',#}
-{#                success: function (result) {#}
-{#                }#}
-{#            });#}
-{#        }#}
-{#    </script>#}
+    <script>
+        // function selectChange(el) {
+        //     $('#driven-configurator-button').click();
+            // $.ajax
+            // ({
+            //     url: '/driven/product-configurator/save-selection/',
+            //     data: {selection: el},
+            //     type: 'post',
+            //     success: function (result) {
+            //     }
+            // });
+            // $('select[name=forehead]').on('change', function () {
+            //     var self = this;
+            //     $('select[name=backhead]').find('option').prop('disabled', function () {
+            //         return this.value == self.value
+            //     });
+            // });
+            //
+            // $('select[name=backhead]').on('change', function () {
+            //     var self = this;
+            //     $('select[name=forehead]').find('option').prop('disabled', function () {
+            //         return this.value == self.value
+            //     });
+            // });
+        // }
+    </script>
 {% endblock %}
