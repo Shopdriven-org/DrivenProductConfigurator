@@ -5,6 +5,10 @@
     <services>
 
         <service id="Driven\ProductConfigurator\Service\Cart\LineItemFactoryService">
+            <argument type="service" id="Driven\ProductConfigurator\Service\VariantTextService"/>
+        </service>
+
+        <service id="Driven\ProductConfigurator\Service\VariantTextService">
         </service>
 
         <service id="Driven\ProductConfigurator\Service\Cart\CartService">
@@ -20,8 +24,8 @@
         </service>
 
         <service id="Driven\ProductConfigurator\Service\Calculator\PriceCalculatorService">
-            <argument type="service" id="Shopware\Core\Checkout\Cart\Price\QuantityPriceCalculator" />
-            <argument type="service" id="Shopware\Core\Content\Product\SalesChannel\Price\ProductPriceCalculator" />
+            <argument type="service" id="Shopware\Core\Checkout\Cart\Price\QuantityPriceCalculator"/>
+            <argument type="service" id="Shopware\Core\Content\Product\SalesChannel\Price\ProductPriceCalculator"/>
         </service>
 
         <service id="Driven\ProductConfigurator\Service\Calculator\ListingPriceCalculatorService">

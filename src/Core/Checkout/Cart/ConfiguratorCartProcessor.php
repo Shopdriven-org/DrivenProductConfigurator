@@ -20,6 +20,7 @@ use Shopware\Core\Checkout\Cart\LineItem\CartDataCollection;
 use Shopware\Core\Checkout\Cart\LineItem\LineItem;
 use Shopware\Core\Checkout\Cart\Price\PercentagePriceCalculator;
 use Shopware\Core\Checkout\Cart\Price\QuantityPriceCalculator;
+use Shopware\Core\Content\Product\ProductEntity;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -63,6 +64,7 @@ class ConfiguratorCartProcessor implements CartProcessorInterface
                     if ($options["driven_product_configurator_racquet_option"] === "racquet") {
 
                         $configuratorProduct = $this->selectionService->getParentProduct($lineItem->getId(), $context);
+                        $parentProduct = $this->selectionService->getProduct($lineItem->getId(), $context);
                         if ($configuratorProduct != null) {
                             $foreheadProduct = $configuratorProduct->getForehead();
                             $backheadProduct = $configuratorProduct->getBackhead();
@@ -70,6 +72,10 @@ class ConfiguratorCartProcessor implements CartProcessorInterface
 
                             if ($foreheadProduct != $keinBelag || $backheadProduct != $keinBelag) {
                                 $montageQuantity += $lineItem->getQuantity();
+                                if ($lineItem->getQuantity() > 1) {
+                                    //TODO
+//                                    $this->ConfiguratorChanges($parentProduct, $lineItem, $toCalculate, $context);
+                                }
                             }
                             if ($foreheadProduct != $keinBelag && $backheadProduct != $keinBelag) {
                                 $montageQuantity += $lineItem->getQuantity();
@@ -100,6 +106,29 @@ class ConfiguratorCartProcessor implements CartProcessorInterface
             } catch (Exception $exception) {
                 dd($exception);
             }
+        }
+    }
+
+    /**
+     * @param ProductEntity|null $parentProduct
+     * @param LineItem $lineItem
+     * @param Cart $toCalculate
+     * @param SalesChannelContext $context
+     * @return void
+     */
+    private function ConfiguratorChanges(?ProductEntity $parentProduct, LineItem $lineItem, Cart $toCalculate, SalesChannelContext $context)
+    {
+      try {
+            if ($lineItem->getExtensions()["Equipments"]["selection"]["backheadSelection"] != Uuid::fromStringToHex($this->selectionService::KEIN_BELAG) || $lineItem->getExtensions()["Equipments"]["selection"]["foreheadSelection"] != Uuid::fromStringToHex($this->selectionService::KEIN_BELAG)) {
+                $configurator = $this->lineItemFactoryService->createProductConfigurator($parentProduct, $lineItem);
+                $this->selectionService->saveSelection(
+                    $lineItem->getId(), Uuid::fromStringToHex($this->selectionService::KEIN_BELAG), Uuid::fromStringToHex($this->selectionService::KEIN_BELAG), "", $context
+                );
+                $lineItem->setQuantity(1);
+                $toCalculate->add($configurator);
+            }
+        } catch (Exception $exception) {
+            dd($exception);
         }
     }
 }

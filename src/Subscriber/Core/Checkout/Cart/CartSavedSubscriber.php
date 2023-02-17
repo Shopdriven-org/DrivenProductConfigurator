@@ -85,17 +85,9 @@ class CartSavedSubscriber implements EventSubscriberInterface
                 $options = $lineItem->getPayload()["customFields"];
                 if (isset($options["driven_product_configurator_racquet_option"])) {
                     if ($options["driven_product_configurator_racquet_option"] === "toppings") {
-                        if ($lineItem->getQuantity() > 1) {
-                            for ($y = 0; $y < $lineItem->getQuantity(); $y++) {
-                                $lineItem->addArrayExtension("driven_equipment", ["number" => $y]);
-                                array_push($equipments, $lineItem);
-                                $equipments_length++;
-                            }
-                        } else {
-                            $lineItem->addArrayExtension("driven_equipment", ["number" => 1]);
-                            array_push($equipments, $lineItem);
-                            $equipments_length++;
-                        }
+                        $lineItem->addArrayExtension("driven_equipment", ["number" => $lineItem->getQuantity() + 1]);
+                        array_push($equipments, $lineItem);
+                        $equipments_length++;
                     }
                     if ($options["driven_product_configurator_racquet_option"] === "racquet") {
                         array_push($racquets, $lineItem);
@@ -142,9 +134,6 @@ class CartSavedSubscriber implements EventSubscriberInterface
                 }
 
                 $this->setRacquetConfiguratorQuantity($racquet, $backheadSelection, $foreheadSelection);
-                if (isset($parentProduct)) {
-                    $this->createNewProductConfigurator($parentProduct, $racquet, $event->getSalesChannelContext());
-                }
                 for ($i = 0; $i <= count($equipments) - 1; $i++) {
                     if ($foreheadEquipments[$i]->getId() == $backheadSelection) {
                         if ($backheadSelection !== $no_choice["id"]) {
@@ -162,8 +151,8 @@ class CartSavedSubscriber implements EventSubscriberInterface
                     $sealingSelection = $sealingItemQuantity;
                 }
 
-                array_unshift($backheadEquipments, $no_choice);
                 array_unshift($foreheadEquipments, $no_choice);
+                array_unshift($backheadEquipments, $no_choice);
                 $racquet->addArrayExtension("Equipments",
                     ["items" => $equipments,
                         "back" => ["backheadEquipments" => $backheadEquipments, "length" => count($backheadEquipments)],
@@ -249,21 +238,6 @@ class CartSavedSubscriber implements EventSubscriberInterface
                 }
             }
         }
-    }
-
-    /**
-     * @param $parentProduct
-     * @param $racquet
-     * @param $context
-     * @return void
-     */
-    private function createNewProductConfigurator($parentProduct, $racquet, $context)
-    {
-        // TODO: finish createNewProductConfigurator functionality
-        // TODO: clone parent product and add all other functionalities
-//        if ($racquet->getQuantity() > 1){
-//            $this->selectionService->saveSelection($parentProduct->getId(), "", "", 0, $context);
-//        }
     }
 
 }

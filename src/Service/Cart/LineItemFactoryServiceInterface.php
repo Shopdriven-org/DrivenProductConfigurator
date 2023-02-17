@@ -36,4 +36,11 @@ interface LineItemFactoryServiceInterface
      * @return LineItem
      */
     public function createMontageLineItem($quantity): LineItem;
+
+    /**
+     * @param ProductEntity $product
+     * @param LineItem $parentLineItem
+     * @return LineItem
+     */
+    public function createProductConfigurator(ProductEntity $product, LineItem $parentLineItem): LineItem;
 }

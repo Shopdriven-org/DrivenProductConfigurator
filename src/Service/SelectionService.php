@@ -87,7 +87,7 @@ class SelectionService implements SelectionServiceInterface
      * @param string $productId
      * @param string $forehead
      * @param string $backhead
-     * @param int $sealing
+     * @param string $sealing
      * @param SalesChannelContext $salesChannelContext
      *
      * @return EntityWrittenContainerEvent
@@ -111,7 +111,7 @@ class SelectionService implements SelectionServiceInterface
      * @param string $productId
      * @param string $forehead
      * @param string $backhead
-     * @param int $sealing
+     * @param string $sealing
      * @param SalesChannelContext $salesChannelContext
      * @return EntityWrittenContainerEvent|void
      */
